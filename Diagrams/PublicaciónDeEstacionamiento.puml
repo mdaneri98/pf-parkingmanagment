@@ -1,0 +1,20 @@
+@startuml "Flujo Publicación de Espacios"
+title Flujo de Publicación de Espacios de Estacionamiento
+
+actor "Administrador" as administrador
+participant "Aplicación" as app
+
+administrador -> app: Publica un espacio de estacionamiento (con imágenes, ubicación, capacidad, etc)
+app -> administrador: Confirma datos,
+
+administrador -> app: Ingresa características del espacio\n(tamaño, techado, seguridad, etc.)
+administrador -> app: Define disponibilidad\n(días, horarios)
+administrador -> app: Establece precio\n(hora, día, semana, mes)
+administrador -> app: Sube fotos del espacio
+
+administrador -> app: Envía publicación
+app -> db: Guarda información del espacio
+db --> app: Confirma almacenamiento
+app -> administrador: Notifica publicación exitosa
+
+@enduml

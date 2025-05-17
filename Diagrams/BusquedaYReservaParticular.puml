@@ -1,0 +1,30 @@
+@startuml "Flujo de Búsqueda y Reserva"
+title Flujo de Búsqueda y Reserva Particular
+
+actor "Conductor" as conductor
+participant "Aplicación" as app
+actor "Administrador" as administrador
+
+conductor -> app: Filtro estacionamientos cercanos disponibles
+app -> conductor: Muestra en el mapa lo pedido
+conductor -> app: Selecciona un espacio
+app -> conductor: Muestra detalles del espacio\n(fotos, reseñas, características)
+
+conductor -> app: Solicita reserva del tiempo a utilizar
+app -> administrador: Notifica nueva reserva
+administrador -> app: Confirma reserva
+administrador --[#0009FF]-> conductor: Brinda instrucciones de acceso
+
+note right of conductor: Usa el estacionamiento
+
+administrador -> app: Indica y registra fin de estadía
+app -> conductor : Indica fin de estadía
+app -> administrador: Calcula tiempo real de estadía
+administrador --[#0009FF]->  conductor: Cobra la estadía
+
+app -> conductor: Solicita calificación de la experiencia
+conductor -> app: Califica al espacio
+
+app -> conductor: Muestra resumen final y comprobante
+
+@enduml

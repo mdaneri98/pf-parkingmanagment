@@ -1,0 +1,36 @@
+@startuml "Flujo de Acceso al Estacionamiento"
+title Flujo de Acceso y Uso del Estacionamiento
+
+actor "Conductor" as conductor
+participant "Aplicación" as app
+participant "Estacionamiento" as estacionamiento
+
+conductor -> app: Busca un estacionamiento cercano disponible
+app -> conductor: Muestra en el mapa lo pedido
+conductor -[#0009FF]-> estacionamiento: Ingresa al estacionamiento
+estacionamiento -> app: Asigna al conductor un espacio libre
+app -> conductor: Informa el espacio asignado
+
+alt Se definió tiempo de estadía
+    conductor -> app: Marco el tiempo a utilizar el estacionamiento
+    app -> conductor: Confirma e inicia estadía, y realiza cuenta regresiva
+else No se definió tiempo de estadía
+    conductor -> app: Dejo tiempo indefinido
+    app -> conductor: Confirma e inicia estadía
+end
+
+note right of conductor: Usa el estacionamiento
+
+
+estacionamiento -> app: Indica y registra fin de estadía
+app -> conductor : Indica fin de estadía
+app -> estacionamiento: Calcula tiempo real de estadía
+estacionamiento --[#0009FF]->  conductor: Cobra el estacionamiento
+
+
+app -> conductor: Solicita calificación de la experiencia
+conductor -> app: Califica al espacio
+
+app -> conductor: Muestra resumen final y comprobante
+
+@enduml
