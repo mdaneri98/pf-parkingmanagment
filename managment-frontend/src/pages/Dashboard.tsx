@@ -1,6 +1,7 @@
 import { mockParkingLots, mockSpots } from '../utils/mockData';
 import Card from '../components/atoms/Card';
 import type { ParkingLot, Spot } from '../types';
+import ParkingGrid from '../components/organisms/ParkingGrid';
 
 const Dashboard = () => {
   // Usar directamente los datos mockeados
@@ -145,6 +146,9 @@ const Dashboard = () => {
           })}
         </div>
       </Card>
+
+      {/* Parking Grid */}
+      <ParkingGrid />
     </div>
   );
 };
