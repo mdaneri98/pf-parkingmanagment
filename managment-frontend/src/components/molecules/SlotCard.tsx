@@ -26,6 +26,14 @@ const SlotCard = ({ spot, onClick }: SlotCardProps) => {
     return icons[vehicleType] || '🚙';
   };
 
+  const getStatusText = (isAvailable: boolean) => {
+    return isAvailable ? 'Disponible' : 'Ocupado';
+  };
+
+  const getStatusColor = (isAvailable: boolean) => {
+    return isAvailable ? 'text-green-700' : 'text-red-700';
+  };
+
   return (
     <div
       className={`
@@ -36,8 +44,9 @@ const SlotCard = ({ spot, onClick }: SlotCardProps) => {
         }
       `}
       onClick={() => onClick(spot)}
+      title={`${spot.label} - ${spot.vehicle_type} - Piso ${spot.floor} - ${getStatusText(spot.is_available)}`}
     >
-      <div className="text-lg font-bold mb-1">
+      <div className="text-lg font-bold mb-1 text-gray-900">
         {spot.label}
       </div>
       
@@ -49,14 +58,16 @@ const SlotCard = ({ spot, onClick }: SlotCardProps) => {
         {spot.vehicle_type}
       </div>
       
-      <div className={`text-xs font-medium mt-2 ${
-        spot.is_available ? 'text-green-700' : 'text-red-700'
-      }`}>
-        {spot.is_available ? 'Libre' : 'Ocupado'}
+      <div className={`text-xs font-medium mt-2 ${getStatusColor(spot.is_available)}`}>
+        {getStatusText(spot.is_available)}
       </div>
       
       <div className="text-xs text-gray-500 mt-1">
         Piso {spot.floor}
+      </div>
+      
+      <div className="text-xs text-gray-400 mt-1">
+        ID: {spot.id}
       </div>
     </div>
   );

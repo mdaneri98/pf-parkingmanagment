@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useAppSelector } from '../../hooks/redux';
+import { useAppSelector, useAppDispatch } from '../../hooks/redux';
+import { addSpot, updateSpot, deleteSpot } from '../../stores/spotSlice';
 import type { Spot, ParkingLot } from '../../types';
 import Card from '../atoms/Card';
 import SectorInfo from '../atoms/SectorInfo';
@@ -7,6 +8,7 @@ import SlotModal from '../molecules/SlotModal';
 import SlotCard from '../molecules/SlotCard';
 
 const ParkingGrid = () => {
+  const dispatch = useAppDispatch();
   const { selectedParkingLot } = useAppSelector((state) => state.parkingLot);
   const { spots } = useAppSelector((state) => state.spot);
   const [selectedSpot, setSelectedSpot] = useState<Spot | undefined>();
@@ -44,10 +46,34 @@ const ParkingGrid = () => {
   };
 
   const handleSaveSpot = (spotData: Partial<Spot>) => {
-    // Aquí se implementaría la lógica para guardar/actualizar el espacio
-    // Por ahora solo cerramos el modal
-    console.log('Guardando espacio:', spotData);
+    if (selectedSpot) {
+      // Actualizar espacio existente
+      dispatch(updateSpot({
+        id: selectedSpot.id,
+        updates: spotData
+      }));
+    } else {
+      // Crear nuevo espacio
+      const newSpot: Spot = {
+        id: Date.now(), // ID temporal para mock data
+        vehicle_type: spotData.vehicle_type || 'Car',
+        floor: spotData.floor || '1',
+        label: spotData.label || '',
+        is_available: spotData.is_available ?? true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        parking_lot_id: selectedParkingLot.id
+      };
+      dispatch(addSpot(newSpot));
+    }
     handleCloseModal();
+  };
+
+  const handleDeleteSpot = (spotId: number) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este espacio?')) {
+      dispatch(deleteSpot(spotId));
+      handleCloseModal();
+    }
   };
 
   const getSectorFromCode = (code: string): string => {
@@ -60,7 +86,7 @@ const ParkingGrid = () => {
       acc[spot.floor] = {};
     }
     
-    const sector = getSectorFromCode(spot.code);
+    const sector = getSectorFromCode(spot.label);
     if (!acc[spot.floor][sector]) {
       acc[spot.floor][sector] = [];
     }
@@ -155,12 +181,6 @@ const ParkingGrid = () => {
                           {sectorSpots.filter(s => s.is_available).length} disponibles
                         </p>
                       </div>
-                      <button
-                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
-                        onClick={handleAddSpot}
-                      >
-                        + Agregar
-                      </button>
                     </div>
 
                     {sectorSpots.length === 0 ? (
@@ -198,6 +218,7 @@ const ParkingGrid = () => {
         spot={selectedSpot}
         parkingLotId={selectedParkingLot.id}
         onSave={handleSaveSpot}
+        onDelete={handleDeleteSpot}
       />
     </div>
   );
