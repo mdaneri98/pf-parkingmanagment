@@ -46,11 +46,32 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Dashboard - Mi Estacionamiento
+          Dashboard
         </h1>
-        <p className="text-gray-600">
-          {currentParkingLot ? `Gestión del estacionamiento en ${currentParkingLot.address}` : 'Cargando...'}
-        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-400">Direccion</p>
+              <p className="text-3xl font-bold text-blue-400">
+                {managerParkingLot.address}
+              </p>
+            </div>
+            <div className="text-4xl">⚡</div>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-400">Porcentaje de Ocupación</p>
+              <p className="text-3xl font-bold text-orange-400">{stats.occupancyPercentage}%</p>
+            </div>
+            <div className="text-4xl">📊</div>
+          </div>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -110,50 +131,6 @@ const Dashboard = () => {
           </div>
         </Card>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Porcentaje de Ocupación</p>
-              <p className="text-3xl font-bold text-orange-600">{stats.occupancyPercentage}%</p>
-            </div>
-            <div className="text-4xl">📊</div>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Eficiencia del Sistema</p>
-              <p className="text-3xl font-bold text-blue-600">
-                {stats.totalSpots > 0 ? Math.round((stats.availableSpots / stats.totalSpots) * 100) : 0}%
-              </p>
-            </div>
-            <div className="text-4xl">⚡</div>
-          </div>
-        </Card>
-      </div>
-
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Mi Estacionamiento</h2>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-primary-50 border-2 border-primary-200 rounded-lg">
-            <div>
-              <p className="font-medium text-gray-900">Estacionamiento #{managerParkingLot.id}</p>
-              <p className="text-sm text-gray-600">{managerParkingLot.address}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">
-                {stats.availableSpots}/{stats.totalSpots} disponibles
-              </p>
-              <p className="text-xs text-gray-500">
-                {stats.totalSpots > 0 ? Math.round((stats.availableSpots / stats.totalSpots) * 100) : 0}% libre
-              </p>
-            </div>
-          </div>
-        </div>
-      </Card>
 
       <ParkingGrid />
     </div>

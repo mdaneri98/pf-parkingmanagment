@@ -8,25 +8,12 @@ const SectorInfo = ({ sector, spots }: SectorInfoProps) => {
   const availableSpots = spots.filter(spot => spot.is_available).length;
   const totalSpots = spots.length;
 
-  const getSectorDescription = (sector: string): string => {
-    const descriptions: Record<string, string> = {
-      'A': 'Autos',
-      'B': 'Motos',
-      'C': 'Autos Premium',
-      'D': 'Discapacitados',
-      'E': 'Carga',
-      'F': 'VIP',
-      'G': 'Eléctricos'
-    };
-    return descriptions[sector] || 'General';
-  };
-
   return (
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
       <div className="flex items-center justify-between">
         <div>
           <h5 className="font-semibold text-blue-900">
-            Sector {sector} - {getSectorDescription(sector)}
+            Sector {sector}
           </h5>
           <p className="text-sm text-blue-700">
             {vehicleTypes.join(', ')} • {availableSpots}/{totalSpots} disponibles

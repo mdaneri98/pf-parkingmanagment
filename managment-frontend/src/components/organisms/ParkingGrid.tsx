@@ -3,6 +3,8 @@ import { useAppSelector } from '../../hooks/redux';
 import type { Spot, ParkingLot } from '../../types';
 import Card from '../atoms/Card';
 import SectorInfo from '../atoms/SectorInfo';
+import SlotModal from '../molecules/SlotModal';
+import SlotCard from '../molecules/SlotCard';
 
 const ParkingGrid = () => {
   const { selectedParkingLot } = useAppSelector((state) => state.parkingLot);
@@ -39,6 +41,13 @@ const ParkingGrid = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedSpot(undefined);
+  };
+
+  const handleSaveSpot = (spotData: Partial<Spot>) => {
+    // Aquí se implementaría la lógica para guardar/actualizar el espacio
+    // Por ahora solo cerramos el modal
+    console.log('Guardando espacio:', spotData);
+    handleCloseModal();
   };
 
   const getSectorFromCode = (code: string): string => {
@@ -101,6 +110,12 @@ const ParkingGrid = () => {
         <Card>
           <div className="text-center py-8">
             <p className="text-gray-500">No hay espacios en este piso</p>
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium mt-4"
+              onClick={handleAddSpot}
+            >
+              + Crear Primer Espacio
+            </button>
           </div>
         </Card>
       ) : (
@@ -128,7 +143,7 @@ const ParkingGrid = () => {
               <div className="space-y-6">
                 {Object.entries(sectors).map(([sector, sectorSpots]) => (
                   <div key={sector} className="border border-gray-200 rounded-lg p-4">
-                    <SectorInfo sector={sector} spots={sectorSpots} />
+                    {/*<SectorInfo sector={sector} spots={sectorSpots} />*/}
                     
                     <div className="flex items-center justify-between mb-4">
                       <div>
@@ -161,29 +176,11 @@ const ParkingGrid = () => {
                     ) : (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
                         {sectorSpots.map((spot) => (
-                          <div
+                          <SlotCard
                             key={spot.id}
-                            className={`
-                              p-3 rounded-lg border-2 text-center cursor-pointer transition-colors duration-200
-                              ${spot.is_available 
-                                ? 'bg-green-100 border-green-300 hover:bg-green-200' 
-                                : 'bg-red-100 border-red-300 hover:bg-red-200'
-                              }
-                            `}
-                            onClick={() => handleEditSpot(spot)}
-                          >
-                            <div className="text-lg font-bold">
-                              {spot.code}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              {spot.vehicle_type}
-                            </div>
-                            <div className={`text-xs font-medium mt-1 ${
-                              spot.is_available ? 'text-green-700' : 'text-red-700'
-                            }`}>
-                              {spot.is_available ? 'Libre' : 'Ocupado'}
-                            </div>
-                          </div>
+                            spot={spot}
+                            onClick={handleEditSpot}
+                          />
                         ))}
                       </div>
                     )}
@@ -195,32 +192,13 @@ const ParkingGrid = () => {
         </div>
       )}
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">
-              {selectedSpot ? 'Editar Espacio' : 'Crear Espacio'}
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Funcionalidad de modal en desarrollo...
-            </p>
-            <div className="flex justify-end space-x-2">
-              <button 
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md"
-                onClick={handleCloseModal}
-              >
-                Cancelar
-              </button>
-              <button 
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-                onClick={handleCloseModal}
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SlotModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        spot={selectedSpot}
+        parkingLotId={selectedParkingLot.id}
+        onSave={handleSaveSpot}
+      />
     </div>
   );
 };
