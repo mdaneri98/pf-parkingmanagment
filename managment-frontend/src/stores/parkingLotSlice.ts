@@ -89,11 +89,14 @@ const parkingLotSlice = createSlice({
 });
 
 export const {
+  setLoading,
   setError,
   setParkingLots,
   addParkingLot,
   updateParkingLot,
-  deleteParkingLot
+  deleteParkingLot,
+  selectParkingLot,
+  clearSelectedParkingLot
 } = parkingLotSlice.actions;
 
 export default parkingLotSlice.reducer; 
