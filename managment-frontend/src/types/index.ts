@@ -69,7 +69,7 @@ export interface Spot {
   id: number;
   vehicle_type: string;
   floor: string;
-  code: string;
+  label: string;
   is_available: boolean;
   created_at: string;
   updated_at: string;

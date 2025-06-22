@@ -38,7 +38,7 @@ const SlotCard = ({ spot, onClick }: SlotCardProps) => {
       onClick={() => onClick(spot)}
     >
       <div className="text-lg font-bold mb-1">
-        {spot.code}
+        {spot.label}
       </div>
       
       <div className="text-2xl mb-2">
@@ -51,8 +51,13 @@ const SlotCard = ({ spot, onClick }: SlotCardProps) => {
       
       <div className={`text-xs font-medium mt-2 ${
         spot.is_available ? 'text-green-700' : 'text-red-700'
-      }`} />
+      }`}>
+        {spot.is_available ? 'Libre' : 'Ocupado'}
+      </div>
       
+      <div className="text-xs text-gray-500 mt-1">
+        Piso {spot.floor}
+      </div>
     </div>
   );
 };

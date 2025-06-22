@@ -11,7 +11,7 @@ interface SlotModalProps {
 
 const SlotModal = ({ isOpen, onClose, spot, parkingLotId, onSave }: SlotModalProps) => {
   const [formData, setFormData] = useState({
-    code: '',
+    label: '',
     vehicle_type: 'Car',
     floor: '1',
     is_available: true
@@ -23,14 +23,14 @@ const SlotModal = ({ isOpen, onClose, spot, parkingLotId, onSave }: SlotModalPro
   useEffect(() => {
     if (spot) {
       setFormData({
-        code: spot.code,
+        label: spot.label,
         vehicle_type: spot.vehicle_type,
         floor: spot.floor,
         is_available: spot.is_available
       });
     } else {
       setFormData({
-        code: '',
+        label: '',
         vehicle_type: 'Car',
         floor: '1',
         is_available: true
@@ -85,15 +85,12 @@ const SlotModal = ({ isOpen, onClose, spot, parkingLotId, onSave }: SlotModalPro
             </label>
             <input
               type="text"
-              value={formData.code}
-              onChange={(e) => handleInputChange('code', e.target.value)}
+              value={formData.label}
+              onChange={(e) => handleInputChange('label', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Ej: A1, B2, C3..."
+              placeholder="Ej: A1, B2, 101, 102..."
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              El código debe comenzar con una letra para sectorización automática
-            </p>
           </div>
 
           <div>
