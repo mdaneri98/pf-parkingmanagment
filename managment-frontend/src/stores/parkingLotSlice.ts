@@ -37,6 +37,17 @@ const parkingLotSlice = createSlice({
       state.parkingLots.push(action.payload);
       state.error = null;
     },
+
+    selectParkingLotByManagerId: (state, action: PayloadAction<number>) => {
+      const managerId = action.payload;
+      const parkingLot = state.parkingLots.find(lot => lot.manager_id === managerId);
+      if (parkingLot) {
+        state.selectedParkingLot = parkingLot;
+        state.error = null;
+      } else {
+        state.error = `Estacionamiento con ID ${managerId} no encontrado`;
+      }
+    },
     
     updateParkingLot: (state, action: PayloadAction<{ id: number; updates: Partial<ParkingLot> }>) => {
       const { id, updates } = action.payload;
@@ -96,6 +107,7 @@ export const {
   updateParkingLot,
   deleteParkingLot,
   selectParkingLot,
+  selectParkingLotByManagerId,
   clearSelectedParkingLot
 } = parkingLotSlice.actions;
 

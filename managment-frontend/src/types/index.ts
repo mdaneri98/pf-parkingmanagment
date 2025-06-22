@@ -41,6 +41,7 @@ export interface ParkingLot {
   image_url: string;
   created_at: string;
   updated_at: string;
+  manager_id: number;
 }
 
 export interface ParkingPrice {

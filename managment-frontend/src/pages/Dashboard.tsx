@@ -1,40 +1,58 @@
-import { mockParkingLots, mockSpots } from '../utils/mockData';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import Card from '../components/atoms/Card';
-import type { ParkingLot, Spot } from '../types';
+import type { Spot } from '../types';
 import ParkingGrid from '../components/organisms/ParkingGrid';
+import { selectParkingLotByManagerId } from '../stores/parkingLotSlice';
 
 const Dashboard = () => {
-  // Usar directamente los datos mockeados
-  const parkingLots = mockParkingLots;
-  const spots = mockSpots;
+  const dispatch = useAppDispatch();
+  const { parkingLots, selectedParkingLot } = useAppSelector((state) => state.parkingLot);
+  const { spots } = useAppSelector((state) => state.spot);
 
-  // Calcular estadísticas basadas en los datos mockeados
+  const loggedInManagerId = 1;
+  const managerParkingLot = parkingLots.find(lot => lot.manager_id === loggedInManagerId);
+
+  useEffect(() => {
+    if (managerParkingLot && !selectedParkingLot) {
+      dispatch(selectParkingLotByManagerId(loggedInManagerId));
+    }
+  }, [dispatch, managerParkingLot, selectedParkingLot, loggedInManagerId]);
+
+  const currentParkingLot = selectedParkingLot || managerParkingLot;
+  const currentSpots = currentParkingLot 
+    ? spots.filter(spot => spot.parking_lot_id === currentParkingLot.id)
+    : [];
+
   const stats = {
-    totalParkingLots: parkingLots.length,
-    totalSpots: spots.length,
-    availableSpots: spots.filter((spot: Spot) => spot.is_available).length,
-    occupiedSpots: spots.filter((spot: Spot) => !spot.is_available).length,
-    occupancyPercentage: spots.length > 0 
-      ? Math.round(((spots.filter((spot: Spot) => !spot.is_available).length) / spots.length) * 100)
+    totalParkingLots: 1,
+    totalSpots: currentSpots.length,
+    availableSpots: currentSpots.filter((spot: Spot) => spot.is_available).length,
+    occupiedSpots: currentSpots.filter((spot: Spot) => !spot.is_available).length,
+    occupancyPercentage: currentSpots.length > 0 
+      ? Math.round(((currentSpots.filter((spot: Spot) => !spot.is_available).length) / currentSpots.length) * 100)
       : 0
   };
 
-  // Obtener el primer estacionamiento como ejemplo
-  const firstParkingLot = parkingLots[0];
+  if (!managerParkingLot) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-gray-500">No hay estacionamiento asignado a este manager</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Dashboard - Gestión de Estacionamientos
+          Dashboard - Mi Estacionamiento
         </h1>
         <p className="text-gray-600">
-          {firstParkingLot ? `Gestión del estacionamiento en ${firstParkingLot.address}` : 'Sistema de gestión de estacionamientos'}
+          {currentParkingLot ? `Gestión del estacionamiento en ${currentParkingLot.address}` : 'Cargando...'}
         </p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <div className="flex items-center">
@@ -44,8 +62,8 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Estacionamientos</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalParkingLots}</p>
+              <p className="text-sm font-medium text-gray-600">Mi Estacionamiento</p>
+              <p className="text-2xl font-semibold text-gray-900">1</p>
             </div>
           </div>
         </Card>
@@ -93,7 +111,6 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Additional Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <div className="flex items-center justify-between">
@@ -118,36 +135,26 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Parking Lots List */}
       <Card>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Estacionamientos Registrados</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Mi Estacionamiento</h2>
         <div className="space-y-3">
-          {parkingLots.map((lot: ParkingLot) => {
-            const lotSpots = spots.filter((spot: Spot) => spot.parking_lot_id === lot.id);
-            const availableCount = lotSpots.filter((spot: Spot) => spot.is_available).length;
-            const totalCount = lotSpots.length;
-            
-            return (
-              <div key={lot.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900">Estacionamiento #{lot.id}</p>
-                  <p className="text-sm text-gray-600">{lot.address}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">
-                    {availableCount}/{totalCount} disponibles
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {totalCount > 0 ? Math.round((availableCount / totalCount) * 100) : 0}% libre
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          <div className="flex items-center justify-between p-3 bg-primary-50 border-2 border-primary-200 rounded-lg">
+            <div>
+              <p className="font-medium text-gray-900">Estacionamiento #{managerParkingLot.id}</p>
+              <p className="text-sm text-gray-600">{managerParkingLot.address}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-medium text-gray-900">
+                {stats.availableSpots}/{stats.totalSpots} disponibles
+              </p>
+              <p className="text-xs text-gray-500">
+                {stats.totalSpots > 0 ? Math.round((stats.availableSpots / stats.totalSpots) * 100) : 0}% libre
+              </p>
+            </div>
+          </div>
         </div>
       </Card>
 
-      {/* Parking Grid */}
       <ParkingGrid />
     </div>
   );

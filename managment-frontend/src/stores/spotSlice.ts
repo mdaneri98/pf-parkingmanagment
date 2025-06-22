@@ -57,7 +57,7 @@ const spotSlice = createSlice({
         state.error = `Espacio con ID ${id} no encontrado`;
       }
     },
-    
+
     // Selección de spot
     selectSpot: (state, action: PayloadAction<number>) => {
       const id = action.payload;

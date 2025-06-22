@@ -70,6 +70,12 @@ export const mockManagers: Manager[] = [
     created_at: '2025-06-01',
     updated_at: '2025-06-10',
     user_id: 1
+  },
+  {
+    id: 2,
+    created_at: '2025-02-01',
+    updated_at: '2025-02-10',
+    user_id: 2
   }
 ];
 
@@ -109,14 +115,16 @@ export const mockParkingLots: ParkingLot[] = [
     address: 'Av. Principal 456',
     image_url: 'https://via.placeholder.com/150',
     created_at: '2025-06-01',
-    updated_at: '2025-06-10'
+    updated_at: '2025-06-10',
+    manager_id: 1
   },
   {
     id: 2,
     address: 'Calle Secundaria 789',
     image_url: 'https://via.placeholder.com/150',
     created_at: '2025-06-03',
-    updated_at: '2025-06-10'
+    updated_at: '2025-06-10',
+    manager_id: 2
   }
 ];
 
