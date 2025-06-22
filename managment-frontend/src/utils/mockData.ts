@@ -73,7 +73,7 @@ export const mockManagers: Manager[] = [
   },
   {
     id: 2,
-    created_at: '2025-02-01',
+    created_at: '2025-0-01',
     updated_at: '2025-02-10',
     user_id: 2
   }
@@ -183,6 +183,7 @@ export const mockReviews: Review[] = [
 ];
 
 export const mockSpots: Spot[] = [
+  // Piso 1 - Sector A (Autos)
   {
     id: 1,
     vehicle_type: 'Car',
@@ -195,6 +196,37 @@ export const mockSpots: Spot[] = [
   },
   {
     id: 2,
+    vehicle_type: 'Car',
+    floor: '1',
+    code: 'A2',
+    is_available: false,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 3,
+    vehicle_type: 'Car',
+    floor: '1',
+    code: 'A3',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 4,
+    vehicle_type: 'Car',
+    floor: '1',
+    code: 'A4',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  // Piso 1 - Sector B (Motos)
+  {
+    id: 5,
     vehicle_type: 'Motorcycle',
     floor: '1',
     code: 'B1',
@@ -204,12 +236,126 @@ export const mockSpots: Spot[] = [
     parking_lot_id: 1
   },
   {
-    id: 3,
+    id: 6,
+    vehicle_type: 'Motorcycle',
+    floor: '1',
+    code: 'B2',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 7,
+    vehicle_type: 'Motorcycle',
+    floor: '1',
+    code: 'B3',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  // Piso 2 - Sector C (Autos Premium)
+  {
+    id: 8,
+    vehicle_type: 'Car',
+    floor: '2',
+    code: 'C1',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 9,
+    vehicle_type: 'Car',
+    floor: '2',
+    code: 'C2',
+    is_available: false,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 10,
     vehicle_type: 'Car',
     floor: '2',
     code: 'C3',
     is_available: true,
     created_at: '2025-06-03',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  // Piso 2 - Sector D (Discapacitados)
+  {
+    id: 11,
+    vehicle_type: 'Car',
+    floor: '2',
+    code: 'D1',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 12,
+    vehicle_type: 'Car',
+    floor: '2',
+    code: 'D2',
+    is_available: false,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  // Piso 3 - Sector E (Carga)
+  {
+    id: 13,
+    vehicle_type: 'Truck',
+    floor: '3',
+    code: 'E1',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  {
+    id: 14,
+    vehicle_type: 'Truck',
+    floor: '3',
+    code: 'E2',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 1
+  },
+  // Espacios para el segundo parking lot
+  {
+    id: 15,
+    vehicle_type: 'Car',
+    floor: '1',
+    code: 'A1',
+    is_available: true,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 2
+  },
+  {
+    id: 16,
+    vehicle_type: 'Car',
+    floor: '1',
+    code: 'A2',
+    is_available: false,
+    created_at: '2025-06-01',
+    updated_at: '2025-06-10',
+    parking_lot_id: 2
+  },
+  {
+    id: 17,
+    vehicle_type: 'Motorcycle',
+    floor: '1',
+    code: 'B1',
+    is_available: true,
+    created_at: '2025-06-01',
     updated_at: '2025-06-10',
     parking_lot_id: 2
   }
