@@ -1,27 +1,14 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { useAppSelector } from '../hooks/redux';
 import Card from '../components/atoms/Card';
 import type { Spot } from '../types';
 import ParkingGrid from '../components/organisms/ParkingGrid';
-import { selectParkingLotByManagerId } from '../stores/parkingLotSlice';
 
 const Dashboard = () => {
-  const dispatch = useAppDispatch();
-  const { parkingLots, selectedParkingLot } = useAppSelector((state) => state.parkingLot);
+  const { selectedParkingLot } = useAppSelector((state) => state.parkingLot);
   const { spots } = useAppSelector((state) => state.spot);
 
-  const loggedInManagerId = 1;
-  const managerParkingLot = parkingLots.find(lot => lot.manager_id === loggedInManagerId);
-
-  useEffect(() => {
-    if (managerParkingLot && !selectedParkingLot) {
-      dispatch(selectParkingLotByManagerId(loggedInManagerId));
-    }
-  }, [dispatch, managerParkingLot, selectedParkingLot, loggedInManagerId]);
-
-  const currentParkingLot = selectedParkingLot || managerParkingLot;
-  const currentSpots = currentParkingLot 
-    ? spots.filter(spot => spot.parking_lot_id === currentParkingLot.id)
+  const currentSpots = selectedParkingLot 
+    ? spots.filter(spot => spot.parking_lot_id === selectedParkingLot.id)
     : [];
 
   const stats = {
@@ -34,10 +21,10 @@ const Dashboard = () => {
       : 0
   };
 
-  if (!managerParkingLot) {
+  if (!selectedParkingLot) {
     return (
       <div className="text-center p-8">
-        <p className="text-gray-500">No hay estacionamiento asignado a este manager</p>
+        <p className="text-gray-500">Cargando estacionamiento...</p>
       </div>
     );
   }
@@ -56,7 +43,7 @@ const Dashboard = () => {
             <div>
               <p className="text-sm font-medium text-gray-400">Direccion</p>
               <p className="text-3xl font-bold text-blue-400">
-                {managerParkingLot.address}
+                {selectedParkingLot.address}
               </p>
             </div>
             <div className="text-4xl">⚡</div>
