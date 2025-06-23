@@ -26,7 +26,6 @@ const BaseLayout = ({ children }: BaseLayoutProps) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: '🏠' },
-    { name: 'Perfil del estacionamiento', href: '/profile', icon: '⚙️' },
   ];
 
   return (
