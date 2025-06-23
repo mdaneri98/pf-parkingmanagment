@@ -20,7 +20,7 @@ const SlotModal = ({ isOpen, onClose, spot, parkingLotId, onSave, onDelete }: Sl
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const vehicleTypes = ['Car', 'Motorcycle', 'Truck', 'Van'];
-  const floors = ['1', '2', '3', '4', '5'];
+  const floors = ['1', '2', '3', '4'];
 
   useEffect(() => {
     if (spot) {
