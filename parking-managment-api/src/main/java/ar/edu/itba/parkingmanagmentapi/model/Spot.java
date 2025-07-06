@@ -1,0 +1,147 @@
+package ar.edu.itba.parkingmanagmentapi.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "spot")
+public class Spot {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @NotBlank(message = "El tipo de vehículo es obligatorio")
+    @Size(max = 30, message = "El tipo de vehículo no puede exceder 30 caracteres")
+    @Column(name = "vehicle_type", nullable = false)
+    private String vehicleType;
+    
+    @Column(name = "floor")
+    private Integer floor;
+    
+    @NotBlank(message = "El código del espacio es obligatorio")
+    @Size(max = 20, message = "El código no puede exceder 20 caracteres")
+    @Column(nullable = false)
+    private String code;
+    
+    @NotNull(message = "La disponibilidad debe ser especificada")
+    @Column(name = "is_available", nullable = false)
+    private Boolean isAvailable = true;
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_lot_id", nullable = false)
+    private ParkingLot parkingLot;
+    
+    @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ScheduledReservation> scheduledReservations = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<WalkInStay> walkInStays = new ArrayList<>();
+    
+    // Constructores
+    public Spot() {}
+    
+    public Spot(String vehicleType, String code, ParkingLot parkingLot) {
+        this.vehicleType = vehicleType;
+        this.code = code;
+        this.parkingLot = parkingLot;
+        this.isAvailable = true;
+    }
+    
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getVehicleType() {
+        return vehicleType;
+    }
+    
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+    
+    public Integer getFloor() {
+        return floor;
+    }
+    
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
+    public Boolean getIsAvailable() {
+        return isAvailable;
+    }
+    
+    public void setIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public ParkingLot getParkingLot() {
+        return parkingLot;
+    }
+    
+    public void setParkingLot(ParkingLot parkingLot) {
+        this.parkingLot = parkingLot;
+    }
+    
+    public List<ScheduledReservation> getScheduledReservations() {
+        return scheduledReservations;
+    }
+    
+    public void setScheduledReservations(List<ScheduledReservation> scheduledReservations) {
+        this.scheduledReservations = scheduledReservations;
+    }
+    
+    public List<WalkInStay> getWalkInStays() {
+        return walkInStays;
+    }
+    
+    public void setWalkInStays(List<WalkInStay> walkInStays) {
+        this.walkInStays = walkInStays;
+    }
+} 
