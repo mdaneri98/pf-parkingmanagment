@@ -7,31 +7,4 @@ spring:
   h2:
     console:
       enabled: true
-      path: /h2-console
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-  security:
-    user:
-      name: admin
-      password: admin123
-
-# Configuración específica para desarrollo
-logging:
-  level:
-    ar.edu.itba.parkingmanagmentapi: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-# Configuración de CORS para desarrollo
-cors:
-  allowed-origins: "http://localhost:3000,http://localhost:4200"
-  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
-  allowed-headers: "*"
-  allow-credentials: true 
+      path: /h2-console 
