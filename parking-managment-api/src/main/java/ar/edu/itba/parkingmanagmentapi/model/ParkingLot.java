@@ -112,20 +112,5 @@ public class ParkingLot {
     public void setSpots(List<Spot> spots) {
         this.spots = spots;
     }
-    
-    public List<ParkingPrice> getParkingPrices() {
-        return parkingPrices;
-    }
-    
-    public void setParkingPrices(List<ParkingPrice> parkingPrices) {
-        this.parkingPrices = parkingPrices;
-    }
-    
-    public List<Review> getReviews() {
-        return reviews;
-    }
-    
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
+
 } 

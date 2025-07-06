@@ -128,20 +128,5 @@ public class Spot {
     public void setParkingLot(ParkingLot parkingLot) {
         this.parkingLot = parkingLot;
     }
-    
-    public List<ScheduledReservation> getScheduledReservations() {
-        return scheduledReservations;
-    }
-    
-    public void setScheduledReservations(List<ScheduledReservation> scheduledReservations) {
-        this.scheduledReservations = scheduledReservations;
-    }
-    
-    public List<WalkInStay> getWalkInStays() {
-        return walkInStays;
-    }
-    
-    public void setWalkInStays(List<WalkInStay> walkInStays) {
-        this.walkInStays = walkInStays;
-    }
+
 } 

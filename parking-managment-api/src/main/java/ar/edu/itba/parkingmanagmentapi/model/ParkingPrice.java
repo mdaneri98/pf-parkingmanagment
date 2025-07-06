@@ -114,12 +114,5 @@ public class ParkingPrice {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
-    public ParkingLot getParkingLot() {
-        return parkingLot;
-    }
-    
-    public void setParkingLot(ParkingLot parkingLot) {
-        this.parkingLot = parkingLot;
-    }
+
 } 

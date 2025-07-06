@@ -112,14 +112,6 @@ public class WalkInStay {
         this.updatedAt = updatedAt;
     }
     
-    public Spot getSpot() {
-        return spot;
-    }
-    
-    public void setSpot(Spot spot) {
-        this.spot = spot;
-    }
-    
     public User getUser() {
         return user;
     }
@@ -127,20 +119,5 @@ public class WalkInStay {
     public void setUser(User user) {
         this.user = user;
     }
-    
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-    
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-    
-    public List<Incident> getIncidents() {
-        return incidents;
-    }
-    
-    public void setIncidents(List<Incident> incidents) {
-        this.incidents = incidents;
-    }
+
 } 
