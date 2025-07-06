@@ -12,28 +12,39 @@ import javax.sql.DataSource;
 @Configuration
 public class DataSourceConfig {
 
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password}")
-    private String password;
-
-    @Value("${spring.datasource.driver-class-name}")
-    private String driverClassName;
-
     @Bean
     @Profile("dev")
-    public DataSource dataSourceDev() {
-        // Para desarrollo, usar H2 en memoria
-        return new HikariDataSource();
+    public DataSource dataSourceDev(
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password,
+            @Value("${spring.datasource.driver-class-name}") String driverClassName) {
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setDriverClassName(driverClassName);
+
+        // Configuración del pool de conexiones para producción
+        config.setMaximumPoolSize(20);
+        config.setMinimumIdle(5);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        config.setLeakDetectionThreshold(60000);
+
+        return new HikariDataSource(config);
     }
 
     @Bean
     @Profile("prod")
-    public DataSource dataSourceProd() {
+    public DataSource dataSourceProd(
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password,
+            @Value("${spring.datasource.driver-class-name}") String driverClassName) {
+        
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url);
         config.setUsername(username);
@@ -52,9 +63,26 @@ public class DataSourceConfig {
     }
 
     @Bean
-    @Profile("default")
-    public DataSource dataSourceDefault() {
-        // Configuración por defecto
-        return new HikariDataSource();
+    @Profile("local")
+    public DataSource dataSourceLocal(
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password,
+            @Value("${spring.datasource.driver-class-name}") String driverClassName) {
+        
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setDriverClassName(driverClassName);
+        
+        // Configuración básica para entorno local
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(2);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(300000);
+        config.setMaxLifetime(900000);
+        
+        return new HikariDataSource(config);
     }
 } 

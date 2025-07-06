@@ -1,4 +1,4 @@
-package ar.edu.itba.parkingmanagmentapi.config;
+    package ar.edu.itba.parkingmanagmentapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,28 +18,8 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class JpaConfig {
 
-    @Bean
-    @Profile("dev")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryDev(DataSource dataSource) {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource);
-        em.setPackagesToScan("ar.edu.itba.parkingmanagmentapi.model");
-
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        em.setJpaVendorAdapter(vendorAdapter);
-
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-        properties.setProperty("hibernate.show_sql", "true");
-        properties.setProperty("hibernate.format_sql", "true");
-        em.setJpaProperties(properties);
-
-        return em;
-    }
-
-    @Bean
-    @Profile("prod")
+    @Bean(name = "entityManagerFactory")
+    @Profile("prod, local")
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryProd(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
@@ -60,11 +40,4 @@ public class JpaConfig {
 
         return em;
     }
-
-    @Bean
-    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
-        return transactionManager;
-    }
-} 
+}
