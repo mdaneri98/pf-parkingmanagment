@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL para producción
+  postgres:
+    image: postgres:15-alpine
+    container_name: parking_postgres
+    environment:
+      POSTGRES_DB: parking_management
+      POSTGRES_USER: parking_user
+      POSTGRES_PASSWORD: parking_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - parking_network
+    restart: unless-stopped
+
+  # Base de datos H2 para desarrollo (opcional)
+  h2:
+    image: oscarfonts/h2
+    container_name: parking_h2
+    environment:
+      H2_OPTIONS: -ifNotExists
+    ports:
+      - "8082:81"
+    volumes:
+      - h2_data:/h2-data
+    networks:
+      - parking_network
+    restart: unless-stopped
+
+  # Adminer para gestión de base de datos (opcional)
+  adminer:
+    image: adminer
+    container_name: parking_adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - parking_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  h2_data:
+    driver: local
+
+networks:
+  parking_network:
+    driver: bridge 
