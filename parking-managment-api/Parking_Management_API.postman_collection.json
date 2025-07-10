@@ -1,0 +1,658 @@
+{
+	"info": {
+		"_postman_id": "parking-management-api",
+		"name": "Parking Management API",
+		"description": "Colección completa de endpoints para la API de gestión de estacionamientos.\n\n**Configuración inicial:**\n1. Importa esta colección en Postman\n2. Configura las variables de entorno\n3. Ejecuta el endpoint de login para obtener el token JWT\n4. El token se guardará automáticamente en las variables de entorno\n\n**Variables de entorno requeridas:**\n- `baseUrl`: http://localhost:8081/api\n- `token`: Se obtiene automáticamente al hacer login\n\n**Autenticación:**\nLa mayoría de endpoints requieren autenticación JWT. El token se incluye automáticamente en el header Authorization.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔐 Autenticación",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-guardar el token JWT en las variables de entorno",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    if (responseJson.token) {",
+									"        pm.environment.set('token', responseJson.token);",
+									"        console.log('Token guardado exitosamente:', responseJson.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"pepe\",\n    \"password\": \"1234\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Autentica un usuario y retorna un token JWT.\n\n**Usuarios de prueba:**\n- Username: `pepe`, Password: `1234`\n- Username: `juan.perez@gmail.com`, Password: `password123`\n\n**Respuesta exitosa:**\n```json\n{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"type\": \"Bearer\",\n    \"username\": \"pepe\",\n    \"message\": \"Login exitoso\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Login Exitoso",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"pepe\",\n    \"password\": \"1234\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwZXBlIiwiaWF0IjoxNzAzMDA3NjAwLCJleHAiOjE3MDMwOTQwMDB9.example\",\n    \"type\": \"Bearer\",\n    \"username\": \"pepe\",\n    \"message\": \"Login exitoso\"\n}"
+						},
+						{
+							"name": "Credenciales Inválidas",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"usuario_incorrecto\",\n    \"password\": \"password_incorrecto\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Credenciales inválidas\",\n    \"status\": 401\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints para autenticación y autorización del sistema."
+		},
+		{
+			"name": "👥 Usuarios",
+			"item": [
+				{
+					"name": "Obtener todos los usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Retorna una lista con todos los usuarios registrados en el sistema.\n\n**Requiere autenticación:** Sí\n\n**Respuesta exitosa:**\n```json\n[\n    {\n        \"id\": 1,\n        \"firstName\": \"Juan\",\n        \"lastName\": \"Pérez\",\n        \"email\": \"juan.perez@gmail.com\",\n        \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150\",\n        \"createdAt\": \"2024-12-19T10:00:00Z\",\n        \"updatedAt\": \"2024-12-19T10:00:00Z\"\n    }\n]\n```"
+					},
+					"response": [
+						{
+							"name": "Lista de Usuarios",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"firstName\": \"Juan\",\n        \"lastName\": \"Pérez\",\n        \"email\": \"juan.perez@gmail.com\",\n        \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150\",\n        \"createdAt\": \"2024-12-19T10:00:00Z\",\n        \"updatedAt\": \"2024-12-19T10:00:00Z\"\n    },\n    {\n        \"id\": 2,\n        \"firstName\": \"María\",\n        \"lastName\": \"González\",\n        \"email\": \"maria.gonzalez@outlook.com\",\n        \"imageUrl\": \"https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150\",\n        \"createdAt\": \"2024-12-19T10:05:00Z\",\n        \"updatedAt\": \"2024-12-19T10:05:00Z\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Crear nuevo usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Rodríguez\",\n    \"email\": \"carlos.rodriguez@hotmail.com\",\n    \"passwordHash\": \"password123\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Crea un nuevo usuario en el sistema con toda la información requerida.\n\n**Requiere autenticación:** Sí\n\n**Campos requeridos:**\n- `firstName`: Nombre del usuario\n- `lastName`: Apellido del usuario\n- `email`: Email único del usuario\n- `passwordHash`: Contraseña del usuario\n\n**Campos opcionales:**\n- `imageUrl`: URL de la imagen de perfil\n\n**Respuesta exitosa (201):**\n```json\n{\n    \"id\": 3,\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Rodríguez\",\n    \"email\": \"carlos.rodriguez@hotmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150\",\n    \"createdAt\": \"2024-12-19T10:10:00Z\",\n    \"updatedAt\": \"2024-12-19T10:10:00Z\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Usuario Creado",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Rodríguez\",\n    \"email\": \"carlos.rodriguez@hotmail.com\",\n    \"passwordHash\": \"password123\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 3,\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Rodríguez\",\n    \"email\": \"carlos.rodriguez@hotmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150\",\n    \"createdAt\": \"2024-12-19T10:10:00Z\",\n    \"updatedAt\": \"2024-12-19T10:10:00Z\"\n}"
+						},
+						{
+							"name": "Email Ya Existe",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Juan\",\n    \"lastName\": \"Pérez\",\n    \"email\": \"juan.perez@gmail.com\",\n    \"passwordHash\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"timestamp\": \"2024-12-19T10:10:00Z\",\n    \"status\": 400,\n    \"error\": \"Bad Request\",\n    \"message\": \"El email ya está registrado\",\n    \"path\": \"/api/users\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Obtener usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "Retorna un usuario específico basado en su ID único.\n\n**Requiere autenticación:** Sí\n\n**Parámetros:**\n- `id` (path): ID único del usuario\n\n**Respuesta exitosa (200):**\n```json\n{\n    \"id\": 1,\n    \"firstName\": \"Juan\",\n    \"lastName\": \"Pérez\",\n    \"email\": \"juan.perez@gmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150\",\n    \"createdAt\": \"2024-12-19T10:00:00Z\",\n    \"updatedAt\": \"2024-12-19T10:00:00Z\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Usuario Encontrado",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"firstName\": \"Juan\",\n    \"lastName\": \"Pérez\",\n    \"email\": \"juan.perez@gmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150\",\n    \"createdAt\": \"2024-12-19T10:00:00Z\",\n    \"updatedAt\": \"2024-12-19T10:00:00Z\"\n}"
+						},
+						{
+							"name": "Usuario No Encontrado",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users/999",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"timestamp\": \"2024-12-19T10:15:00Z\",\n    \"status\": 404,\n    \"error\": \"Not Found\",\n    \"message\": \"Usuario con ID 999 no encontrado\",\n    \"path\": \"/api/users/999\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Actualizar usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Juan Carlos\",\n    \"lastName\": \"Pérez García\",\n    \"email\": \"juancarlos.perez@gmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "Actualiza los datos de un usuario existente.\n\n**Requiere autenticación:** Sí\n\n**Parámetros:**\n- `id` (path): ID único del usuario\n\n**Campos actualizables:**\n- `firstName`: Nombre del usuario\n- `lastName`: Apellido del usuario\n- `email`: Email único del usuario\n- `passwordHash`: Contraseña del usuario\n- `imageUrl`: URL de la imagen de perfil\n\n**Respuesta exitosa (200):**\n```json\n{\n    \"id\": 1,\n    \"firstName\": \"Juan Carlos\",\n    \"lastName\": \"Pérez García\",\n    \"email\": \"juancarlos.perez@gmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200\",\n    \"createdAt\": \"2024-12-19T10:00:00Z\",\n    \"updatedAt\": \"2024-12-19T10:20:00Z\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Usuario Actualizado",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Juan Carlos\",\n    \"lastName\": \"Pérez García\",\n    \"email\": \"juancarlos.perez@gmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"firstName\": \"Juan Carlos\",\n    \"lastName\": \"Pérez García\",\n    \"email\": \"juancarlos.perez@gmail.com\",\n    \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200\",\n    \"createdAt\": \"2024-12-19T10:00:00Z\",\n    \"updatedAt\": \"2024-12-19T10:20:00Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Eliminar usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						},
+						"description": "Elimina un usuario del sistema.\n\n**Requiere autenticación:** Sí\n\n**Parámetros:**\n- `id` (path): ID único del usuario\n\n**Respuesta exitosa (204):**\nSin contenido (No Content)\n\n**Respuesta de error (404):**\n```json\n{\n    \"timestamp\": \"2024-12-19T10:25:00Z\",\n    \"status\": 404,\n    \"error\": \"Not Found\",\n    \"message\": \"Usuario con ID 999 no encontrado\",\n    \"path\": \"/api/users/999\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Usuario Eliminado",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users/3",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"3"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": null,
+							"header": [],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Buscar usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/search?q=juan",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "juan",
+									"description": "Término de búsqueda (nombre, apellido o email)"
+								}
+							]
+						},
+						"description": "Busca usuarios por nombre, apellido o email usando un término de búsqueda.\n\n**Requiere autenticación:** Sí\n\n**Parámetros:**\n- `q` (query): Término de búsqueda (nombre, apellido o email)\n\n**Ejemplos de búsqueda:**\n- `q=juan` - Busca usuarios con \"juan\" en nombre, apellido o email\n- `q=perez` - Busca usuarios con \"perez\" en nombre, apellido o email\n- `q=@gmail.com` - Busca usuarios con email de Gmail\n\n**Respuesta exitosa (200):**\n```json\n[\n    {\n        \"id\": 1,\n        \"firstName\": \"Juan\",\n        \"lastName\": \"Pérez\",\n        \"email\": \"juan.perez@gmail.com\",\n        \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150\",\n        \"createdAt\": \"2024-12-19T10:00:00Z\",\n        \"updatedAt\": \"2024-12-19T10:00:00Z\"\n    }\n]\n```"
+					},
+					"response": [
+						{
+							"name": "Resultados de Búsqueda",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users/search?q=juan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "juan"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"firstName\": \"Juan\",\n        \"lastName\": \"Pérez\",\n        \"email\": \"juan.perez@gmail.com\",\n        \"imageUrl\": \"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150\",\n        \"createdAt\": \"2024-12-19T10:00:00Z\",\n        \"updatedAt\": \"2024-12-19T10:00:00Z\"\n    }\n]"
+						}
+					]
+				}
+			],
+			"description": "Endpoints para la gestión de usuarios del sistema.\n\n**Funcionalidades incluidas:**\n- Listar todos los usuarios\n- Crear nuevos usuarios\n- Obtener usuario por ID\n- Actualizar información de usuarios\n- Eliminar usuarios\n- Buscar usuarios por término\n\n**Autenticación requerida:** Todos los endpoints requieren token JWT.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta antes de cada request",
+					"// Verifica que existan las variables necesarias",
+					"if (!pm.environment.get('baseUrl')) {",
+					"    console.log('⚠️  Variable baseUrl no está configurada');",
+					"    console.log('Configura: baseUrl = http://localhost:8081/api');",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta después de cada request",
+					"// Log del status de la respuesta",
+					"console.log('📊 Status:', pm.response.code, pm.response.status);",
+					"console.log('⏱️  Tiempo de respuesta:', pm.response.responseTime + 'ms');",
+					"",
+					"// Verifica si la respuesta es exitosa",
+					"if (pm.response.code >= 200 && pm.response.code < 300) {",
+					"    console.log('✅ Request exitoso');",
+					"} else {",
+					"    console.log('❌ Request falló');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8081/api",
+			"type": "string"
+		}
+	]
+} 

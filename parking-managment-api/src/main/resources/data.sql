@@ -3,14 +3,17 @@
 -- Sistema de Gestión de Estacionamientos
 -- =============================================
 
--- Usuarios comunes (contraseña: "password123" hasheada con BCrypt)
+-- Usuarios comunes 
+-- Contraseña "password123" hasheada con BCrypt: $2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.
+-- Contraseña "1234" hasheada con BCrypt: $2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS
 INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at) VALUES
 ('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('María', 'González', 'maria.gonzalez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Carlos', 'Rodríguez', 'carlos.rodriguez@hotmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Ana', 'Martínez', 'ana.martinez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Roberto', 'López', 'roberto.lopez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Laura', 'Fernández', 'laura.fernandez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('Laura', 'Fernández', 'laura.fernandez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Pepe', 'Usuario', 'pepe', '$2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Detalles de usuarios
 INSERT INTO user_detail (user_id, phone, address, created_at, updated_at) VALUES
@@ -19,7 +22,8 @@ INSERT INTO user_detail (user_id, phone, address, created_at, updated_at) VALUES
 (3, '+5411-4567-8901', 'Av. Cabildo 3456, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (4, '+5411-5678-9012', 'Av. Rivadavia 4567, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (5, '+5411-6789-0123', 'Av. Belgrano 5678, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(6, '+5411-7890-1234', 'Av. Libertador 6789, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(6, '+5411-7890-1234', 'Av. Libertador 6789, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, '+5411-8901-2345', 'Av. Calle Falsa 123, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Gerentes (usuarios 5 y 6 serán gerentes)
 INSERT INTO manager (user_id, created_at, updated_at) VALUES

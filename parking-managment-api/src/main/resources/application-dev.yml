@@ -31,24 +31,3 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
-# Configuración de Swagger/OpenAPI para desarrollo
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-    operationsSorter: method
-    tagsSorter: alpha
-    try-it-out-enabled: true
-    filter: true
-    disable-swagger-default-url: true
-    url: /v3/api-docs
-  show-actuator: false
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-  # Usar especificación OpenAPI desde archivo
-  use-management-port: false
-  api-docs-from-file: true 
