@@ -1,5 +1,8 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 
 import java.util.List;
@@ -10,12 +13,12 @@ public interface UserService {
     /**
      * Crea un nuevo usuario
      */
-    User createUser(User user);
+    UserResponse createUser(CreateUserRequest user);
 
     /**
      * Actualiza un usuario existente
      */
-    User updateUser(Long id, User userDetails);
+    UserResponse updateUser(Long id, UpdateUserRequest userDetails);
 
     /**
      * Busca un usuario por ID

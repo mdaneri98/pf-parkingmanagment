@@ -1,9 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
+import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +30,15 @@ public class UserController {
      * Crea un nuevo usuario
      */
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest user) {
         try {
-            User createdUser = userService.createUser(user);
+            UserResponse createdUser = userService.createUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
     /**
      * Obtiene todos los usuarios
      */
@@ -45,7 +47,7 @@ public class UserController {
         List<User> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
-    
+
     /**
      * Obtiene un usuario por ID
      */
@@ -53,22 +55,22 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userService.findById(id);
         return user.map(ResponseEntity::ok)
-                  .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
-    
+
     /**
      * Actualiza un usuario
      */
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest userDetails) {
         try {
-            User updatedUser = userService.updateUser(id, userDetails);
+            UserResponse updatedUser = userService.updateUser(id, userDetails);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
     /**
      * Elimina un usuario
      */

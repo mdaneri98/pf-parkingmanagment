@@ -1,10 +1,14 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.model.UserDetail;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
+import ar.edu.itba.parkingmanagmentapi.validators.CreateUserRequestValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,58 +19,56 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
+    private final CreateUserRequestValidator createUserRequestValidator;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(CreateUserRequestValidator createUserRequestValidator, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.createUserRequestValidator = createUserRequestValidator;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     /**
      * Crea un nuevo usuario
-     * */
+     */
     @Override
-    public User createUser(User user) {
-        // Verificar que el email no exista
-        if (userRepository.existsByEmail(user.getEmail())) {
+    public UserResponse createUser(CreateUserRequest userRequest) {
+        createUserRequestValidator.validate(userRequest);
+
+        if (userRepository.existsByEmail(userRequest.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
-        
-        // Encriptar la contraseña
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        
-        return userRepository.save(user);
+
+        User user = new User();
+        user.setEmail(userRequest.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(userRequest.getPassword()));
+        userRepository.save(user);
+
+        return UserResponse.builder()
+                .email(user.getEmail())
+                .build();
     }
-    
+
     /**
      * Actualiza un usuario existente
      */
     @Override
-    public User updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id)
+    public UserResponse updateUser(Long id, UpdateUserRequest user) {
+        User userSaved = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Verificar que el email no esté en uso por otro usuario
-        if (!user.getEmail().equals(userDetails.getEmail()) && 
-            userRepository.existsByEmail(userDetails.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
-        }
-        
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setEmail(userDetails.getEmail());
-        user.setImageUrl(userDetails.getImageUrl());
-        
-        // Solo actualizar contraseña si se proporciona una nueva
-        if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
-            user.setPasswordHash(passwordEncoder.encode(userDetails.getPasswordHash()));
-        }
-        
-        return userRepository.save(user);
+
+        userSaved.setFirstName(user.getFirstName());
+        userSaved.setLastName(user.getLastName());
+        userSaved.setImageUrl(user.getImageUrl());
+        userSaved.setUserDetail(Optional.ofNullable(user.getUserDetail())
+                .map(userDetail -> new UserDetail())
+                .orElse(null));
+        userRepository.save(userSaved);
+
+        return UserResponse.builder().firstName(user.getFirstName()).build();
     }
-    
+
     /**
      * Busca un usuario por ID
      */
@@ -103,7 +105,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         userRepository.delete(user);
     }
-    
+
     /**
      * Verifica las credenciales de un usuario
      */

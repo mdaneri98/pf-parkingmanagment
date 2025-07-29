@@ -1,15 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -20,23 +16,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name")
     private String firstName;
-
-    @NotBlank(message = "El apellido es obligatorio")
-    @Size(max = 100, message = "El apellido no puede exceder 100 caracteres")
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Email(message = "El formato del email no es válido")
-    @NotBlank(message = "El email es obligatorio")
     @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -56,19 +43,20 @@ public class User {
     private UserDetail userDetail;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviews = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<UserVehicleAssignment> vehicleAssignments = new ArrayList<>();
+    private final List<UserVehicleAssignment> vehicleAssignments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ScheduledReservation> scheduledReservations = new ArrayList<>();
+    private final List<ScheduledReservation> scheduledReservations = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WalkInStay> walkInStays = new ArrayList<>();
+    private final List<WalkInStay> walkInStays = new ArrayList<>();
 
     // Constructores
-    public User() {}
+    public User() {
+    }
 
     public User(String firstName, String lastName, String email, String passwordHash) {
         this.firstName = firstName;
