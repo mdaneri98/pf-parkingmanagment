@@ -78,9 +78,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserResponse> findById(Long id) {
+    public UserResponse findById(Long id) {
         return userRepository.findById(id)
-                .map(UserMapper::toUserResponse);
+                .map(UserMapper::toUserResponse)
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     /**

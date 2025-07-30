@@ -1,20 +1,23 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
+import ar.edu.itba.parkingmanagmentapi.builder.TestDataBuilder;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 
 class UserControllerIntegrationTest extends BaseIntegrationTest {
 
@@ -59,10 +62,10 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            ", password123, email",              // email null
-            "'', password123, email",           // email vacío
-            "test@example.com, , password",     // password null
-            "test@example.com, '', password"    // password vacío
+            ", password123, email",
+            "'', password123, email",
+            "test@example.com, , password",
+            "test@example.com, '', password"
     })
     void testCreateUser_withInvalidInput_shouldReturn400(String email, String password, String expectedField) {
         CreateUserRequest request = new CreateUserRequest();
@@ -101,6 +104,81 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         ApiResponse error = response.getBody();
         assertNotNull(error);
         assertTrue(error.getMessage().contains("is not an alphanumeric value"));
+    }
+
+    @Test
+    void testGetUser_shouldReturn200_andCorrectUser() {
+        User user = TestDataBuilder.createUserComplete();
+        User savedUser = userRepository.save(user);
+        Long userId = savedUser.getId();
+
+        ResponseEntity<UserResponse> getResponse = restTemplate.getForEntity("/users/" + userId, UserResponse.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+        UserResponse userResponse = getResponse.getBody();
+        assertNotNull(userResponse);
+        assertEquals(user.getEmail(), userResponse.getEmail());
+        assertEquals(user.getFirstName(), userResponse.getFirstName());
+        assertEquals(user.getLastName(), userResponse.getLastName());
+        assertEquals(user.getImageUrl(), userResponse.getImageUrl());
+        assertNotNull(userResponse.getUserDetail());
+        assertEquals(user.getUserDetail().getPhone(), userResponse.getUserDetail().getPhone());
+        assertEquals(user.getUserDetail().getAddress(), userResponse.getUserDetail().getAddress());
+    }
+
+    @Test
+    void testGetUser_whenUserDoesNotExist_shouldReturn404() {
+        long nonExistentId = 9999L;
+
+        ResponseEntity<ApiResponse> response = restTemplate.getForEntity("/users/" + nonExistentId, ApiResponse.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        ApiResponse error = response.getBody();
+        assertNotNull(error);
+        assertTrue(error.getMessage().toLowerCase().contains("not found"));
+    }
+
+    @Test
+    void testUpdateUser_shouldModifyFields_andPersistChanges() {
+        User user = TestDataBuilder.createUserComplete();
+        User savedUser = userRepository.save(user);
+        Long userId = savedUser.getId();
+
+        UpdateUserRequest updateRequest = new UpdateUserRequest();
+        updateRequest.setFirstName("NuevoNombre");
+        updateRequest.setLastName("NuevoApellido");
+        updateRequest.setImageUrl("http://example.com/image2.jpg");
+
+        HttpEntity<UpdateUserRequest> requestEntity = new HttpEntity<>(updateRequest);
+        ResponseEntity<UserResponse> updateResponse = restTemplate.exchange("/users/" + userId, HttpMethod.PUT, requestEntity, UserResponse.class);
+
+        assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
+        assertNotNull(updateResponse.getBody());
+        assertEquals(updateRequest.getFirstName(), updateResponse.getBody().getFirstName());
+
+        Optional<User> updatedUserOpt = userRepository.findById(userId);
+        assertTrue(updatedUserOpt.isPresent());
+        User updatedUser = updatedUserOpt.get();
+        assertEquals(updateRequest.getFirstName(), updatedUser.getFirstName());
+        assertEquals(updateRequest.getLastName(), updatedUser.getLastName());
+        assertEquals(updateRequest.getImageUrl(), updatedUser.getImageUrl());
+    }
+
+    @Test
+    void testUpdateUser_whenUserDoesNotExist_shouldReturn404() {
+        long nonExistentId = 9999L;
+
+        UpdateUserRequest request = new UpdateUserRequest();
+        request.setFirstName("UpdatedName");
+
+        HttpEntity<UpdateUserRequest> entity = new HttpEntity<>(request);
+
+        ResponseEntity<ApiResponse> response = restTemplate.exchange("/users/" + nonExistentId, HttpMethod.PUT, entity, ApiResponse.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        ApiResponse error = response.getBody();
+        assertNotNull(error);
+        assertTrue(error.getMessage().toLowerCase().contains("not found"));
     }
 
 

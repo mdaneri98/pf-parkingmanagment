@@ -30,14 +30,12 @@ public class UserDetail {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Constructores
     public UserDetail() {
     }
 
-    public UserDetail(String phone, String address, User user) {
+    public UserDetail(String phone, String address) {
         this.phone = phone;
         this.address = address;
-        this.user = user;
     }
 
     // Getters y Setters

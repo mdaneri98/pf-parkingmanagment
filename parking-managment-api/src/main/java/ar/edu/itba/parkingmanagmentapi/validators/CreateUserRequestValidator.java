@@ -31,5 +31,10 @@ public class CreateUserRequestValidator {
         mandatoryFieldValidator.validate(userRequest.getPassword(), "password");
         lengthRangeFieldPasswordValidator.validate(userRequest.getPassword(), "password");
 
+        mandatoryFieldValidator.validate(userRequest.getFirstName(), "firstName");
+        blankFieldValidator.validate(userRequest.getFirstName(), "firstName");
+
+        mandatoryFieldValidator.validate(userRequest.getLastName(), "lastName");
+        blankFieldValidator.validate(userRequest.getLastName(), "lastName");
     }
 }

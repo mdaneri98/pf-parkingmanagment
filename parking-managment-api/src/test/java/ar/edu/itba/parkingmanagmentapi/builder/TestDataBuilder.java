@@ -4,6 +4,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.model.UserDetail;
 
 /**
  * Utility class for building test data objects.
@@ -73,6 +74,21 @@ public class TestDataBuilder {
         request.setEmail(email);
         request.setPassword(password);
         return request;
+    }
+
+    public static User createUserComplete() {
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPasswordHash("hashedPassword");
+        user.setFirstName("Test");
+        user.setLastName("Lastname");
+        user.setImageUrl("http://example.com/image.jpg");
+        UserDetail detail = new UserDetail();
+        detail.setPhone("123456");
+        detail.setAddress("falsa 123");
+        detail.setUser(user);
+        user.setUserDetail(detail);
+        return user;
     }
 
     /**

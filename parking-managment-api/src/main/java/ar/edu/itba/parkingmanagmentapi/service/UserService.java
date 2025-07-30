@@ -6,7 +6,6 @@ import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
@@ -23,7 +22,7 @@ public interface UserService {
     /**
      * Finds a user by ID
      */
-    Optional<UserResponse> findById(Long id);
+    UserResponse findById(Long id);
 
     /**
      * Finds a user by Email

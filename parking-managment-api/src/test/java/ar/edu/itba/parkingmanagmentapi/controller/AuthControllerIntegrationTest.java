@@ -127,6 +127,7 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         // First register a user
         var registerRequest = TestDataBuilder.createRegisterRequest("Integration", "Test", "test@example.com", "Password123");
 
+        //TODO: yo no haria las 2 pegadas, mockearia la primera, es decir, hago el save en la BD con credenciales, no se que te parece?
         ResponseEntity<String> registerResponse = restTemplate.postForEntity(getApiUrl("/auth/register"), registerRequest, String.class);
         assertResponseStatus(registerResponse, HttpStatus.CREATED);
 
