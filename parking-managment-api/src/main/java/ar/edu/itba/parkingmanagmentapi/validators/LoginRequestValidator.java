@@ -1,8 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.validators;
 
 import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.validators.common.*;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 public class LoginRequestValidator {
@@ -27,6 +30,9 @@ public class LoginRequestValidator {
     }
 
     public void validate(LoginRequest loginRequest) {
+        if (Objects.isNull(loginRequest)) {
+            throw new BadRequestException("LoginRequest cannot be null");
+        }
         validateEmail(loginRequest.getEmail());
         validatePassword(loginRequest.getPassword());
     }

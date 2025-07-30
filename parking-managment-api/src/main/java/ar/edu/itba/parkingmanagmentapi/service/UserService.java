@@ -6,6 +6,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 

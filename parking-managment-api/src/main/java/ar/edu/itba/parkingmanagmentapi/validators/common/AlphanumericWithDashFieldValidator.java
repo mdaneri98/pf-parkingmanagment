@@ -4,10 +4,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AlphanumericWithDashFieldValidator extends PatternValidator {
-    private static final String ERROR_MESSAGE = "The value from [%s] is not an alphanumeric value. Actual value [%s]";
     private static final String PATTERN = "^[a-zA-Z0-9-]+$";
 
     public AlphanumericWithDashFieldValidator() {
-        super(PATTERN, ERROR_MESSAGE);
+        super(PATTERN);
     }
 }

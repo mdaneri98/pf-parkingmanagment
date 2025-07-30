@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest user) {
+
         User userSaved = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 

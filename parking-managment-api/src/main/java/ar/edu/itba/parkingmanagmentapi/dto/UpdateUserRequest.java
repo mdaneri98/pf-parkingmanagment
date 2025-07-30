@@ -15,10 +15,6 @@ public class UpdateUserRequest {
 
     private String lastName;
 
-    private String email;
-
-    private String passwordHash;
-
     private String imageUrl;
 
     private UserDetailDTO userDetail;

@@ -1,8 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.validators;
 
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.validators.common.*;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 public class CreateUserRequestValidator {
@@ -21,6 +24,10 @@ public class CreateUserRequestValidator {
     }
 
     public void validate(CreateUserRequest userRequest) {
+        if (Objects.isNull(userRequest)) {
+            throw new BadRequestException("CreateUserRequest cannot be null");
+        }
+
         mandatoryFieldValidator.validate(userRequest.getEmail(), "email");
         blankFieldValidator.validate(userRequest.getEmail(), "email");
         alphanumericEmailValidator.validate(userRequest.getEmail(), "email");
