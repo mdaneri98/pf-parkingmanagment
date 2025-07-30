@@ -54,6 +54,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<WalkInStay> walkInStays = new ArrayList<>();
 
+
     // Constructores
     public User() {
     }

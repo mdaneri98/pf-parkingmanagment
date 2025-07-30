@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: parking-management-api-test
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # Clean database for each test
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+        jdbc:
+          batch_size: 5
+    defer-datasource-initialization: false
+  
+  
+  sql:
+    init:
+      mode: never
+      schema-locations: 
+      data-locations: 
+      continue-on-error: false
+  
+  h2:
+    console:
+      enabled: false
+
+
+server:
+  port: 0  # Random port for tests
+  servlet:
+    context-path: /api
+
+
+jwt:
+  secret: test-secret-key-for-testing-only-not-for-production-use
+  expiration: 3600000
+
+
+cors:
+  allowed-origins: "http://localhost:3000"
+  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+  allowed-headers: "*"
+  allow-credentials: true
+
+
+logging:
+  level:
+    ar.edu.itba.parkingmanagmentapi: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+    org.springframework.test: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" 

@@ -3,7 +3,6 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
-import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,20 +30,16 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest user) {
-        try {
-            UserResponse createdUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        UserResponse createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     /**
      * Obtiene todos los usuarios
      */
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.findAll();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 
@@ -52,8 +47,8 @@ public class UserController {
      * Obtiene un usuario por ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        Optional<UserResponse> user = userService.findById(id);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -63,12 +58,8 @@ public class UserController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest userDetails) {
-        try {
-            UserResponse updatedUser = userService.updateUser(id, userDetails);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        UserResponse updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**
@@ -76,12 +67,8 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -91,8 +78,8 @@ public class UserController {
      * Busca usuarios por término de búsqueda
      */
     @GetMapping("/search")
-    public ResponseEntity<List<User>> searchUsers(@RequestParam String q) {
-        List<User> users = userService.searchUsers(q);
+    public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam String q) {
+        List<UserResponse> users = userService.searchUsers(q);
         return ResponseEntity.ok(users);
     }
 

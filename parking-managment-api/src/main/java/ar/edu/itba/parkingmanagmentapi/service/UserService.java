@@ -1,8 +1,8 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 
 import java.util.List;
@@ -11,37 +11,42 @@ import java.util.Optional;
 public interface UserService {
 
     /**
-     * Crea un nuevo usuario
+     * Creates a new user
      */
     UserResponse createUser(CreateUserRequest user);
 
     /**
-     * Actualiza un usuario existente
+     * Updates an existing user
      */
     UserResponse updateUser(Long id, UpdateUserRequest userDetails);
 
     /**
-     * Busca un usuario por ID
+     * Finds a user by ID
      */
-    Optional<User> findById(Long id);
+    Optional<UserResponse> findById(Long id);
 
     /**
-     * Lista todos los usuarios
+     * Finds a user by Email
      */
-    List<User> findAll();
+    Optional<User> findByEmail(String email);
 
     /**
-     * Busca usuarios por término de búsqueda
+     * Lists all users
      */
-     List<User> searchUsers(String searchTerm);
+    List<UserResponse> findAll();
 
     /**
-     * Elimina un usuario
+     * Searches users by search term
+     */
+    List<UserResponse> searchUsers(String searchTerm);
+
+    /**
+     * Deletes a user
      */
     void deleteUser(Long id);
 
     /**
-     * Verifica las credenciales de un usuario
+     * Verifies user credentials
      */
     boolean verifyCredentials(String email, String password);
 

@@ -4,6 +4,18 @@ import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
+
+    /**
+     * Busca un manager por su user_id
+     */
+    Optional<Manager> findByUserId(Long userId);
+
+    /**
+     * Verifica si existe un manager con el user_id especificado
+     */
+    boolean existsByUserId(Long userId);
 }

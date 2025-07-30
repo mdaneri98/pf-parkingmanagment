@@ -1,17 +1,13 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
+import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
+import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
-import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
-import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,21 +15,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerIntegrationTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ManagerRepository managerRepository;
-
-    @BeforeEach
-    void cleanDb() {
-        managerRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+class UserControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void testCreateUser_shouldReturn201_andUserIsPersisted() {
@@ -49,15 +32,14 @@ class UserControllerIntegrationTest {
 
         Optional<User> savedUserOpt = userRepository.findByEmail("test@example.com");
         assertTrue(savedUserOpt.isPresent(), "El usuario debería estar en la base de datos");
-
         User savedUser = savedUserOpt.get();
-        assertNotNull(savedUser.getPasswordHash(), "La contraseña debe estar hasheada");
+        assertNotNull(savedUser.getPasswordHash());
         assertNotEquals("securePassword123", savedUser.getPasswordHash(), "La contraseña no debe guardarse en texto plano");
     }
 
     @Test
     void testCreateUser_whenEmailAlreadyExists_shouldReturn400() {
-        String email = "duplicate@example.com";
+        String email = "test@example.com";
         User existingUser = new User();
         existingUser.setEmail(email);
         existingUser.setPasswordHash("hashedpassword");
@@ -67,28 +49,35 @@ class UserControllerIntegrationTest {
         request.setEmail(email);
         request.setPassword("anotherPassword");
 
-        ResponseEntity<Void> response = restTemplate.postForEntity("/users", request, Void.class);
+        ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/users", request, ApiResponse.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        ApiResponse error = response.getBody();
+        assertNotNull(error);
+        assertEquals("The email test@example.com is already in use", error.getMessage());
     }
 
     @ParameterizedTest
     @CsvSource({
-            // Casos inválidos de email y/o password
-            ", password123",                   // email null
-            "'', password123",                 // email vacío
-            "test@example.com, ",              // password null
-            "test@example.com, ''",            // password vacío
+            ", password123, email",              // email null
+            "'', password123, email",           // email vacío
+            "test@example.com, , password",     // password null
+            "test@example.com, '', password"    // password vacío
     })
-    void testCreateUser_withInvalidInput_shouldReturn400(String email, String password) {
+    void testCreateUser_withInvalidInput_shouldReturn400(String email, String password, String expectedField) {
         CreateUserRequest request = new CreateUserRequest();
         request.setEmail(email);
         request.setPassword(password);
 
-        ResponseEntity<Void> response = restTemplate.postForEntity("/users", request, Void.class);
+        ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/users", request, ApiResponse.class);
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        //TODO: despues mirar que el mensaje de error sea el correcto
+        ApiResponse error = response.getBody();
+        assertNotNull(error);
+        assertTrue(error.getMessage().contains(expectedField));
+        assertTrue(error.getMessage().contains("is mandatory"));
     }
+
 
     @ParameterizedTest
     @CsvSource({
@@ -106,8 +95,12 @@ class UserControllerIntegrationTest {
         request.setEmail(email);
         request.setPassword(password);
 
-        ResponseEntity<Void> response = restTemplate.postForEntity("/users", request, Void.class);
+        ResponseEntity<ApiResponse> response = restTemplate.postForEntity("/users", request, ApiResponse.class);
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        ApiResponse error = response.getBody();
+        assertNotNull(error);
+        assertTrue(error.getMessage().contains("is not an alphanumeric value"));
     }
 
 

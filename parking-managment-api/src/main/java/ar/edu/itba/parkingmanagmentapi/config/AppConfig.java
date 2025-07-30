@@ -30,6 +30,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
     CorsConfig.class
 })
 public class AppConfig {
-    // Esta clase actúa como punto central de configuración
-    // Todas las configuraciones específicas están en sus respectivas clases
+    // This class acts as the central configuration point
+    // All specific configurations are in their respective classes
 } 

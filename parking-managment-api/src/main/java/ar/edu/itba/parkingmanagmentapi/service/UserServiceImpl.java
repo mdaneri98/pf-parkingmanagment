@@ -3,9 +3,12 @@ package ar.edu.itba.parkingmanagmentapi.service;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
+import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.model.UserDetail;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
+import ar.edu.itba.parkingmanagmentapi.util.UserMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.CreateUserRequestValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,14 +34,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Crea un nuevo usuario
+     * Creates a new user
      */
     @Override
     public UserResponse createUser(CreateUserRequest userRequest) {
         createUserRequestValidator.validate(userRequest);
 
         if (userRepository.existsByEmail(userRequest.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new BadRequestException(String.format("The email %s is already in use", userRequest.getEmail()));
         }
 
         User user = new User();
@@ -51,12 +55,12 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Actualiza un usuario existente
+     * Updates an existing user
      */
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest user) {
         User userSaved = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         userSaved.setFirstName(user.getFirstName());
         userSaved.setLastName(user.getLastName());
@@ -70,44 +74,64 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Busca un usuario por ID
+     * Finds a user by ID
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserResponse> findById(Long id) {
+        return userRepository.findById(id)
+                .map(UserMapper::toUserResponse);
     }
 
     /**
-     * Lista todos los usuarios
+     * Finds a user by Email
      */
     @Override
     @Transactional(readOnly = true)
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+        //TODO: deberia quedar asi, analizar como quedaria esta respuesta, porque no podemos pasar el password
+        /*return userRepository.findByEmail(email)
+                .map(UserMapper::toUserResponse)
+                .orElseThrow(() -> new NotFoundException("User not found with email: " + email));*/
     }
 
     /**
-     * Busca usuarios por término de búsqueda
+     * Lists all users
      */
     @Override
     @Transactional(readOnly = true)
-    public List<User> searchUsers(String searchTerm) {
-        return userRepository.findByFirstNameOrLastNameContainingIgnoreCase(searchTerm);
+    public List<UserResponse> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toUserResponse)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Elimina un usuario
+     * Searches users by search term
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserResponse> searchUsers(String searchTerm) {
+        return userRepository.findByFirstNameOrLastNameContainingIgnoreCase(searchTerm)
+                .stream()
+                .map(UserMapper::toUserResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes a user
      */
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         userRepository.delete(user);
     }
 
     /**
-     * Verifica las credenciales de un usuario
+     * Verifies user credentials
      */
     @Override
     @Transactional(readOnly = true)

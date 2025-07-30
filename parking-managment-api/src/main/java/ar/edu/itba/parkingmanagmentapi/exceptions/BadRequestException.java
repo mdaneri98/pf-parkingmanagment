@@ -1,10 +1,12 @@
 package ar.edu.itba.parkingmanagmentapi.exceptions;
 
-public class BadRequestException extends RuntimeException {
-    public BadRequestException(String errorMessage) {
-        super(errorMessage);
-    }
+import org.springframework.http.HttpStatus;
 
+public class BadRequestException extends BaseException {
+    public BadRequestException(String message) {
+        super(HttpStatus.BAD_REQUEST, message, ApiErrorCode.BAD_REQUEST.getCode());
+    }
 }
+
 
 

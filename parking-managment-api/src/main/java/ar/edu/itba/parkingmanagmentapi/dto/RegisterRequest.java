@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserRequest {
-    private Long id;
+@AllArgsConstructor
+public class RegisterRequest {
 
     private String firstName;
 
@@ -18,9 +17,6 @@ public class UpdateUserRequest {
 
     private String email;
 
-    private String passwordHash;
+    private String password;
 
-    private String imageUrl;
-
-    private UserDetailDTO userDetail;
-}
+} 

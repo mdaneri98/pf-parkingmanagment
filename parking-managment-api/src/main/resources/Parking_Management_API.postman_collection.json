@@ -39,7 +39,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"pepe\",\n    \"password\": \"1234\"\n}"
+							"raw": "{\n    \"email\": \"juan.perez@gmail.com\",\n    \"password\": \"password123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -51,7 +51,7 @@
 								"login"
 							]
 						},
-						"description": "Autentica un usuario y retorna un token JWT.\n\n**Usuarios de prueba:**\n- Username: `pepe`, Password: `1234`\n- Username: `juan.perez@gmail.com`, Password: `password123`\n\n**Respuesta exitosa:**\n```json\n{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"type\": \"Bearer\",\n    \"username\": \"pepe\",\n    \"message\": \"Login exitoso\"\n}\n```"
+						"description": "Autentica un usuario y retorna un token JWT.\n\n**Usuarios de prueba:**\n- Email: `juan.perez@gmail.com`, Password: `password123`\n- Email: `maria.gonzalez@outlook.com`, Password: `password123`\n- Email: `carlos.rodriguez@hotmail.com`, Password: `password123`\n\n**Respuesta exitosa:**\n```json\n{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"type\": \"Bearer\",\n    \"email\": \"juan.perez@gmail.com\",\n    \"message\": \"Login exitoso\"\n}\n```"
 					},
 					"response": [
 						{
@@ -66,7 +66,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"username\": \"pepe\",\n    \"password\": \"1234\"\n}"
+									"raw": "{\n    \"email\": \"juan.perez@gmail.com\",\n    \"password\": \"password123\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/auth/login",
@@ -89,7 +89,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwZXBlIiwiaWF0IjoxNzAzMDA3NjAwLCJleHAiOjE3MDMwOTQwMDB9.example\",\n    \"type\": \"Bearer\",\n    \"username\": \"pepe\",\n    \"message\": \"Login exitoso\"\n}"
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqdWFuLnBlcmV6QGdtYWlsLmNvbSIsImlhdCI6MTcwMzAwNzYwMCwiZXhwIjoxNzAzMDk0MDAwfS5leGFtcGxl\",\n    \"type\": \"Bearer\",\n    \"email\": \"juan.perez@gmail.com\",\n    \"message\": \"Login exitoso\"\n}"
 						},
 						{
 							"name": "Credenciales Inválidas",
@@ -103,7 +103,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"username\": \"usuario_incorrecto\",\n    \"password\": \"password_incorrecto\"\n}"
+									"raw": "{\n    \"email\": \"usuario_incorrecto@example.com\",\n    \"password\": \"password_incorrecto\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/auth/login",
@@ -127,6 +127,146 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"message\": \"Credenciales inválidas\",\n    \"status\": 401\n}"
+						}
+					]
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Ana\",\n    \"lastName\": \"Martínez\",\n    \"email\": \"ana.martinez@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registra un nuevo usuario en el sistema.\n\n**Campos requeridos:**\n- `firstName`: Nombre del usuario (máximo 100 caracteres)\n- `lastName`: Apellido del usuario (máximo 100 caracteres)\n- `email`: Email único del usuario (formato válido)\n- `password`: Contraseña del usuario (mínimo 6 caracteres)\n\n**Validaciones:**\n- El email debe ser único en el sistema\n- La contraseña se encripta automáticamente con BCrypt\n- Todos los campos son obligatorios\n\n**Respuesta exitosa (201):**\n```json\n{\n    \"message\": \"Usuario registrado exitosamente\",\n    \"email\": \"ana.martinez@example.com\",\n    \"userId\": 4\n}\n```\n\n**Respuesta de error (400):**\n```json\n{\n    \"message\": \"El email ya está registrado\",\n    \"status\": 400\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Registro Exitoso",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Ana\",\n    \"lastName\": \"Martínez\",\n    \"email\": \"ana.martinez@example.com\",\n    \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Usuario registrado exitosamente\",\n    \"email\": \"ana.martinez@example.com\",\n    \"userId\": 4\n}"
+						},
+						{
+							"name": "Email Ya Existe",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Juan\",\n    \"lastName\": \"Pérez\",\n    \"email\": \"juan.perez@gmail.com\",\n    \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"El email ya está registrado\",\n    \"status\": 400\n}"
+						},
+						{
+							"name": "Datos Inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"\",\n    \"lastName\": \"\",\n    \"email\": \"email_invalido\",\n    \"password\": \"123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"El nombre es obligatorio\",\n    \"status\": 400\n}"
 						}
 					]
 				}

@@ -13,7 +13,7 @@ INSERT INTO common_user (first_name, last_name, email, password_hash, image_url,
 ('Ana', 'Martínez', 'ana.martinez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Roberto', 'López', 'roberto.lopez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Laura', 'Fernández', 'laura.fernandez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Pepe', 'Usuario', 'pepe', '$2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('Pepe', 'Usuario', 'pepe@gmail.com', '$2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Detalles de usuarios
 INSERT INTO user_detail (user_id, phone, address, created_at, updated_at) VALUES
@@ -27,7 +27,7 @@ INSERT INTO user_detail (user_id, phone, address, created_at, updated_at) VALUES
 
 -- Gerentes (usuarios 5 y 6 serán gerentes)
 INSERT INTO manager (user_id, created_at, updated_at) VALUES
-(5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamientos

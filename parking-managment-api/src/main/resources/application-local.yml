@@ -25,7 +25,7 @@ spring:
       name: admin
       password: admin123
 
-# Configuración específica para desarrollo local
+# Logging configuration for local development
 logging:
   level:
     ar.edu.itba.parkingmanagmentapi: DEBUG

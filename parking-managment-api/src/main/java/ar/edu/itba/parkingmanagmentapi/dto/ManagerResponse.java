@@ -4,11 +4,9 @@ import lombok.*;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
-    private String token;
-    private String type;
-    private String email;
-} 
+@Builder
+public class ManagerResponse {
+    private Long id;
+}
