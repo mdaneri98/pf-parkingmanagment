@@ -14,11 +14,15 @@ public enum ApiErrorCode {
 
     // Auth & Security
     INVALID_CREDENTIALS("auth.invalid_credentials"),
+    AUTHENTICATION_FAILED("auth.authentication_failed"),
     EXPIRED_JWT_TOKEN("auth.expired_jwt_token"),
     INVALID_JWT_TOKEN("auth.invalid_jwt_token"),
     INVALID_JWT_CLAIM("auth.invalid_jwt_claim"),
     ACCESS_DENIED("auth.access_denied"),
-    USER_DISABLED("auth.user_disabled");
+    USER_DISABLED("auth.user_disabled"),
+    
+    // Validation
+    VALIDATION_ERROR("validation.error");
 
 
     private final String code;

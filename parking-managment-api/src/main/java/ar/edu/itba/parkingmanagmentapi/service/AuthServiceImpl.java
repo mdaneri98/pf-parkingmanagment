@@ -5,6 +5,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AlreadyExistsException;
+import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.security.provider.EmailBasedAuthenticationProvider;
@@ -85,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Invalid credentials");
         } catch (Exception e) {
             logger.error("Authentication error for user: {}", loginRequest.getEmail(), e);
-            throw new RuntimeException("Error during authentication");
+            throw new AuthenticationFailedException("Error during authentication: " + e.getMessage());
         }
     }
 
