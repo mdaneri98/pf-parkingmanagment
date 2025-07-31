@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AlphanumericFieldValidator extends PatternValidator {
-    private static final String PATTERN = "^[a-zA-Z]$";
+    private static final String PATTERN = "^[\\p{L}]+$";
 
     public AlphanumericFieldValidator() {
         super(PATTERN);

@@ -6,7 +6,9 @@ import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AlreadyExistsException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
+import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.security.provider.EmailBasedAuthenticationProvider;
 import ar.edu.itba.parkingmanagmentapi.util.JwtUtil;
@@ -31,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final EmailBasedAuthenticationProvider emailAuthProvider;
     private final UserRepository userRepository;
+    private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
     private final RegisterRequestValidator registerRequestValidator;
     private final LoginRequestValidator loginRequestValidator;
@@ -38,12 +41,14 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(JwtUtil jwtUtil,
                            EmailBasedAuthenticationProvider emailAuthProvider,
                            UserRepository userRepository,
+                           ManagerRepository managerRepository,
                            PasswordEncoder passwordEncoder,
                            RegisterRequestValidator registerRequestValidator,
                            LoginRequestValidator loginRequestValidator) {
         this.jwtUtil = jwtUtil;
         this.emailAuthProvider = emailAuthProvider;
         this.userRepository = userRepository;
+        this.managerRepository = managerRepository;
         this.passwordEncoder = passwordEncoder;
         this.registerRequestValidator = registerRequestValidator;
         this.loginRequestValidator = loginRequestValidator;
@@ -93,8 +98,8 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Registers a new user
      */
-    public RegisterResponse register(RegisterRequest registerRequest) {
-        logger.info("Intento de registro para usuario: {}", registerRequest.getEmail());
+    public RegisterResponse register(RegisterRequest registerRequest, boolean isManager) {
+        logger.info("Intento de registro para usuario: {} como manager: {}", registerRequest.getEmail(), isManager);
 
         registerRequestValidator.validate(registerRequest);
 
@@ -113,7 +118,14 @@ public class AuthServiceImpl implements AuthService {
         // Save user
         User savedUser = userRepository.save(user);
 
-        logger.info("Usuario registrado exitosamente: {}", registerRequest.getEmail());
+        // Create manager if requested
+        if (isManager) {
+            Manager manager = new Manager(savedUser);
+            managerRepository.save(manager);
+            logger.info("Manager registrado exitosamente: {}", registerRequest.getEmail());
+        }
+
+        logger.info("Usuario registrado exitosamente: {} como manager: {}", registerRequest.getEmail(), isManager);
 
         return new RegisterResponse(savedUser.getEmail());
     }

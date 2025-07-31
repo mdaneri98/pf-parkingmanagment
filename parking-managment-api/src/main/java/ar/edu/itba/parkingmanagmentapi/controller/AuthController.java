@@ -46,11 +46,12 @@
         }
 
         @PostMapping("/register")
-        public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest,
+                                        @RequestParam(value = "manager", defaultValue = "false") boolean isManager) {
             try {
-                logger.info("Procesando registro para usuario: {}", registerRequest.getEmail());
+                logger.info("Procesando registro para usuario: {} como manager: {}", registerRequest.getEmail(), isManager);
 
-                RegisterResponse response = authService.register(registerRequest);
+                RegisterResponse response = authService.register(registerRequest, isManager);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
 

@@ -15,11 +15,12 @@ public abstract class Validator<V> {
         String path = "";
         for (String arg : args) {
             if (!path.isEmpty()) {
-                path = String.format(CONCATENATE, path, args);
+                path = String.format(CONCATENATE, path, arg);
             } else {
                 path = arg;
             }
         }
         return path;
     }
+
 }

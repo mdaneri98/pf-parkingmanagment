@@ -46,11 +46,20 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setEmail(userRequest.getEmail());
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setImageUrl(userRequest.getImageUrl());
         user.setPasswordHash(passwordEncoder.encode(userRequest.getPassword()));
         userRepository.save(user);
 
+
+
         return UserResponse.builder()
+                .id(user.getId())
+                .firstName(userRequest.getFirstName())
+                .lastName(userRequest.getLastName())
                 .email(user.getEmail())
+                .imageUrl(userRequest.getImageUrl())
                 .build();
     }
 
