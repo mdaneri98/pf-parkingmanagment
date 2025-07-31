@@ -17,4 +17,6 @@ public class UserResponse {
     private String lastName;
 
     private String imageUrl;
+
+    private UserDetailDTO userDetail;
 }
