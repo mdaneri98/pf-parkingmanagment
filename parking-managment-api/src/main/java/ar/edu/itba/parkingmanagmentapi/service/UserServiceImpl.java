@@ -10,6 +10,7 @@ import ar.edu.itba.parkingmanagmentapi.model.UserDetail;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.util.UserMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.CreateUserRequestValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.UpdatedUserRequestedValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,11 +25,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final CreateUserRequestValidator createUserRequestValidator;
+    private final UpdatedUserRequestedValidator updatedUserRequestValidator;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(CreateUserRequestValidator createUserRequestValidator, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(CreateUserRequestValidator createUserRequestValidator, UpdatedUserRequestedValidator updatedUserRequestValidator, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.createUserRequestValidator = createUserRequestValidator;
+        this.updatedUserRequestValidator = updatedUserRequestValidator;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -68,7 +71,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest user) {
-
+        updatedUserRequestValidator.validate(user);
+        
         User userSaved = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
@@ -76,11 +80,17 @@ public class UserServiceImpl implements UserService {
         userSaved.setLastName(user.getLastName());
         userSaved.setImageUrl(user.getImageUrl());
         userSaved.setUserDetail(Optional.ofNullable(user.getUserDetail())
-                .map(userDetail -> new UserDetail())
+                .map(userDetailDto -> {
+                    UserDetail userDetail = new UserDetail();
+                    userDetail.setPhone(userDetailDto.getPhone());
+                    userDetail.setAddress(userDetailDto.getAddress());
+                    userDetail.setUser(userSaved);
+                    return userDetail;
+                })
                 .orElse(null));
         userRepository.save(userSaved);
 
-        return UserResponse.builder().firstName(user.getFirstName()).build();
+        return UserMapper.toUserResponse(userSaved);
     }
 
     /**
