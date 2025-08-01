@@ -1,6 +1,9 @@
 package ar.edu.itba.parkingmanagmentapi;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
+import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
@@ -41,6 +44,59 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
+    protected TestUser normalUser;
+    protected TestUser adminUser;
+    protected TestUser managerUser;
+
+    /**
+     * Setup method to create and authenticate test users.
+     */
+    protected void setupTestUsers() {
+        // Create normal user
+        User normalUserEntity = createTestUser("normal@test.com", "password123");
+        String normalUserToken = authenticateUser("normal@test.com", "password123");
+        normalUser = new TestUser(normalUserEntity, normalUserToken);
+
+        // Create admin user
+        User adminUserEntity = createTestUser("admin@test.com", "password123");
+        String adminUserToken = authenticateUser("admin@test.com", "password123");
+        adminUser = new TestUser(adminUserEntity, adminUserToken);
+
+        // Create manager user
+        User managerUserEntity = createTestUser("manager@test.com", "password123");
+        Manager manager = new Manager(managerUserEntity);
+        managerRepository.save(manager);
+        String managerUserToken = authenticateUser("manager@test.com", "password123");
+        managerUser = new TestUser(managerUserEntity, managerUserToken);
+    }
+
+    /**
+     * Authenticates a user and returns the JWT token
+     */
+    private String authenticateUser(String email, String password) {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(email);
+        loginRequest.setPassword(password);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                getApiUrl("/auth/login"),
+                loginRequest,
+                String.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            try {
+                ApiResponse<LoginResponse> apiResponse = parseApiResponse(response, LoginResponse.class);
+                return apiResponse.getData().getToken();
+            } catch (Exception e) {
+                fail("Failed to parse login response: " + e.getMessage());
+                return null;
+            }
+        } else {
+            fail("Login failed for user " + email + ": " + response.getStatusCode());
+            return null;
+        }
+    }
 
     /**
      * Asserts that a response has the expected HTTP status code.
@@ -137,4 +193,54 @@ public abstract class BaseIntegrationTest {
     protected String getApiUrl(String endpoint) {
         return endpoint;
     }
+
+    /**
+     * Creates an HTTP header with the Authorization Bearer token for a test user
+     */
+    protected org.springframework.http.HttpHeaders createAuthHeaders(TestUser testUser) {
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.set("Authorization", "Bearer " + testUser.getToken());
+        headers.set("Content-Type", "application/json");
+        return headers;
+    }
+
+    /**
+     * Creates an HTTP header with the Authorization Bearer token for a test user
+     */
+    protected org.springframework.http.HttpHeaders createAuthHeaders(String token) {
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        headers.set("Content-Type", "application/json");
+        return headers;
+    }
+
+ /**
+     * Inner class to hold user and token information for testing
+     */
+    protected static class TestUser {
+        private final User user;
+        private final String token;
+
+        public TestUser(User user, String token) {
+            this.user = user;
+            this.token = token;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public String getEmail() {
+            return user.getEmail();
+        }
+
+        public Long getId() {
+            return user.getId();
+        }
+    }
+
 } 
