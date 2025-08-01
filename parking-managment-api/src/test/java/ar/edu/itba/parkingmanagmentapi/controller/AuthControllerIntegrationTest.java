@@ -184,7 +184,6 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
     void testLogin_withInvalidInput_shouldReturn400(String email, String password) {
         var request = TestDataBuilder.createLoginRequest(email, password);
 
-        //TODO: Ahora entra por las validaciones, por lo que deberiamos ver que devuelva bad request
         ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/login"), request, String.class);
         assertResponseStatus(response, HttpStatus.BAD_REQUEST);
     }
