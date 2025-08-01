@@ -6,6 +6,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AlreadyExistsException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
@@ -60,7 +61,6 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         logger.info("Intento de login para usuario: {}", loginRequest.getEmail());
 
-        try {
             // Verify credentials using the email-based authentication provider
             loginRequestValidator.validate(loginRequest);
             Authentication authentication = emailAuthProvider.authenticate(
@@ -86,13 +86,6 @@ public class AuthServiceImpl implements AuthService {
                     .email(loginRequest.getEmail())
                     .build();
 
-        } catch (BadCredentialsException e) {
-            logger.warn("Invalid credentials for user: {}", loginRequest.getEmail());
-            throw new BadCredentialsException("Invalid credentials");
-        } catch (Exception e) {
-            logger.error("Authentication error for user: {}", loginRequest.getEmail(), e);
-            throw new AuthenticationFailedException("Error during authentication: " + e.getMessage());
-        }
     }
 
     /**
@@ -108,17 +101,14 @@ public class AuthServiceImpl implements AuthService {
             throw new AlreadyExistsException("Email already registered");
         }
 
-        // Create new user
         User user = new User();
         user.setFirstName(registerRequest.getFirstName());
         user.setLastName(registerRequest.getLastName());
         user.setEmail(registerRequest.getEmail());
         user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
 
-        // Save user
         User savedUser = userRepository.save(user);
 
-        // Create manager if requested
         if (isManager) {
             Manager manager = new Manager(savedUser);
             managerRepository.save(manager);
