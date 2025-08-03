@@ -9,6 +9,7 @@ import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -47,6 +48,13 @@ public abstract class BaseIntegrationTest {
     protected TestUser normalUser;
     protected TestUser adminUser;
     protected TestUser managerUser;
+    
+    @BeforeEach
+    void clean() {
+        managerRepository.deleteAll();
+        userRepository.deleteAll();
+        setupTestUsers();
+    }
 
     /**
      * Setup method to create and authenticate test users.
