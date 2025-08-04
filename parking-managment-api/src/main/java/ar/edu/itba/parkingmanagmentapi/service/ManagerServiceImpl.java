@@ -1,7 +1,7 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ManagerResponse;
-import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
+import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import ar.edu.itba.parkingmanagmentapi.util.ManagerMapper;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class ManagerServiceImpl implements ManagerService {
         logger.debug("Finding manager by ID: {}", id);
         return managerRepository.findById(id)
                 .map(ManagerMapper::toResponse)
-                .orElseThrow(() -> new BadRequestException("Manager not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Manager not found with ID: " + id));
     }
 
     /**
@@ -41,7 +41,7 @@ public class ManagerServiceImpl implements ManagerService {
         logger.debug("Finding manager by user ID: {}", userId);
         return managerRepository.findByUserId(userId)
                 .map(ManagerMapper::toResponse)
-                .orElseThrow(() -> new BadRequestException("Manager not found with ID: " + userId));
+                .orElseThrow(() -> new NotFoundException("Manager not found with user ID: " + userId));
     }
 
     /**

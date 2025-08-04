@@ -4,7 +4,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AlphanumericFieldValidator extends PatternValidator {
-    private static final String PATTERN = "^[a-zA-Z]$";
+    // Acepta: letras Unicode, espacios, guiones, apóstrofes
+    // Ejemplos: "Jean-Pierre", "O'Connor", "José María", "Van der Berg"
+    private static final String PATTERN = "^[\\p{L}\\s'-]+$";
 
     public AlphanumericFieldValidator() {
         super(PATTERN);

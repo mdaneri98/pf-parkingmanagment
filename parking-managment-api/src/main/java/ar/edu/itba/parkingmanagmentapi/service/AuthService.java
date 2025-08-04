@@ -14,7 +14,10 @@ public interface AuthService {
     
     /**
      * Registers a new user
+     * @param registerRequest the registration data
+     * @param isManager whether to create the user as a manager
+     * @return RegisterResponse with registration details
      */
-    RegisterResponse register(RegisterRequest registerRequest);
+    RegisterResponse register(RegisterRequest registerRequest, boolean isManager);
 
 }

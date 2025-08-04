@@ -38,15 +38,15 @@ public class LoginRequestValidator {
     }
 
     private void validateEmail(String email) {
-        mandatoryFieldValidator.validate(email);
-        blankFieldValidator.validate(email);
-        alphanumericEmailValidator.validate(email);
-        lengthRangeFieldInfoValidator.validate(email);
+        mandatoryFieldValidator.validate(email,"email");
+        blankFieldValidator.validate(email,"email");
+        alphanumericEmailValidator.validate(email, "email");
+        lengthRangeFieldInfoValidator.validate(email, "email");
     }
 
     private void validatePassword(String password) {
-        mandatoryFieldValidator.validate(password);
-        blankFieldValidator.validate(password);
-        lengthRangeFieldPasswordValidator.validate(password);
+        mandatoryFieldValidator.validate(password, "password");
+        blankFieldValidator.validate(password,  "password");
+        lengthRangeFieldPasswordValidator.validate(password,  "password");
     }
 }

@@ -14,13 +14,15 @@ public class CreateUserRequestValidator {
     private final AlphanumericEmailValidator alphanumericEmailValidator;
     private final LengthRangeFieldPasswordValidator lengthRangeFieldPasswordValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator;
+    private final AlphanumericFieldValidator alphanumericValidator;
 
-    public CreateUserRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, AlphanumericEmailValidator alphanumericEmailValidator, LengthRangeFieldPasswordValidator lengthRangeFieldPasswordValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator) {
+    public CreateUserRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, AlphanumericEmailValidator alphanumericEmailValidator, LengthRangeFieldPasswordValidator lengthRangeFieldPasswordValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericFieldValidator alphanumericValidator) {
         this.mandatoryFieldValidator = mandatoryFieldValidator;
         this.blankFieldValidator = blankFieldValidator;
         this.alphanumericEmailValidator = alphanumericEmailValidator;
         this.lengthRangeFieldPasswordValidator = lengthRangeFieldPasswordValidator;
         this.lengthRangeFieldInfoValidator = lengthRangeFieldInfoValidator;
+        this.alphanumericValidator = alphanumericValidator;
     }
 
     public void validate(CreateUserRequest userRequest) {
@@ -40,8 +42,12 @@ public class CreateUserRequestValidator {
 
         mandatoryFieldValidator.validate(userRequest.getFirstName(), "firstName");
         blankFieldValidator.validate(userRequest.getFirstName(), "firstName");
+        lengthRangeFieldInfoValidator.validate(userRequest.getFirstName(), "firstName");
+        alphanumericValidator.validate(userRequest.getFirstName(), "firstName");
 
         mandatoryFieldValidator.validate(userRequest.getLastName(), "lastName");
         blankFieldValidator.validate(userRequest.getLastName(), "lastName");
+        lengthRangeFieldInfoValidator.validate(userRequest.getLastName(), "lastName");
+        alphanumericValidator.validate(userRequest.getLastName(), "lastName");
     }
 }

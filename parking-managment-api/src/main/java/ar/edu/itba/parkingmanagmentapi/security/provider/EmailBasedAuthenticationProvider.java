@@ -1,12 +1,12 @@
 package ar.edu.itba.parkingmanagmentapi.security.provider;
 
 import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadCredentialsException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BaseException;
 import ar.edu.itba.parkingmanagmentapi.security.service.EmailAuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -53,7 +53,7 @@ public class EmailBasedAuthenticationProvider implements AuthenticationProvider 
             } else {
                 logger.warn("Invalid password for email: {}", email);
                 throw new AuthenticationFailedException("Invalid credentials");
-            } //TODO: ver si seguir usando try/catch
+            }
         } catch (BaseException e) {
             logger.warn("Authentication failed for email: {}", email, e);
             throw new BadCredentialsException("Invalid credentials");

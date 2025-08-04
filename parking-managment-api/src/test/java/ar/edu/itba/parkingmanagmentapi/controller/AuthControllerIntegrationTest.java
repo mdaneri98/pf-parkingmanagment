@@ -5,6 +5,7 @@ import ar.edu.itba.parkingmanagmentapi.builder.TestDataBuilder;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -46,6 +47,72 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(savedUser.getPasswordHash());
         assertNotEquals("securePassword123", savedUser.getPasswordHash());
         assertTrue(passwordEncoder.matches("securePassword123", savedUser.getPasswordHash()));
+    }
+
+    @Test
+    void testRegister_asManager_shouldReturn201_andUserAndManagerArePersisted() {
+        // 1. Arrange
+        var request = TestDataBuilder.createValidRegisterRequest();
+
+        // 2. Act
+        ResponseEntity<String> response = restTemplate.postForEntity(
+            getApiUrl("/auth/register?manager=true"), request, String.class);
+
+        // 3. Assert
+        assertResponseStatus(response, HttpStatus.CREATED);
+        assertResponseBodyNotEmpty(response);
+
+        var apiResponse = parseApiResponse(response, RegisterResponse.class);
+        assertApiResponseSuccess(apiResponse);
+        assertEquals("john.doe@example.com", apiResponse.getData().getEmail());
+
+        // Verify user is persisted in database
+        Optional<User> savedUserOpt = userRepository.findByEmail("john.doe@example.com");
+        assertTrue(savedUserOpt.isPresent());
+
+        User savedUser = savedUserOpt.get();
+        assertEquals("John", savedUser.getFirstName());
+        assertEquals("Doe", savedUser.getLastName());
+        assertEquals("john.doe@example.com", savedUser.getEmail());
+        assertNotNull(savedUser.getPasswordHash());
+        assertNotEquals("securePassword123", savedUser.getPasswordHash());
+        assertTrue(passwordEncoder.matches("securePassword123", savedUser.getPasswordHash()));
+
+        // Verify manager is also persisted
+        assertTrue(managerRepository.existsByUserId(savedUser.getId()));
+    }
+
+    @Test
+    void testRegister_asNormalUser_shouldReturn201_andOnlyUserIsPersisted() {
+        // 1. Arrange
+        var request = TestDataBuilder.createValidRegisterRequest();
+
+        // 2. Act
+        ResponseEntity<String> response = restTemplate.postForEntity(
+            getApiUrl("/auth/register?manager=false"), request, String.class);
+
+        // 3. Assert
+        assertResponseStatus(response, HttpStatus.CREATED);
+        assertResponseBodyNotEmpty(response);
+
+        var apiResponse = parseApiResponse(response, RegisterResponse.class);
+        assertApiResponseSuccess(apiResponse);
+        assertEquals("john.doe@example.com", apiResponse.getData().getEmail());
+
+        // Verify user is persisted in database
+        Optional<User> savedUserOpt = userRepository.findByEmail("john.doe@example.com");
+        assertTrue(savedUserOpt.isPresent());
+
+        User savedUser = savedUserOpt.get();
+        assertEquals("John", savedUser.getFirstName());
+        assertEquals("Doe", savedUser.getLastName());
+        assertEquals("john.doe@example.com", savedUser.getEmail());
+        assertNotNull(savedUser.getPasswordHash());
+        assertNotEquals("securePassword123", savedUser.getPasswordHash());
+        assertTrue(passwordEncoder.matches("securePassword123", savedUser.getPasswordHash()));
+
+        // Verify manager is NOT persisted
+        assertFalse(managerRepository.existsByUserId(savedUser.getId()));
     }
 
     // ========== LOGIN TESTS ==========
@@ -117,7 +184,6 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
     void testLogin_withInvalidInput_shouldReturn400(String email, String password) {
         var request = TestDataBuilder.createLoginRequest(email, password);
 
-        //TODO: Ahora entra por las validaciones, por lo que deberiamos ver que devuelva bad request
         ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/login"), request, String.class);
         assertResponseStatus(response, HttpStatus.BAD_REQUEST);
     }
