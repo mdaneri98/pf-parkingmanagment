@@ -4,6 +4,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenResponse;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AlreadyExistsException;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RegisterRequestValidator registerRequestValidator;
     private final LoginRequestValidator loginRequestValidator;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthServiceImpl(JwtUtil jwtUtil,
                            EmailBasedAuthenticationProvider emailAuthProvider,
@@ -42,7 +45,8 @@ public class AuthServiceImpl implements AuthService {
                            ManagerRepository managerRepository,
                            PasswordEncoder passwordEncoder,
                            RegisterRequestValidator registerRequestValidator,
-                           LoginRequestValidator loginRequestValidator) {
+                           LoginRequestValidator loginRequestValidator,
+                           RefreshTokenService refreshTokenService) {
         this.jwtUtil = jwtUtil;
         this.emailAuthProvider = emailAuthProvider;
         this.userRepository = userRepository;
@@ -50,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
         this.passwordEncoder = passwordEncoder;
         this.registerRequestValidator = registerRequestValidator;
         this.loginRequestValidator = loginRequestValidator;
+        this.refreshTokenService = refreshTokenService;
     }
 
     /**
@@ -58,7 +63,6 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         logger.info("Intento de login para usuario: {}", loginRequest.getEmail());
 
-        // Verify credentials using the email-based authentication provider
         loginRequestValidator.validate(loginRequest);
         Authentication authentication = emailAuthProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
@@ -66,21 +70,21 @@ public class AuthServiceImpl implements AuthService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // Extract all user roles/authorities
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(Object::toString)
-                .collect(Collectors.toList());
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+        List<String> roles = userDetails.getAuthorities().stream().map(
+                authority -> authority.getAuthority().replace("ROLE_", "")
+        ).collect(Collectors.toList());
 
-        logger.debug("User {} has roles: {}", loginRequest.getEmail(), roles);
-
-        // Generate JWT token with all roles
+        // Generate access token and refresh token
         String token = jwtUtil.generateTokenWithRoles(loginRequest.getEmail(), roles);
+        var refreshToken = refreshTokenService.createRefreshToken(user, true);
 
         logger.info("Login exitoso para usuario: {} con roles: {}", loginRequest.getEmail(), roles);
 
         return LoginResponse.builder()
                 .token(token)
                 .email(loginRequest.getEmail())
+                .refreshToken(refreshToken.getToken())
                 .build();
 
     }
@@ -116,4 +120,28 @@ public class AuthServiceImpl implements AuthService {
 
         return new RegisterResponse(savedUser.getEmail());
     }
+
+    @Override
+    public RefreshTokenResponse refresh(String refreshToken) {
+        var rotated = refreshTokenService.validateAndRotate(refreshToken);
+        var user = rotated.getUser();
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        if (managerRepository.existsByUserId(user.getId())) {
+            roles.add("MANAGER");
+        }
+
+        String newAccessToken = jwtUtil.generateTokenWithRoles(user.getEmail(), roles);
+        return RefreshTokenResponse.builder()
+                .token(newAccessToken)
+                .email(user.getEmail())
+                .refreshToken(rotated.getToken())
+                .build();
+    }
+
+    @Override
+    public void logout(String refreshToken) {
+        refreshTokenService.revokeByToken(refreshToken);
+    }
+    
 }

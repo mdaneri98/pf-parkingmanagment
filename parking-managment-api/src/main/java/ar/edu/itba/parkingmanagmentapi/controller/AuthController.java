@@ -2,6 +2,8 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
@@ -11,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,6 +43,21 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
 
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        logger.info("Procesando refresh");
+
+        RefreshTokenResponse response = authService.refresh(request.getRefreshToken());
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@Valid @RequestBody RefreshTokenRequest request) {
+        logger.info("Procesando logout");
+        authService.logout(request.getRefreshToken());
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Logged out"));
     }
 
 }

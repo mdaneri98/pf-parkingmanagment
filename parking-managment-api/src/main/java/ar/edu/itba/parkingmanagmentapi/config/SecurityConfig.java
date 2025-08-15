@@ -5,6 +5,7 @@ import ar.edu.itba.parkingmanagmentapi.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,46 +32,46 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll() 
                 
-                .requestMatchers("GET", "/users/**").authenticated()
-                .requestMatchers("GET", "/parking-lots/**").authenticated()
-                .requestMatchers("GET", "/vehicles/**").authenticated()
-                .requestMatchers("GET", "/spots/**").authenticated()
-                .requestMatchers("GET", "/reservations/**").authenticated()
-                .requestMatchers("GET", "/reviews/**").authenticated()
-                .requestMatchers("GET", "/incidents/**").authenticated()
-                .requestMatchers("GET", "/actuator/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/parking-lots/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/vehicles/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/spots/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/reservations/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/reviews/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/incidents/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/actuator/**").authenticated()
                 
-                .requestMatchers("POST", "/users/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("PUT", "/users/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("DELETE", "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                 
-                .requestMatchers("POST", "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("PUT", "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("DELETE", "/parking-lots/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.PUT, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.DELETE, "/parking-lots/**").hasRole("ADMIN")
                 
-                .requestMatchers("POST", "/vehicles/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers("PUT", "/vehicles/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("DELETE", "/vehicles/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
                 
-                .requestMatchers("POST", "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("PUT", "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("DELETE", "/spots/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.PUT, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.DELETE, "/spots/**").hasRole("ADMIN")
                 
-                .requestMatchers("POST", "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers("PUT", "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers("DELETE", "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.POST, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                 
-                .requestMatchers("POST", "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers("PUT", "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers("DELETE", "/reviews/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.POST, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.PUT, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.DELETE, "/reviews/**").hasAnyRole("ADMIN", "MANAGER")
                 
-                .requestMatchers("POST", "/incidents/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers("PUT", "/incidents/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("DELETE", "/incidents/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/incidents/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.PUT, "/incidents/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers(HttpMethod.DELETE, "/incidents/**").hasRole("ADMIN")
                 
-                .requestMatchers("POST", "/actuator/**").hasRole("ADMIN")
-                .requestMatchers("PUT", "/actuator/**").hasRole("ADMIN")
-                .requestMatchers("DELETE", "/actuator/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/actuator/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/actuator/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/actuator/**").hasRole("ADMIN")
                 
                 .anyRequest().authenticated()
             )

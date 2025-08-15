@@ -37,7 +37,7 @@ public class JwtUtil {
     private String jwtSecret;
 
     @Value("${jwt.expiration}")
-    private int jwtExpiration;
+    private long jwtExpiration;
 
     /**
      * Generates a JWT token with the provided email and multiple roles.
@@ -76,12 +76,18 @@ public class JwtUtil {
      */
     public List<String> getRolesFromToken(String token) {
         Claims claims = extractAllClaims(token);
-
-        String role = claims.get("role", String.class);
-        if (role != null) {
-            return List.of(role);
+        Object rolesClaim = claims.get("roles");
+        if (rolesClaim instanceof List<?>) {
+            List<?> rawList = (List<?>) rolesClaim;
+            return rawList.stream()
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .toList();
         }
-        
+        String singleRole = claims.get("role", String.class);
+        if (singleRole != null) {
+            return List.of(singleRole);
+        }
         return List.of();
     }
 

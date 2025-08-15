@@ -35,6 +35,15 @@ CREATE TABLE IF NOT EXISTS manager (
     CONSTRAINT fk_manager_user FOREIGN KEY (user_id) REFERENCES common_user(id)
 );
 
+-- Tabla de administradores
+CREATE TABLE IF NOT EXISTS admin (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_admin_user FOREIGN KEY (user_id) REFERENCES common_user(id)
+);
+
 -- Tabla de estacionamientos
 CREATE TABLE IF NOT EXISTS parking_lot (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -124,6 +133,19 @@ CREATE TABLE IF NOT EXISTS walk_in_stay (
     CONSTRAINT fk_walk_in_stay_spot FOREIGN KEY (spot_id) REFERENCES spot(id),
     CONSTRAINT fk_walk_in_stay_user FOREIGN KEY (vehicle_user_id) REFERENCES common_user(id),
     CONSTRAINT fk_walk_in_stay_vehicle FOREIGN KEY (vehicle_license_plate) REFERENCES vehicle(license_plate)
+);
+
+-- Tabla de refresh tokens
+CREATE TABLE IF NOT EXISTS refresh_token (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    user_id BIGINT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    revoked BOOLEAN NOT NULL DEFAULT FALSE,
+    replaced_by_token VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_refresh_token_user FOREIGN KEY (user_id) REFERENCES common_user(id)
 );
 
 -- Tabla de reseñas

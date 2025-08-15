@@ -1,14 +1,18 @@
 package ar.edu.itba.parkingmanagmentapi.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+public class RefreshTokenResponse {
     private String token;
     private String email;
     private String refreshToken;
-} 
+}
+
+

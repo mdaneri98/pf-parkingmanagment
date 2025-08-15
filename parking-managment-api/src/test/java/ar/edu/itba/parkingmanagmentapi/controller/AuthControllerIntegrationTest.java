@@ -5,7 +5,6 @@ import ar.edu.itba.parkingmanagmentapi.builder.TestDataBuilder;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
-import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -138,6 +137,7 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         assertApiResponseSuccess(apiResponse);
         assertEquals(email, apiResponse.getData().getEmail());
         assertNotNull(apiResponse.getData().getToken(), "El token debe estar presente");
+        assertNotNull(apiResponse.getData().getRefreshToken(), "El refresh token debe estar presente");
     }
 
     @Test
@@ -208,5 +208,6 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         assertApiResponseSuccess(apiResponse);
         assertEquals("test@example.com", apiResponse.getData().getEmail());
         assertNotNull(apiResponse.getData().getToken());
+        assertNotNull(apiResponse.getData().getRefreshToken());
     }
 } 

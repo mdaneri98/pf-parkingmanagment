@@ -99,6 +99,7 @@ public class TestDataBuilder {
         user.setFirstName("Test");
         user.setLastName("User");
         user.setEmail("test@example.com");
+        user.setPasswordHash("hashedPassword");
         return user;
     }
 
@@ -113,36 +114,4 @@ public class TestDataBuilder {
         return user;
     }
 
-    /**
-     * Test email addresses for validation testing.
-     */
-    public static class TestEmails {
-        public static final String VALID = "test@example.com";
-        public static final String INVALID_NO_AT = "plainaddress";
-        public static final String INVALID_NO_LOCAL = "@no-local.com";
-        public static final String INVALID_NO_DOMAIN = "missingatsign.com";
-        public static final String INVALID_MISSING_DOMAIN = "missing.domain@.com";
-        public static final String INVALID_IP_FORMAT = "email@111.222.333.44444";
-        public static final String INVALID_DOUBLE_AT = "two@@signs.com";
-        public static final String INVALID_WITH_ANGLE_BRACKETS = "Outlook Contact <outlook-contact@domain.com>";
-    }
-
-    /**
-     * Test passwords for validation testing.
-     */
-    public static class TestPasswords {
-        public static final String VALID = "securePassword123";
-        public static final String TOO_SHORT = "123";
-        public static final String EMPTY = "";
-    }
-
-    /**
-     * Test names for validation testing.
-     */
-    public static class TestNames {
-        public static final String VALID_FIRST_NAME = "John";
-        public static final String VALID_LAST_NAME = "Doe";
-        public static final String TOO_LONG = "a".repeat(101); // More than 100 characters
-        public static final String EMPTY = "";
-    }
 } 

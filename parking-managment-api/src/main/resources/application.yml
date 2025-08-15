@@ -13,7 +13,9 @@ server:
 # Configuración de JWT
 jwt:
   secret: your-secret-key-here-make-it-long-and-secure-in-production
-  expiration: 86400000 # 24 horas en milisegundos
+  expiration: 300000 # 5 minutos en milisegundos
+  refresh:
+    expiration: 86400000 # 1 dia en milisegundos
 
 # CORS Configuration
 cors:

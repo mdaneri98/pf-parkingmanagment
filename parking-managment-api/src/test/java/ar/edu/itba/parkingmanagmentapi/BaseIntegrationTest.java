@@ -6,6 +6,8 @@ import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.AdminRepository;
+import ar.edu.itba.parkingmanagmentapi.model.Admin;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +42,9 @@ public abstract class BaseIntegrationTest {
     protected ManagerRepository managerRepository;
 
     @Autowired
+    protected AdminRepository adminRepository;
+
+    @Autowired
     protected PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -51,6 +56,7 @@ public abstract class BaseIntegrationTest {
     
     @BeforeEach
     void clean() {
+        adminRepository.deleteAll();
         managerRepository.deleteAll();
         userRepository.deleteAll();
         setupTestUsers();
@@ -66,8 +72,9 @@ public abstract class BaseIntegrationTest {
         normalUser = new TestUser(normalUserEntity, normalUserToken);
 
         // Create admin user
-        User adminUserEntity = createTestUser("admin@test.com", "password123");
-        String adminUserToken = authenticateUser("admin@test.com", "password123");
+        User adminUserEntity = createTestUser("admin@admin.com", "password123");
+        adminRepository.save(new Admin(adminUserEntity));
+        String adminUserToken = authenticateUser("admin@admin.com", "password123");
         adminUser = new TestUser(adminUserEntity, adminUserToken);
 
         // Create manager user

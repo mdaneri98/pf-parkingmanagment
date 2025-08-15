@@ -7,6 +7,7 @@
 -- Contraseña "password123" hasheada con BCrypt: $2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.
 -- Contraseña "1234" hasheada con BCrypt: $2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS
 INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at) VALUES
+('John', 'Doe', 'admin@admin.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('María', 'González', 'maria.gonzalez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Carlos', 'Rodríguez', 'carlos.rodriguez@hotmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -29,6 +30,10 @@ INSERT INTO user_detail (user_id, phone, address, created_at, updated_at) VALUES
 INSERT INTO manager (user_id, created_at, updated_at) VALUES
 (7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Administradores (usuario 5 será admin)
+INSERT INTO admin (user_id, created_at, updated_at) VALUES
+(1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamientos
 INSERT INTO parking_lot (address, image_url, manager_id, created_at, updated_at) VALUES

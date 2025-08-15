@@ -2,6 +2,7 @@ package ar.edu.itba.parkingmanagmentapi.security.service;
 
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.service.AdminService;
 import ar.edu.itba.parkingmanagmentapi.service.ManagerService;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
 import org.slf4j.Logger;
@@ -25,10 +26,12 @@ public class EmailAuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(EmailAuthenticationService.class);
     private final UserService userService;
     private final ManagerService managerService;
+    private final AdminService adminService;
 
-    public EmailAuthenticationService(UserService userService, ManagerService managerService) {
+    public EmailAuthenticationService(UserService userService, ManagerService managerService, AdminService adminService) {
         this.userService = userService;
         this.managerService = managerService;
+        this.adminService = adminService;
     }
 
     /**
@@ -53,9 +56,14 @@ public class EmailAuthenticationService {
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         if (managerService.isUserManager(user.getId())) {
-            logger.debug("User {} is also a manager, adding ROLE_MANAGER", user.getEmail());
             authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
         }
+
+        if (adminService.isUserAdmin(user.getId())) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+
+        logger.debug("User has successfully loaded with authorities: {}", authorities);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

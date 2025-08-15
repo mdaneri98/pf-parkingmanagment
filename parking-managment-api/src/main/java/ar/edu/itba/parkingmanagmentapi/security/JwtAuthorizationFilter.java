@@ -1,7 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.security;
 
 import ar.edu.itba.parkingmanagmentapi.util.JwtUtil;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,9 +41,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String email = jwtUtil.getEmailFromToken(token);
             List<String> roles = jwtUtil.getRolesFromToken(token);
             
-            // Convert roles to Spring Security authorities
             List<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                    .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
