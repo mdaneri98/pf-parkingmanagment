@@ -64,13 +64,13 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         parkingLot.setAddress(request.getAddress());
         parkingLot.setImageUrl(request.getImageUrl());
 
-        return ParkingLotMapper.toParkingLotResponse(parkingLotRepository.save(parkingLot));
+        return ParkingLotMapper.toParkingLotWithoutSpotsResponse(parkingLotRepository.save(parkingLot));
     }
 
     @Override
     public ParkingLotResponse findById(Long id) {
         return parkingLotRepository.findById(id)
-                .map(ParkingLotMapper::toParkingLotResponse)
+                .map(ParkingLotMapper::toParkingLotWithoutSpotsResponse)
                 .orElseThrow(() -> new NotFoundException("ParkingLot not found"));
     }
 
@@ -78,7 +78,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     public List<ParkingLotResponse> findAll() {
         return parkingLotRepository.findAll()
                 .stream()
-                .map(ParkingLotMapper::toParkingLotResponse)
+                .map(ParkingLotMapper::toParkingLotWithoutSpotsResponse)
                 .collect(Collectors.toList());
     }
 

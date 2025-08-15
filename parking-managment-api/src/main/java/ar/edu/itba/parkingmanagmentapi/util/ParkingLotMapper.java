@@ -30,6 +30,18 @@ public class ParkingLotMapper {
         return dto;
     }
 
+    public static ParkingLotResponse toParkingLotWithoutSpotsResponse(ParkingLot parkingLot) {
+        if (parkingLot == null) return null;
+
+        ParkingLotResponse dto = new ParkingLotResponse();
+        dto.setId(parkingLot.getId());
+        dto.setName(parkingLot.getName());
+        dto.setAddress(parkingLot.getAddress());
+        dto.setImageUrl(parkingLot.getImageUrl());
+
+        return dto;
+    }
+
     public static SpotDTO toSpotDTO(Spot spot) {
         if (Objects.isNull(spot)) return null;
 
