@@ -10,6 +10,7 @@ import ar.edu.itba.parkingmanagmentapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,17 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         request.setPassword("securePassword123");
 
         HttpEntity<CreateUserRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(adminUser));
-        ResponseEntity<UserResponse> response = restTemplate.exchange("/users", HttpMethod.POST, requestEntity, UserResponse.class);
+        ResponseEntity<ApiResponse<UserResponse>> response = restTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("test@example.com", response.getBody().getEmail());
+        assertEquals("test@example.com", response.getBody().getData().getEmail());
 
         Optional<User> savedUserOpt = userRepository.findByEmail("test@example.com");
         assertTrue(savedUserOpt.isPresent(), "El usuario debería estar en la base de datos");
@@ -52,12 +59,17 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         request.setPassword("anotherPassword");
 
         HttpEntity<CreateUserRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(adminUser));
-        ResponseEntity<String> response = restTemplate.exchange("/users", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<ApiResponse<UserResponse>> response = restTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        ApiResponse<UserResponse> apiResponse = parseApiResponse(response, UserResponse.class);
-        assertNotNull(response);
-        assertTrue(apiResponse.getMessage().contains("in use"));
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getMessage().contains("in use"));
     }
 
     @ParameterizedTest
@@ -73,19 +85,22 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         request.setPassword(password);
 
         HttpEntity<CreateUserRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(adminUser));
-        ResponseEntity<String> response = restTemplate.exchange("/users", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<ApiResponse<UserResponse>> response = restTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        ApiResponse<UserResponse> apiResponse = parseApiResponse(response, UserResponse.class);
-        assertNotNull(apiResponse);
-        assertTrue(apiResponse.getMessage().contains(expectedField));
-        assertTrue(apiResponse.getMessage().contains("is mandatory"));
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getMessage().contains(expectedField));
+        assertTrue(response.getBody().getMessage().contains("is mandatory"));
     }
-
 
     @ParameterizedTest
     @CsvSource({
-            // Emails con formato inválido
             "plainaddress, validPassword123",
             "'@no-local.com', validPassword123",
             "'missingatsign.com', validPassword123",
@@ -99,12 +114,17 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         request.setPassword(password);
 
         HttpEntity<CreateUserRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(adminUser));
-        ResponseEntity<String> response = restTemplate.exchange("/users", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<ApiResponse<UserResponse>> response = restTemplate.exchange(
+                "/users",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        ApiResponse<ApiResponse> apiResponse = parseApiResponse(response, ApiResponse.class);
-        assertNotNull(apiResponse);
-        assertTrue(apiResponse.getMessage().contains("is not an alphanumeric value"));
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getMessage().toLowerCase().contains("is not an alphanumeric value"));
     }
 
     @Test
@@ -114,10 +134,17 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         Long userId = savedUser.getId();
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(adminUser));
-        ResponseEntity<UserResponse> getResponse = restTemplate.exchange("/users/" + userId, HttpMethod.GET, requestEntity, UserResponse.class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        ResponseEntity<ApiResponse<UserResponse>> getResponse = restTemplate.exchange(
+                "/users/" + userId,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
-        UserResponse userResponse = getResponse.getBody();
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        assertNotNull(getResponse.getBody());
+        UserResponse userResponse = getResponse.getBody().getData();
         assertNotNull(userResponse);
         assertEquals(user.getEmail(), userResponse.getEmail());
         assertEquals(user.getFirstName(), userResponse.getFirstName());
@@ -133,12 +160,17 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         long nonExistentId = 9999L;
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(adminUser));
-        ResponseEntity<ApiResponse> response = restTemplate.exchange("/users/" + nonExistentId, HttpMethod.GET, requestEntity, ApiResponse.class);
+        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
+                "/users/" + nonExistentId,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        ApiResponse error = response.getBody();
-        assertNotNull(error);
-        assertTrue(error.getMessage().toLowerCase().contains("not found"));
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getMessage().toLowerCase().contains("not found"));
     }
 
     @Test
@@ -150,14 +182,20 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         UpdateUserRequest updateRequest = new UpdateUserRequest();
         updateRequest.setFirstName("NuevoNombre");
         updateRequest.setLastName("NuevoApellido");
-        updateRequest.setImageUrl("http://example.com/image2.jpg");
+        updateRequest.setImageUrl("https://example.com/image2.jpg");
 
         HttpEntity<UpdateUserRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(adminUser));
-        ResponseEntity<UserResponse> updateResponse = restTemplate.exchange("/users/" + userId, HttpMethod.PUT, requestEntity, UserResponse.class);
+        ResponseEntity<ApiResponse<UserResponse>> updateResponse = restTemplate.exchange(
+                "/users/" + userId,
+                HttpMethod.PUT,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
         assertNotNull(updateResponse.getBody());
-        assertEquals(updateRequest.getFirstName(), updateResponse.getBody().getFirstName());
+        assertEquals(updateRequest.getFirstName(), updateResponse.getBody().getData().getFirstName());
 
         Optional<User> updatedUserOpt = userRepository.findById(userId);
         assertTrue(updatedUserOpt.isPresent());
@@ -176,12 +214,17 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
 
         HttpEntity<UpdateUserRequest> entity = new HttpEntity<>(request, createAuthHeaders(adminUser));
 
-        ResponseEntity<ApiResponse> response = restTemplate.exchange("/users/" + nonExistentId, HttpMethod.PUT, entity, ApiResponse.class);
+        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
+                "/users/" + nonExistentId,
+                HttpMethod.PUT,
+                entity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        ApiResponse error = response.getBody();
-        assertNotNull(error);
-        assertTrue(error.getMessage().toLowerCase().contains("not found"));
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getMessage().toLowerCase().contains("not found"));
     }
-
 }
+

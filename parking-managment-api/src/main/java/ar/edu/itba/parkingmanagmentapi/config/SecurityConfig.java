@@ -4,8 +4,8 @@ import ar.edu.itba.parkingmanagmentapi.security.JwtAuthorizationFilter;
 import ar.edu.itba.parkingmanagmentapi.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,65 +19,65 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, 
-                                         CorsConfigurationSource corsConfigurationSource,
-                                         JwtUtil jwtUtil) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           CorsConfigurationSource corsConfigurationSource,
+                                           JwtUtil jwtUtil) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll() 
-                
-                .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/parking-lots/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/vehicles/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/spots/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/reservations/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/reviews/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/incidents/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/actuator/**").authenticated()
-                
-                .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
-                
-                .requestMatchers(HttpMethod.POST, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.PUT, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.DELETE, "/parking-lots/**").hasRole("ADMIN")
-                
-                .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
-                
-                .requestMatchers(HttpMethod.POST, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.PUT, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.DELETE, "/spots/**").hasRole("ADMIN")
-                
-                .requestMatchers(HttpMethod.POST, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                
-                .requestMatchers(HttpMethod.POST, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.PUT, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.DELETE, "/reviews/**").hasAnyRole("ADMIN", "MANAGER")
-                
-                .requestMatchers(HttpMethod.POST, "/incidents/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.PUT, "/incidents/**").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.DELETE, "/incidents/**").hasRole("ADMIN")
-                
-                .requestMatchers(HttpMethod.POST, "/actuator/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/actuator/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/actuator/**").hasRole("ADMIN")
-                
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(new JwtAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-            .headers(headers -> headers.frameOptions().disable()); // For H2 Console
-        
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/parking-lots/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/vehicles/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/spots/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/reservations/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/reviews/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/incidents/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/actuator/**").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
+
+                        .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/spots/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+
+                        .requestMatchers(HttpMethod.POST, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/reviews/**").hasAnyRole("ADMIN", "MANAGER")
+
+                        .requestMatchers(HttpMethod.POST, "/incidents/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/incidents/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/incidents/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/actuator/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/actuator/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/actuator/**").hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers.frameOptions().disable()); // For H2 Console
+
         return http.build();
     }
 
@@ -90,6 +90,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
 
 } 

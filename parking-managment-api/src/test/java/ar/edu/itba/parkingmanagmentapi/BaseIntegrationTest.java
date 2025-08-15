@@ -6,6 +6,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.AdminRepository;
 import ar.edu.itba.parkingmanagmentapi.model.Admin;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
@@ -40,6 +41,8 @@ public abstract class BaseIntegrationTest {
 
     @Autowired
     protected ManagerRepository managerRepository;
+    @Autowired
+    protected ParkingLotRepository parkingLotRepository;
 
     @Autowired
     protected AdminRepository adminRepository;
@@ -53,12 +56,13 @@ public abstract class BaseIntegrationTest {
     protected TestUser normalUser;
     protected TestUser adminUser;
     protected TestUser managerUser;
-    
+
     @BeforeEach
     void clean() {
         adminRepository.deleteAll();
         managerRepository.deleteAll();
         userRepository.deleteAll();
+        parkingLotRepository.deleteAll();
         setupTestUsers();
     }
 
@@ -229,7 +233,7 @@ public abstract class BaseIntegrationTest {
         return headers;
     }
 
- /**
+    /**
      * Inner class to hold user and token information for testing
      */
     protected static class TestUser {

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -52,6 +54,18 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> validationError(List<String> errors) {
         return new ApiResponse<>(false, null, "Validation failed", "VALIDATION_ERROR", errors, null, null);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> ok(T data) {
+        return ResponseEntity.ok(success(data));
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> created(T data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(success(data));
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> noContent() {
+        return ResponseEntity.noContent().build();
     }
 
     // Utility methods

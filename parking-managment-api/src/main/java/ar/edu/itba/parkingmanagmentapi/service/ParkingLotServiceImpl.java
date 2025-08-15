@@ -1,0 +1,92 @@
+package ar.edu.itba.parkingmanagmentapi.service;
+
+import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
+import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
+import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
+import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
+import ar.edu.itba.parkingmanagmentapi.util.ParkingLotMapper;
+import ar.edu.itba.parkingmanagmentapi.validators.CreateParkingLotRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class ParkingLotServiceImpl implements ParkingLotService {
+
+    private final ParkingLotRepository parkingLotRepository;
+
+    private final CreateParkingLotRequest createParkingLotRequestValidator;
+
+    @Autowired
+    public ParkingLotServiceImpl(ParkingLotRepository parkingLotRepository, CreateParkingLotRequest createParkingLotRequestValidator) {
+        this.parkingLotRepository = parkingLotRepository;
+        this.createParkingLotRequestValidator = createParkingLotRequestValidator;
+    }
+
+    @Override
+    public ParkingLotResponse createParkingLot(ParkingLotRequest request) {
+        createParkingLotRequestValidator.validate(request);
+        if (parkingLotRepository.existsByAddress(request.getAddress())) {
+            throw new IllegalArgumentException("ParkingLot with address " + request.getAddress() + " already exists");
+        }
+
+        ParkingLot parkingLot = new ParkingLot();
+        parkingLot.setName(request.getName());
+        parkingLot.setAddress(request.getAddress());
+        parkingLot.setImageUrl(request.getImageUrl());
+        parkingLot.setSpots(Optional.ofNullable(request.getSpots())
+                .orElseGet(List::of)
+                .stream()
+                .map(spotDto -> {
+                    Spot spot = new Spot();
+                    spot.setParkingLot(parkingLot);
+                    spot.setVehicleType(spotDto.getVehicleType());
+                    spot.setFloor(spotDto.getFloor());
+                    spot.setCode(spotDto.getCode());
+                    return spot;
+                })
+                .collect(Collectors.toList()));
+
+        return ParkingLotMapper.toParkingLotResponse(parkingLotRepository.save(parkingLot));
+    }
+
+    @Override
+    public ParkingLotResponse updateParkingLot(Long id, ParkingLotRequest request) {
+        ParkingLot parkingLot = parkingLotRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("ParkingLot with id " + id + " not found"));
+
+        parkingLot.setName(request.getName());
+        parkingLot.setAddress(request.getAddress());
+        parkingLot.setImageUrl(request.getImageUrl());
+
+        return ParkingLotMapper.toParkingLotResponse(parkingLotRepository.save(parkingLot));
+    }
+
+    @Override
+    public ParkingLotResponse findById(Long id) {
+        return parkingLotRepository.findById(id)
+                .map(ParkingLotMapper::toParkingLotResponse)
+                .orElseThrow(() -> new NotFoundException("ParkingLot not found"));
+    }
+
+    @Override
+    public List<ParkingLotResponse> findAll() {
+        return parkingLotRepository.findAll()
+                .stream()
+                .map(ParkingLotMapper::toParkingLotResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteParkingLot(Long id) {
+        if (!parkingLotRepository.existsById(id)) {
+            throw new NotFoundException("ParkingLot with id " + id + " not found");
+        }
+        parkingLotRepository.deleteById(id);
+    }
+}

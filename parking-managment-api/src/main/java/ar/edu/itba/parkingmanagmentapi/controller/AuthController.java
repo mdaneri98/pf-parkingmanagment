@@ -1,12 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
-import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -27,22 +21,24 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
         logger.info("Procesando login para usuario: {}", loginRequest.getEmail());
 
         LoginResponse response = authService.login(loginRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response));
+        return ApiResponse.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest, @RequestParam(value = "manager", defaultValue = "false") boolean isManager) {
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(
+            @Valid @RequestBody RegisterRequest registerRequest,
+            @RequestParam(value = "manager", defaultValue = "false") boolean isManager) {
+
         logger.info("Procesando registro para usuario: {} como manager: {}", registerRequest.getEmail(), isManager);
 
         RegisterResponse response = authService.register(registerRequest, isManager);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
-
+        return ApiResponse.created(response);
     }
 
     @PostMapping("/refresh")

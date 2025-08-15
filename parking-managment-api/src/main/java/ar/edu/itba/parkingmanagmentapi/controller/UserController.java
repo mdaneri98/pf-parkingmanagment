@@ -1,11 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
+import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,63 +22,48 @@ public class UserController {
         this.userService = userService;
     }
 
-    // -------------------------- BASIC CRUD --------------------------
-
     /**
      * Crea un nuevo usuario
      */
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest user) {
+    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody CreateUserRequest user) {
         UserResponse createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        return ApiResponse.created(createdUser);
     }
 
-    /**
-     * Obtiene todos los usuarios
-     */
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> users = userService.findAll();
-        return ResponseEntity.ok(users);
+        return ApiResponse.ok(users);
     }
 
-    /**
-     * Obtiene un usuario por ID
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
         UserResponse user = userService.findById(id);
-        return ResponseEntity.ok(user);
+        return ApiResponse.ok(user);
     }
 
-    /**
-     * Actualiza un usuario
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest userDetails) {
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserRequest userDetails) {
         UserResponse updatedUser = userService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updatedUser);
+        return ApiResponse.ok(updatedUser);
     }
 
-    /**
-     * Elimina un usuario
-     */
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ApiResponse.noContent();
     }
-
 
     // -------------------------- EXTENSIONS --------------------------
 
-    /**
-     * Busca usuarios por término de búsqueda
-     */
     @GetMapping("/search")
-    public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam String q) {
+    public ResponseEntity<ApiResponse<List<UserResponse>>> searchUsers(@RequestParam String q) {
         List<UserResponse> users = userService.searchUsers(q);
-        return ResponseEntity.ok(users);
+        return ApiResponse.ok(users);
     }
 
-} 
+}

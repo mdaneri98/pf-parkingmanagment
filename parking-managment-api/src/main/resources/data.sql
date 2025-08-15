@@ -36,10 +36,13 @@ INSERT INTO admin (user_id, created_at, updated_at) VALUES
 (1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamientos
-INSERT INTO parking_lot (address, image_url, manager_id, created_at, updated_at) VALUES
-('Av. Corrientes 1500, CABA', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Av. Santa Fe 3000, Palermo, CABA', 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Av. Cabildo 2800, Belgrano, CABA', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO parking_lot (address, name, image_url, manager_id, created_at, updated_at)
+VALUES ('Av. Corrientes 1500', 'Estacionamiento 1',
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Av. Santa Fe 3000, Palermo, CABA', 'Estacionamiento 2',
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Av. Cabildo 2800, Belgrano, CABA', 'Estacionamiento 3',
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Espacios de estacionamiento
 -- Estacionamiento 1 (Corrientes) - 12 espacios
@@ -58,31 +61,32 @@ INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, creat
 ('CAMIONETA', 0, 'PB-C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 2 (Santa Fe) - 10 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at) VALUES
-('AUTO', -1, 'S1-A01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', -1, 'S1-A02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', -1, 'S1-A03', false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', -1, 'S1-A04', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', -1, 'S1-A05', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', -1, 'S1-A06', false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', -1, 'S1-M01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', -1, 'S1-M02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', -1, 'S1-C01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', -1, 'S1-C02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
+VALUES ('AUTO', -1, 'S1-A01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A03', false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A04', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A05', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A06', false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', -1, 'S1-M01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', -1, 'S1-M02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', -1, 'S1-C01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', -1, 'S1-C02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 3 (Cabildo) - 8 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at) VALUES
-('AUTO', 0, 'CB-A01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 0, 'CB-A02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 0, 'CB-A03', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 0, 'CB-A04', false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 0, 'CB-M01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 0, 'CB-M02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 0, 'CB-C01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 0, 'CB-C02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
+VALUES ('AUTO', 0, 'CB-A01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'CB-A02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'CB-A03', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'CB-A04', false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', 0, 'CB-M01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', 0, 'CB-M02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', 0, 'CB-C01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', 0, 'CB-C02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Precios de estacionamiento (por hora)
-INSERT INTO parking_price (vehicle_type, price, valid_from, valid_to, parking_lot_id, created_at, updated_at) VALUES
+INSERT INTO parking_price (vehicle_type, price, valid_from, valid_to, parking_lot_id, created_at, updated_at)
+VALUES
 -- Estacionamiento 1 (Corrientes) - Precios actuales
 ('AUTO', 800.00, '2024-01-01 00:00:00', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('MOTO', 400.00, '2024-01-01 00:00:00', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -119,18 +123,25 @@ INSERT INTO user_vehicle_assignment (user_id, vehicle_license_plate, created_at,
 -- Reservas programadas
 INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, status, estimated_price, spot_id, vehicle_user_id, vehicle_license_plate, created_at, updated_at) VALUES
 -- Reserva completada (ayer)
-('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', CURRENT_TIMESTAMP,
+ CURRENT_TIMESTAMP),
 -- Reserva confirmada (hoy)
-('2024-12-19 08:00:00', '2024-12-19 17:00:00', 'CONFIRMED', 8000.00, 6, 2, 'DEF456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('2024-12-19 08:00:00', '2024-12-19 17:00:00', 'CONFIRMED', 8000.00, 6, 2, 'DEF456', CURRENT_TIMESTAMP,
+ CURRENT_TIMESTAMP),
 -- Reserva futura
-('2024-12-20 10:00:00', '2024-12-20 14:00:00', 'CONFIRMED', 3200.00, 1, 3, 'JKL012', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('2024-12-20 10:00:00', '2024-12-20 14:00:00', 'CONFIRMED', 3200.00, 1, 3, 'JKL012', CURRENT_TIMESTAMP,
+ CURRENT_TIMESTAMP),
 -- Reserva en progreso
-('2024-12-19 14:00:00', '2024-12-19 20:00:00', 'IN_PROGRESS', 2100.00, 10, 4, 'PQR678', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('2024-12-19 14:00:00', '2024-12-19 20:00:00', 'IN_PROGRESS', 2100.00, 10, 4, 'PQR678', CURRENT_TIMESTAMP,
+ CURRENT_TIMESTAMP),
 -- Reserva cancelada
-('2024-12-18 12:00:00', '2024-12-18 16:00:00', 'CANCELLED', 2800.00, 15, 2, 'GHI789', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('2024-12-18 12:00:00', '2024-12-18 16:00:00', 'CANCELLED', 2800.00, 15, 2, 'GHI789', CURRENT_TIMESTAMP,
+ CURRENT_TIMESTAMP);
 
 -- Estancias walk-in
-INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, spot_id, vehicle_user_id, vehicle_license_plate, created_at, updated_at) VALUES
+INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, spot_id, vehicle_user_id, vehicle_license_plate,
+                          created_at, updated_at)
+VALUES
 -- Estancia completada
 ('2024-12-17 15:30:00', '2024-12-17 18:45:00', 2600.00, 3, 1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia completada
@@ -139,16 +150,22 @@ INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, spot_id, v
 ('2024-12-19 16:00:00', NULL, NULL, 24, 4, 'MNO345', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Reseñas
-INSERT INTO review (rating, comment, user_id, parking_lot_id, created_at, updated_at) VALUES
-(5, 'Excelente estacionamiento, muy seguro y bien ubicado. El personal es muy amable.', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'Buen servicio, aunque un poco caro. Las instalaciones están bien mantenidas.', 2, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'Perfecto para el trabajo, siempre hay lugar y es muy conveniente.', 3, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'Está bien, pero los espacios son un poco pequeños para camionetas.', 4, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'Muy buena ubicación en Palermo, fácil acceso y salida.', 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'Tuve problemas con el sistema de pago, tardó mucho en resolverse.', 2, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO review (rating, comment, user_id, parking_lot_id, created_at, updated_at)
+VALUES (5, 'Excelente estacionamiento, muy seguro y bien ubicado. El personal es muy amable.', 1, 1, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP),
+       (4, 'Buen servicio, aunque un poco caro. Las instalaciones están bien mantenidas.', 2, 2, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP),
+       (5, 'Perfecto para el trabajo, siempre hay lugar y es muy conveniente.', 3, 1, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP),
+       (3, 'Está bien, pero los espacios son un poco pequeños para camionetas.', 4, 3, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP),
+       (4, 'Muy buena ubicación en Palermo, fácil acceso y salida.', 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (2, 'Tuve problemas con el sistema de pago, tardó mucho en resolverse.', 2, 3, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP);
 
 -- Incidentes
-INSERT INTO incident (description, status, walk_in_stay_id, scheduled_reservation_id, created_at, updated_at) VALUES
+INSERT INTO incident (description, status, walk_in_stay_id, scheduled_reservation_id, created_at, updated_at)
+VALUES
 -- Incidente resuelto en walk-in
 ('Vehículo bloqueado por otro auto mal estacionado', 'RESOLVED', 1, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Incidente en progreso en reserva

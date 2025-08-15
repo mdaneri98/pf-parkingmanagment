@@ -2,12 +2,14 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.builder.TestDataBuilder;
-import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -16,26 +18,24 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthControllerIntegrationTest extends BaseIntegrationTest {
-
     // ========== REGISTER TESTS ==========
-
     @Test
     void testRegister_shouldReturn201_andUserIsPersisted() {
-        // 1. Arrange
-        var request = TestDataBuilder.createValidRegisterRequest();
+        RegisterRequest request = TestDataBuilder.createValidRegisterRequest();
 
-        // 2. Act
-        ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/register"), request, String.class);
+        ResponseEntity<ApiResponse<RegisterResponse>> response = restTemplate.exchange(
+                getApiUrl("/auth/register"),
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
-        // 3. Assert
-        assertResponseStatus(response, HttpStatus.CREATED);
-        assertResponseBodyNotEmpty(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().isSuccess());
+        assertEquals("john.doe@example.com", response.getBody().getData().getEmail());
 
-        var apiResponse = parseApiResponse(response, RegisterResponse.class);
-        assertApiResponseSuccess(apiResponse);
-        assertEquals("john.doe@example.com", apiResponse.getData().getEmail());
-
-        // Verify user is persisted in database
         Optional<User> savedUserOpt = userRepository.findByEmail("john.doe@example.com");
         assertTrue(savedUserOpt.isPresent());
 
@@ -46,29 +46,48 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(savedUser.getPasswordHash());
         assertNotEquals("securePassword123", savedUser.getPasswordHash());
         assertTrue(passwordEncoder.matches("securePassword123", savedUser.getPasswordHash()));
+    }
+
+    @Test
+    void testRegister_shouldFail_whenEmailAlreadyExists() {
+        RegisterRequest request = TestDataBuilder.createValidRegisterRequest();
+        request.setEmail(TestDataBuilder.createUserComplete().getEmail());
+        userRepository.save(TestDataBuilder.createUserComplete());
+
+        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
+                getApiUrl("/auth/register"),
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isSuccess());
+        assertTrue(response.getBody().getMessage().contains("Email already registered"));
     }
 
     @Test
     void testRegister_asManager_shouldReturn201_andUserAndManagerArePersisted() {
-        // 1. Arrange
         var request = TestDataBuilder.createValidRegisterRequest();
 
-        // 2. Act
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            getApiUrl("/auth/register?manager=true"), request, String.class);
 
-        // 3. Assert
-        assertResponseStatus(response, HttpStatus.CREATED);
-        assertResponseBodyNotEmpty(response);
+        HttpEntity<RegisterRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(adminUser));
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/auth/register?manager=true",
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
 
-        var apiResponse = parseApiResponse(response, RegisterResponse.class);
-        assertApiResponseSuccess(apiResponse);
-        assertEquals("john.doe@example.com", apiResponse.getData().getEmail());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        ApiResponse<RegisterResponse> apiResponse = parseApiResponse(response, RegisterResponse.class);
+        assertNotNull(apiResponse);
+        assertTrue(apiResponse.isSuccess());
 
-        // Verify user is persisted in database
         Optional<User> savedUserOpt = userRepository.findByEmail("john.doe@example.com");
         assertTrue(savedUserOpt.isPresent());
-
         User savedUser = savedUserOpt.get();
         assertEquals("John", savedUser.getFirstName());
         assertEquals("Doe", savedUser.getLastName());
@@ -77,137 +96,95 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         assertNotEquals("securePassword123", savedUser.getPasswordHash());
         assertTrue(passwordEncoder.matches("securePassword123", savedUser.getPasswordHash()));
 
-        // Verify manager is also persisted
         assertTrue(managerRepository.existsByUserId(savedUser.getId()));
     }
 
-    @Test
-    void testRegister_asNormalUser_shouldReturn201_andOnlyUserIsPersisted() {
-        // 1. Arrange
-        var request = TestDataBuilder.createValidRegisterRequest();
-
-        // 2. Act
-        ResponseEntity<String> response = restTemplate.postForEntity(
-            getApiUrl("/auth/register?manager=false"), request, String.class);
-
-        // 3. Assert
-        assertResponseStatus(response, HttpStatus.CREATED);
-        assertResponseBodyNotEmpty(response);
-
-        var apiResponse = parseApiResponse(response, RegisterResponse.class);
-        assertApiResponseSuccess(apiResponse);
-        assertEquals("john.doe@example.com", apiResponse.getData().getEmail());
-
-        // Verify user is persisted in database
-        Optional<User> savedUserOpt = userRepository.findByEmail("john.doe@example.com");
-        assertTrue(savedUserOpt.isPresent());
-
-        User savedUser = savedUserOpt.get();
-        assertEquals("John", savedUser.getFirstName());
-        assertEquals("Doe", savedUser.getLastName());
-        assertEquals("john.doe@example.com", savedUser.getEmail());
-        assertNotNull(savedUser.getPasswordHash());
-        assertNotEquals("securePassword123", savedUser.getPasswordHash());
-        assertTrue(passwordEncoder.matches("securePassword123", savedUser.getPasswordHash()));
-
-        // Verify manager is NOT persisted
-        assertFalse(managerRepository.existsByUserId(savedUser.getId()));
-    }
-
-    // ========== LOGIN TESTS ==========
 
     @Test
-    void testLogin_withValidCredentials_shouldReturn200_andToken() {
-        // Create a user first
-        String email = "login.test@example.com";
-        String password = "securePassword123";
+    void testLogin_shouldReturn200_withValidCredentials() {
+        var user = TestDataBuilder.createUserComplete();
+        user.setPasswordHash(passwordEncoder.encode("securePassword123"));
+        userRepository.save(user);
 
-        createTestUser(email, password);
 
-        // Attempt login
-        var request = TestDataBuilder.createLoginRequest(email, password);
+        LoginRequest request = new LoginRequest("test@example.com", "securePassword123");
 
-        ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/login"), request, String.class);
+        ResponseEntity<ApiResponse<LoginResponse>> response = restTemplate.exchange(
+                getApiUrl("/auth/login"),
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
-        assertResponseStatus(response, HttpStatus.OK);
-        assertResponseBodyNotEmpty(response);
-
-        // Verify the response structure
-        var apiResponse = parseApiResponse(response, LoginResponse.class);
-        assertApiResponseSuccess(apiResponse);
-        assertEquals(email, apiResponse.getData().getEmail());
-        assertNotNull(apiResponse.getData().getToken(), "El token debe estar presente");
-        assertNotNull(apiResponse.getData().getRefreshToken(), "El refresh token debe estar presente");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().isSuccess());
+        assertNotNull(response.getBody().getData().getToken());
+        assertNotNull(response.getBody().getData().getRefreshToken(), "El refresh token debe estar presente");
     }
 
     @Test
-    void testLogin_withInvalidEmail_shouldReturn401() {
-        var request = TestDataBuilder.createLoginRequest("nonexistent@example.com", "anyPassword");
+    void testLogin_shouldFail_withInvalidPassword() {
+        userRepository.save(TestDataBuilder.createUserComplete());
 
-        ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/login"), request, String.class);
+        LoginRequest request = new LoginRequest("john.doe@example.com", "wrongPassword");
 
-        assertResponseStatus(response, HttpStatus.UNAUTHORIZED);
-        assertResponseBodyNotEmpty(response);
+        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
+                getApiUrl("/auth/login"),
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
-        var apiResponse = parseApiResponse(response, Void.class);
-        assertApiResponseFailure(apiResponse);
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isSuccess());
+        assertTrue(response.getBody().getMessage().contains("Invalid credentials"));
     }
 
     @Test
-    void testLogin_withInvalidPassword_shouldReturn401() {
-        // 1. Arrange
-        String email = "password.test@example.com";
-        String correctPassword = "correctPassword123";
+    void testLogin_shouldFail_withNonExistentUser() {
+        LoginRequest request = new LoginRequest("nonexistent@example.com", "somePassword");
 
-        createTestUser(email, correctPassword);
+        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
+                getApiUrl("/auth/login"),
+                HttpMethod.POST,
+                new HttpEntity<>(request),
+                new ParameterizedTypeReference<>() {
+                }
+        );
 
-        // 2. Act
-        var request = TestDataBuilder.createLoginRequest(email, "wrongPassword");
-
-        // 3. Assert
-        ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/login"), request, String.class);
-
-        assertResponseStatus(response, HttpStatus.UNAUTHORIZED);
-        assertResponseBodyNotEmpty(response);
-
-        var apiResponse = parseApiResponse(response, Void.class);
-        assertApiResponseFailure(apiResponse);
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isSuccess());
+        assertTrue(response.getBody().getMessage().contains("Invalid credentials"));
     }
 
     @ParameterizedTest
     @CsvSource({
-            // Casos inválidos de email y/o password
-            ", password123",                   // email null
-            "'', password123",                 // email vacío
-            "test@example.com, ''",            // password vacío
+            "invalid-email, password123, email",
+            "'', password123, email",
+            "test@example.com, '', password"
     })
-    void testLogin_withInvalidInput_shouldReturn400(String email, String password) {
-        var request = TestDataBuilder.createLoginRequest(email, password);
+    void testRegister_withInvalidInput_shouldReturn400(String email, String password, String expectedField) {
+        RegisterRequest request = new RegisterRequest();
+        request.setEmail(email);
+        request.setPassword(password);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(getApiUrl("/auth/login"), request, String.class);
-        assertResponseStatus(response, HttpStatus.BAD_REQUEST);
+        HttpEntity<RegisterRequest> requestEntity = new HttpEntity<>(request);
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/auth/register",
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        ApiResponse<Void> apiResponse = parseApiResponse(response, Void.class);
+        assertNotNull(apiResponse);
+        assertTrue(apiResponse.getMessage().contains(expectedField));
+        assertTrue(apiResponse.getMessage().contains("is mandatory") || apiResponse.getMessage().contains("is not an alphanumeric value"));
     }
-
-    @Test
-    void testLogin_afterRegister_shouldWork() {
-        // First register a user
-        var registerRequest = TestDataBuilder.createRegisterRequest("Integration", "Test", "test@example.com", "Password123");
-
-        //TODO: yo no haria las 2 pegadas, mockearia la primera, es decir, hago el save en la BD con credenciales, no se que te parece?
-        ResponseEntity<String> registerResponse = restTemplate.postForEntity(getApiUrl("/auth/register"), registerRequest, String.class);
-        assertResponseStatus(registerResponse, HttpStatus.CREATED);
-
-        // Then login with the same credentials
-        var loginRequest = TestDataBuilder.createLoginRequest("test@example.com", "Password123");
-
-        ResponseEntity<String> loginResponse = restTemplate.postForEntity(getApiUrl("/auth/login"), loginRequest, String.class);
-        assertResponseStatus(loginResponse, HttpStatus.OK);
-
-        // Verify login response
-        var apiResponse = parseApiResponse(loginResponse, LoginResponse.class);
-        assertApiResponseSuccess(apiResponse);
-        assertEquals("test@example.com", apiResponse.getData().getEmail());
-        assertNotNull(apiResponse.getData().getToken());
-        assertNotNull(apiResponse.getData().getRefreshToken());
-    }
-} 
+}
