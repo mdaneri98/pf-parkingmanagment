@@ -5,7 +5,6 @@ import ar.edu.itba.parkingmanagmentapi.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,18 +41,18 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<ApiResponse<RefreshTokenResponse>> refresh(@Valid @RequestBody RefreshTokenRequest request) {
         logger.info("Procesando refresh");
 
         RefreshTokenResponse response = authService.refresh(request.getRefreshToken());
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response));
+        return ApiResponse.ok(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@Valid @RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<ApiResponse<Void>> logout(@Valid @RequestBody RefreshTokenRequest request) {
         logger.info("Procesando logout");
         authService.logout(request.getRefreshToken());
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Logged out"));
+        return ApiResponse.ok(null);
     }
 
 }
