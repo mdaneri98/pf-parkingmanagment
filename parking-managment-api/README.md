@@ -235,27 +235,7 @@ docker run -p 8081:8081 \
 ## 📚 Documentación Adicional
 
 - **H2 Console**: http://localhost:8081/h2-console (perfil dev)
-- **Adminer**: http://localhost:8080 (con Docker Compose)
-- **Actuator**: http://localhost:8081/actuator
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
 
 ## 👥 Autores
 
-- **Equipo de Desarrollo** - *Trabajo inicial* - [TuNombre](https://github.com/tuusuario)
-
-## 🙏 Agradecimientos
-
-- Spring Boot Team
-- PostgreSQL Community
-- H2 Database Team 
+- **Equipo de Desarrollo** - *Trabajo inicial* - Matias Ezequiel Daneri y Desiree Melisa Limachi
