@@ -143,5 +143,4 @@ public class AuthServiceImpl implements AuthService {
     public void logout(String refreshToken) {
         refreshTokenService.revokeByToken(refreshToken);
     }
-    
 }

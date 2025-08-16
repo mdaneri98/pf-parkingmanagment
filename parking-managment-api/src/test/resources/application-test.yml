@@ -1,7 +1,9 @@
 spring:
   application:
     name: parking-management-api-test
-  
+  redis:
+    use-testcontainer: true
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -50,6 +52,12 @@ jwt:
   expiration: 300000 # 5 minutos en milisegundos
   refresh:
     expiration: 86400000 # 1 dia en milisegundos
+
+
+recovery:
+  token:
+    ttl-seconds: 300
+  expose-token-in-response: true
 
 
 cors:

@@ -4,6 +4,7 @@ spring:
   application:
     name: parking-management-api
 
+
 # Configuración del servidor
 server:
   port: 8081
@@ -23,3 +24,9 @@ cors:
   allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
   allowed-headers: "*"
   allow-credentials: true
+
+# Password recovery feature configuration
+recovery:
+  token:
+    ttl-seconds: 1800
+  expose-token-in-response: false

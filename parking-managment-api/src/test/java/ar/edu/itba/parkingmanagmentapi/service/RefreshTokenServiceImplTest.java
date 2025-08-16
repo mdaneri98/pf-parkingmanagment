@@ -1,5 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.builder.TestDataBuilder;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.model.RefreshToken;
@@ -43,12 +44,16 @@ class RefreshTokenServiceImplTest {
         User user = TestDataBuilder.createValidUser();
 
         when(refreshTokenRepository.save(any(RefreshToken.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                .thenAnswer(invocation -> {
+                    RefreshToken token = invocation.getArgument(0);
+                    token.setId(1L);
+                    return token;
+                });
 
         // 2. Act
         RefreshToken created = refreshTokenService.createRefreshToken(user, true);
 
-        // 3. Asser
+        // 3. Assert
         assertNotNull(created);
         assertEquals(user, created.getUser());
         assertNotNull(created.getToken());
@@ -65,7 +70,11 @@ class RefreshTokenServiceImplTest {
         User user = TestDataBuilder.createValidUser();
 
         when(refreshTokenRepository.save(any(RefreshToken.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                .thenAnswer(invocation -> {
+                    RefreshToken token = invocation.getArgument(0);
+                    token.setId(1L);
+                    return token;
+                });
 
         // 2. Act
         RefreshToken created = refreshTokenService.createRefreshToken(user, false);
@@ -86,14 +95,22 @@ class RefreshTokenServiceImplTest {
         // 1. Arrange
         User user = TestDataBuilder.createValidUser();
         RefreshToken existing = new RefreshToken();
+        existing.setId(1L);
         existing.setUser(user);
         existing.setToken("old-token");
         existing.setExpiresAt(LocalDateTime.now().plusMinutes(5));
         existing.setRevoked(false);
 
         when(refreshTokenRepository.findByToken("old-token")).thenReturn(Optional.of(existing));
+        
         when(refreshTokenRepository.save(any(RefreshToken.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                .thenAnswer(invocation -> {
+                    RefreshToken token = invocation.getArgument(0);
+                    if (token.getId() == null) {
+                        token.setId(2L);
+                    }
+                    return token;
+                });
 
         // 2. Act
         RefreshToken result = refreshTokenService.validateAndRotate("old-token");
@@ -123,15 +140,15 @@ class RefreshTokenServiceImplTest {
         // 1. Arrange
         User user = TestDataBuilder.createValidUser();
         RefreshToken expired = new RefreshToken();
+        expired.setId(1L);
         expired.setUser(user);
         expired.setToken("expired-token");
         expired.setExpiresAt(LocalDateTime.now().minusSeconds(1));
         expired.setRevoked(false);
 
-        // 2. Act
         when(refreshTokenRepository.findByToken("expired-token")).thenReturn(Optional.of(expired));
 
-        // 3. Assert
+        // 2. Act & 3. Assert
         assertThrows(BadRequestException.class, () -> refreshTokenService.validateAndRotate("expired-token"));
 
         verify(refreshTokenRepository, times(1)).findByToken("expired-token");
