@@ -2,12 +2,14 @@ package ar.edu.itba.parkingmanagmentapi.service;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
 import ar.edu.itba.parkingmanagmentapi.util.ParkingLotMapper;
-import ar.edu.itba.parkingmanagmentapi.validators.CreateParkingLotRequest;
+import ar.edu.itba.parkingmanagmentapi.validators.CreateParkingLotRequestValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.UpdateParkingLotRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +22,15 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     private final ParkingLotRepository parkingLotRepository;
 
-    private final CreateParkingLotRequest createParkingLotRequestValidator;
+    private final CreateParkingLotRequestValidator createParkingLotRequestValidator;
+
+    private final UpdateParkingLotRequestValidator updateParkingLotRequestValidator;
 
     @Autowired
-    public ParkingLotServiceImpl(ParkingLotRepository parkingLotRepository, CreateParkingLotRequest createParkingLotRequestValidator) {
+    public ParkingLotServiceImpl(ParkingLotRepository parkingLotRepository, CreateParkingLotRequestValidator createParkingLotRequestValidator, UpdateParkingLotRequestValidator updateParkingLotRequestValidator) {
         this.parkingLotRepository = parkingLotRepository;
         this.createParkingLotRequestValidator = createParkingLotRequestValidator;
+        this.updateParkingLotRequestValidator = updateParkingLotRequestValidator;
     }
 
     @Override
@@ -56,7 +61,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     }
 
     @Override
-    public ParkingLotResponse updateParkingLot(Long id, ParkingLotRequest request) {
+    public ParkingLotResponse updateParkingLot(Long id, UpdateParkingLotRequest request) {
+        updateParkingLotRequestValidator.validate(request);
         ParkingLot parkingLot = parkingLotRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("ParkingLot with id " + id + " not found"));
 

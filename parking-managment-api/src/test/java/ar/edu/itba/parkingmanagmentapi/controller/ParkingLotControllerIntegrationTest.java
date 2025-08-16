@@ -1,10 +1,7 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
-import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.SpotDTO;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -156,12 +153,12 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void testUpdateParkingLot_shouldReturn404_whenNotFound() {
-        ParkingLotRequest request = new ParkingLotRequest();
-        request.setName("X");
-        request.setAddress("Y");
-        request.setImageUrl("Z");
+        UpdateParkingLotRequest request = new UpdateParkingLotRequest();
+        request.setName("Nombre Inexistente");
+        request.setAddress("Direccion Inexistente");
+        request.setImageUrl("http://example.com/no-image.jpg");
 
-        HttpEntity<ParkingLotRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(managerUser));
+        HttpEntity<UpdateParkingLotRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(managerUser));
         ResponseEntity<String> response = restTemplate.exchange(
                 "/parking-lots/99999",
                 HttpMethod.PUT,
