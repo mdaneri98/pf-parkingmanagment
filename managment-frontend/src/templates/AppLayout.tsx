@@ -1,16 +1,11 @@
-import type { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import clsx from 'clsx';
 import type { User } from '../types';
 
-interface BaseLayoutProps {
-  children: ReactNode;
-}
-
-const BaseLayout = ({ children }: BaseLayoutProps) => {
+const AppLayout: React.FC = () => {
   const location = useLocation();
   
-  // Mock user data - en el futuro vendrá del estado de autenticación
+  // Mock user data - in the future will come from authentication state
   const currentUser: User = {
     id: 1,
     first_name: 'John',
@@ -24,6 +19,10 @@ const BaseLayout = ({ children }: BaseLayoutProps) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: '🏠' },
+    { name: 'Users', href: '/users', icon: '👥' },
+    { name: 'Parking Lots', href: '/parking-lots', icon: '🅿️' },
+    { name: 'Spots', href: '/spots', icon: '🚗' },
+    { name: 'Settings', href: '/settings', icon: '⚙️' },
   ];
 
   return (
@@ -41,7 +40,7 @@ const BaseLayout = ({ children }: BaseLayoutProps) => {
                 <h1 className="text-lg font-semibold text-gray-900">
                   Parking Manager
                 </h1>
-                <p className="text-sm text-gray-600">Panel de Control</p>
+                <p className="text-sm text-gray-600">Control Panel</p>
               </div>
             </div>
           </div>
@@ -49,7 +48,8 @@ const BaseLayout = ({ children }: BaseLayoutProps) => {
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-1">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive = location.pathname === item.href || 
+                (item.href !== '/' && location.pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.name}
@@ -105,7 +105,7 @@ const BaseLayout = ({ children }: BaseLayoutProps) => {
         <main className="min-h-screen">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              {children}
+              <Outlet />
             </div>
           </div>
         </main>
@@ -114,4 +114,4 @@ const BaseLayout = ({ children }: BaseLayoutProps) => {
   );
 };
 
-export default BaseLayout; 
+export default AppLayout;

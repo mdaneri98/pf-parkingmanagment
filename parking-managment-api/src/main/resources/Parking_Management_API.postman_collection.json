@@ -1,210 +1,1053 @@
 {
-  "info": {
-    "_postman_id": "parking-management-api",
-    "name": "Parking Management API",
-    "description": "Colección de endpoints de Autenticación y Usuarios para validar cambios.\n\nInstrucciones rápidas:\n1) Ejecuta Auth > Register (opcional)\n2) Ejecuta Auth > Login\n3) La colección guardará automáticamente accessToken y refreshToken\n4) Ejecuta Auth > Refresh / Logout y los endpoints de Usuarios\n\nVariables requeridas (entorno):\n- baseUrl: http://localhost:8081/api\n- accessToken: se setea en Login/Refresh\n- refreshToken: se setea en Login/Refresh",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8081/api", "type": "string" },
-    { "key": "accessToken", "value": "", "type": "string" },
-    { "key": "refreshToken", "value": "", "type": "string" }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "if (!pm.environment.get('baseUrl')) {",
-          "  console.warn('baseUrl no configurado. Ej: http://localhost:8081/api');",
-          "}"
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "console.log('Status:', pm.response.code, pm.response.status);",
-          "console.log('Response time:', pm.response.responseTime + 'ms');"
-        ]
-      }
-    }
-  ],
-  "item": [
-    {
-      "name": "Auth",
-      "item": [
-        {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
-            "description": "Autentica y devuelve ApiResponse<LoginResponse>. Guarda accessToken y refreshToken."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Login 200', function () { pm.response.to.have.status(200); });",
-                  "const res = pm.response.json();",
-                  "pm.test('ApiResponse.success true', function () { pm.expect(res.success).to.eql(true); });",
-                  "pm.test('Tiene data.token', function () { pm.expect(res.data && res.data.token).to.be.a('string'); });",
-                  "pm.environment.set('accessToken', res.data.token);",
-                  "if (res.data && res.data.refreshToken) { pm.environment.set('refreshToken', res.data.refreshToken); }"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "Register (user)",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securePassword123\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
-            "description": "Crea usuario común. Devuelve ApiResponse<RegisterResponse>."
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Register 201', function () { pm.response.to.have.status(201); });",
-                  "const res = pm.response.json();",
-                  "pm.test('ApiResponse.success true', function () { pm.expect(res.success).to.eql(true); });"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "Register (manager)",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Manager\",\n  \"email\": \"jane.manager@example.com\",\n  \"password\": \"securePassword123\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/auth/register?manager=true", "host": ["{{baseUrl}}"], "path": ["auth", "register"], "query": [ { "key": "manager", "value": "true" } ] },
-            "description": "Crea usuario con rol manager (via entidad Manager)."
-          },
-          "event": [
-            { "listen": "test", "script": { "type": "text/javascript", "exec": [
-              "pm.test('Register manager 201', function () { pm.response.to.have.status(201); });"
-            ] } }
-          ]
-        },
-        {
-          "name": "Refresh",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
-            "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth", "refresh"] },
-            "description": "Rotación de refresh token. Devuelve ApiResponse<RefreshTokenResponse>. Actualiza accessToken/refreshToken."
-          },
-          "event": [
-            { "listen": "test", "script": { "type": "text/javascript", "exec": [
-              "pm.test('Refresh 200', function () { pm.response.to.have.status(200); });",
-              "const res = pm.response.json();",
-              "pm.environment.set('accessToken', res.data.token);",
-              "pm.environment.set('refreshToken', res.data.refreshToken);"
-            ] } }
-          ]
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
-            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] },
-            "description": "Revoca el refresh token (logout)."
-          },
-          "event": [
-            { "listen": "test", "script": { "type": "text/javascript", "exec": [
-              "pm.test('Logout 200', function () { pm.response.to.have.status(200); });",
-              "pm.environment.unset('accessToken');",
-              "pm.environment.unset('refreshToken');"
-            ] } }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Users",
-      "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
-      "item": [
-        {
-          "name": "List users",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
-            "description": "Lista usuarios."
-          },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('200', function(){ pm.response.to.have.status(200); });" ] } } ]
-        },
-        {
-          "name": "Create user",
-          "request": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Rodríguez\",\n  \"email\": \"carlos.rodriguez@example.com\",\n  \"password\": \"password123\",\n  \"imageUrl\": \"https://example.com/avatar.jpg\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
-            "description": "Crea usuario. Requiere rol MANAGER o ADMIN (según SecurityConfig)."
-          },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('201', function(){ pm.response.to.have.status(201); });" ] } } ]
-        },
-        {
-          "name": "Get user by id",
-          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users", "1"] } },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('200', function(){ pm.response.to.have.status(200); });" ] } } ]
-        },
-        {
-          "name": "Update user",
-          "request": {
-            "method": "PUT",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"NuevoNombre\",\n  \"lastName\": \"NuevoApellido\",\n  \"imageUrl\": \"https://example.com/new.jpg\"\n}" },
-            "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users", "1"] },
-            "description": "Actualiza usuario. Requiere rol MANAGER o ADMIN."
-          },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('200', function(){ pm.response.to.have.status(200); });" ] } } ]
-        },
-        {
-          "name": "Delete user",
-          "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users", "1"] } },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('204', function(){ pm.response.to.have.status(204); });" ] } } ]
-        },
-        {
-          "name": "Search users",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/users/search?q=juan", "host": ["{{baseUrl}}"], "path": ["users", "search"], "query": [ { "key": "q", "value": "juan" } ] }
-          },
-          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('200', function(){ pm.response.to.have.status(200); });" ] } } ]
-        }
-      ],
-      "description": "Endpoints de usuarios (requieren Authorization: Bearer {{accessToken}}). Para POST/PUT/DELETE se requiere MANAGER o ADMIN."
-    }
-  ]
+	"info": {
+		"_postman_id": "parking-management-api-collection",
+		"name": "Parking Management API",
+		"description": "Complete API collection for Parking Management System with authentication scripts and all endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "parking-management-api"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register?manager=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							],
+							"query": [
+								{
+									"key": "manager",
+									"value": "false",
+									"description": "Set to true to register as manager"
+								}
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Manager",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{managerFirstName}}\",\n    \"lastName\": \"{{managerLastName}}\",\n    \"email\": \"{{managerEmail}}\",\n    \"password\": \"{{managerPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register?manager=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							],
+							"query": [
+								{
+									"key": "manager",
+									"value": "true",
+									"description": "Register as manager"
+								}
+							]
+						},
+						"description": "Register a new manager account"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{adminFirstName}}\",\n    \"lastName\": \"{{adminLastName}}\",\n    \"email\": \"{{adminEmail}}\",\n    \"password\": \"{{adminPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register?manager=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							],
+							"query": [
+								{
+									"key": "manager",
+									"value": "true",
+									"description": "Register as manager (admin role)"
+								}
+							]
+						},
+						"description": "Register a new admin account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with regular user credentials to get access token and refresh token"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data) {",
+									"        pm.environment.set('accessToken', response.data.accessToken);",
+									"        pm.environment.set('refreshToken', response.data.refreshToken);",
+									"        pm.environment.set('tokenType', response.data.tokenType || 'Bearer');",
+									"        pm.environment.set('currentUser', 'user');",
+									"        console.log('User login successful');",
+									"        console.log('Access Token:', response.data.accessToken);",
+									"        console.log('Refresh Token:', response.data.refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Login Manager",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{managerEmail}}\",\n    \"password\": \"{{managerPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with manager credentials to get access token and refresh token"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data) {",
+									"        pm.environment.set('accessToken', response.data.accessToken);",
+									"        pm.environment.set('refreshToken', response.data.refreshToken);",
+									"        pm.environment.set('tokenType', response.data.tokenType || 'Bearer');",
+									"        pm.environment.set('currentUser', 'manager');",
+									"        console.log('Manager login successful');",
+									"        console.log('Access Token:', response.data.accessToken);",
+									"        console.log('Refresh Token:', response.data.refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Login Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{adminEmail}}\",\n    \"password\": \"{{adminPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with admin credentials to get access token and refresh token"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data) {",
+									"        pm.environment.set('accessToken', response.data.accessToken);",
+									"        pm.environment.set('refreshToken', response.data.refreshToken);",
+									"        pm.environment.set('tokenType', response.data.tokenType || 'Bearer');",
+									"        pm.environment.set('currentUser', 'admin');",
+									"        console.log('Admin login successful');",
+									"        console.log('Access Token:', response.data.accessToken);",
+									"        console.log('Refresh Token:', response.data.refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh access token using refresh token"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data) {",
+									"        pm.environment.set('accessToken', response.data.accessToken);",
+									"        pm.environment.set('refreshToken', response.data.refreshToken);",
+									"        console.log('Token refreshed successfully');",
+									"        console.log('New Access Token:', response.data.accessToken);",
+									"        console.log('New Refresh Token:', response.data.refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout and invalidate refresh token"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.environment.set('accessToken', '');",
+									"    pm.environment.set('refreshToken', '');",
+									"    console.log('Logout successful - tokens cleared');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Request Password Recovery",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{recoveryEmail}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/password-recovery/request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"request"
+							]
+						},
+						"description": "Request password recovery for an email address"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data && response.data.token) {",
+									"        pm.environment.set('recoveryToken', response.data.token);",
+									"        console.log('Password recovery token received:', response.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Verify Recovery Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{recoveryToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/password-recovery/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"verify"
+							]
+						},
+						"description": "Verify if a recovery token is valid"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{recoveryToken}}\",\n    \"newPassword\": \"{{newPassword}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/password-recovery/reset",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"reset"
+							]
+						},
+						"description": "Reset password using recovery token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login, register, token refresh, and logout"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{newUserEmail}}\",\n    \"password\": \"{{newUserPassword}}\",\n    \"firstName\": \"{{newUserFirstName}}\",\n    \"lastName\": \"{{newUserLastName}}\",\n    \"imageUrl\": \"{{newUserImageUrl}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Create a new user (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Get all users (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Get user by ID (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\",\n    \"imageUrl\": \"{{updatedImageUrl}}\",\n    \"userDetail\": {\n        \"phone\": \"{{updatedPhone}}\",\n        \"address\": \"{{updatedAddress}}\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Update user information (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Delete user by ID (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/search?q={{searchQuery}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{searchQuery}}",
+									"description": "Search query string"
+								}
+							]
+						},
+						"description": "Search users by query string (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints (CRUD operations and search)"
+		},
+		{
+			"name": "Parking Lots",
+			"item": [
+				{
+					"name": "Create Parking Lot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{parkingLotName}}\",\n    \"address\": \"{{parkingLotAddress}}\",\n    \"imageUrl\": \"{{parkingLotImageUrl}}\",\n    \"managerId\": {{managerId}},\n    \"spots\": [\n        {\n            \"vehicleType\": \"{{spotVehicleType}}\",\n            \"floor\": {{spotFloor}},\n            \"code\": \"{{spotCode}}\",\n            \"isAvailable\": {{spotIsAvailable}}\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots"
+							]
+						},
+						"description": "Create a new parking lot with spots (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Parking Lots",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots"
+							]
+						},
+						"description": "Get all parking lots (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Parking Lot by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}"
+							]
+						},
+						"description": "Get parking lot by ID (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Parking Lot",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{updatedParkingLotName}}\",\n    \"address\": \"{{updatedParkingLotAddress}}\",\n    \"imageUrl\": \"{{updatedParkingLotImageUrl}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}"
+							]
+						},
+						"description": "Update parking lot information (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Parking Lot",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}"
+							]
+						},
+						"description": "Delete parking lot by ID (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Parking lot management endpoints (CRUD operations)"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-refresh token if expired",
+					"const accessToken = pm.environment.get('accessToken');",
+					"const refreshToken = pm.environment.get('refreshToken');",
+					"",
+					"if (accessToken && refreshToken) {",
+					"    // Check if token is expired (JWT tokens expire in 5 minutes according to config)",
+					"    try {",
+					"        const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));",
+					"        const currentTime = Math.floor(Date.now() / 1000);",
+					"        ",
+					"        if (tokenPayload.exp && currentTime >= tokenPayload.exp) {",
+					"            console.log('Token expired, attempting to refresh...');",
+					"            ",
+					"            // Make a request to refresh the token",
+					"            pm.sendRequest({",
+					"                url: pm.environment.get('baseUrl') + '/auth/refresh',",
+					"                method: 'POST',",
+					"                header: {",
+					"                    'Content-Type': 'application/json'",
+					"                },",
+					"                body: {",
+					"                    mode: 'raw',",
+					"                    raw: JSON.stringify({ refreshToken: refreshToken })",
+					"                }",
+					"            }, function (err, response) {",
+					"                if (!err && response.code === 200) {",
+					"                    const refreshResponse = response.json();",
+					"                    if (refreshResponse.success && refreshResponse.data) {",
+					"                        pm.environment.set('accessToken', refreshResponse.data.accessToken);",
+					"                        pm.environment.set('refreshToken', refreshResponse.data.refreshToken);",
+					"                        console.log('Token refreshed automatically');",
+					"                    }",
+					"                } else {",
+					"                    console.log('Failed to refresh token, clearing tokens');",
+					"                    pm.environment.set('accessToken', '');",
+					"                    pm.environment.set('refreshToken', '');",
+					"                }",
+					"            });",
+					"        }",
+					"    } catch (e) {",
+					"        console.log('Error parsing token:', e);",
+					"    }",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8081/api",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "user@example.com",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "password123",
+			"type": "string"
+		},
+		{
+			"key": "firstName",
+			"value": "John",
+			"type": "string"
+		},
+		{
+			"key": "lastName",
+			"value": "Doe",
+			"type": "string"
+		},
+		{
+			"key": "managerFirstName",
+			"value": "Manager",
+			"type": "string"
+		},
+		{
+			"key": "managerLastName",
+			"value": "User",
+			"type": "string"
+		},
+		{
+			"key": "managerEmail",
+			"value": "manager@example.com",
+			"type": "string"
+		},
+		{
+			"key": "managerPassword",
+			"value": "manager123",
+			"type": "string"
+		},
+		{
+			"key": "adminFirstName",
+			"value": "Admin",
+			"type": "string"
+		},
+		{
+			"key": "adminLastName",
+			"value": "User",
+			"type": "string"
+		},
+		{
+			"key": "adminEmail",
+			"value": "admin@example.com",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "admin123",
+			"type": "string"
+		},
+		{
+			"key": "newUserEmail",
+			"value": "newuser@example.com",
+			"type": "string"
+		},
+		{
+			"key": "newUserPassword",
+			"value": "newuser123",
+			"type": "string"
+		},
+		{
+			"key": "newUserFirstName",
+			"value": "New",
+			"type": "string"
+		},
+		{
+			"key": "newUserLastName",
+			"value": "User",
+			"type": "string"
+		},
+		{
+			"key": "newUserImageUrl",
+			"value": "https://example.com/avatar.jpg",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "updatedFirstName",
+			"value": "Updated",
+			"type": "string"
+		},
+		{
+			"key": "updatedLastName",
+			"value": "Name",
+			"type": "string"
+		},
+		{
+			"key": "updatedImageUrl",
+			"value": "https://example.com/updated-avatar.jpg",
+			"type": "string"
+		},
+		{
+			"key": "updatedPhone",
+			"value": "+1234567890",
+			"type": "string"
+		},
+		{
+			"key": "updatedAddress",
+			"value": "123 Updated Street, City, Country",
+			"type": "string"
+		},
+		{
+			"key": "searchQuery",
+			"value": "john",
+			"type": "string"
+		},
+		{
+			"key": "parkingLotName",
+			"value": "Central Parking",
+			"type": "string"
+		},
+		{
+			"key": "parkingLotAddress",
+			"value": "123 Main Street, Downtown",
+			"type": "string"
+		},
+		{
+			"key": "parkingLotImageUrl",
+			"value": "https://example.com/parking-lot.jpg",
+			"type": "string"
+		},
+		{
+			"key": "managerId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "spotVehicleType",
+			"value": "CAR",
+			"type": "string"
+		},
+		{
+			"key": "spotFloor",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "spotCode",
+			"value": "A1",
+			"type": "string"
+		},
+		{
+			"key": "spotIsAvailable",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "parkingLotId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "updatedParkingLotName",
+			"value": "Updated Central Parking",
+			"type": "string"
+		},
+		{
+			"key": "updatedParkingLotAddress",
+			"value": "456 Updated Street, Downtown",
+			"type": "string"
+		},
+		{
+			"key": "updatedParkingLotImageUrl",
+			"value": "https://example.com/updated-parking-lot.jpg",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tokenType",
+			"value": "Bearer",
+			"type": "string"
+		},
+		{
+			"key": "recoveryEmail",
+			"value": "user@example.com",
+			"type": "string"
+		},
+		{
+			"key": "recoveryToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newPassword",
+			"value": "newSecurePassword123",
+			"type": "string"
+		},
+		{
+			"key": "currentUser",
+			"value": "",
+			"type": "string"
+		}
+	]
 }
