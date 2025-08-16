@@ -10,6 +10,7 @@ const Authentication = React.lazy(() => import('./pages/Authentication'));
 const UserManagement = React.lazy(() => import('./pages/UserManagement'));
 const ParkingLotManagement = React.lazy(() => import('./pages/ParkingLotManagement'));
 const ParkingLotDetails = React.lazy(() => import('./pages/ParkingLotDetails'));
+const ParkingLotProfile = React.lazy(() => import('./pages/ParkingLotProfile'));
 const SpotManagement = React.lazy(() => import('./pages/SpotManagement'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
@@ -48,6 +49,12 @@ const AppRouter: React.FC = () => {
           <Route path="parking-lots/:id" element={
             <Suspense fallback={<LoadingSpinner />}>
               <ParkingLotDetails />
+            </Suspense>
+          } />
+          
+          <Route path="parking-lots/:id/profile" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <ParkingLotProfile />
             </Suspense>
           } />
           

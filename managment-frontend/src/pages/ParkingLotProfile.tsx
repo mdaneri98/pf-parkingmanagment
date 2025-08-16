@@ -345,3 +345,5 @@ const ParkingLotProfile = () => {
     </div>
   );
 };
+
+export default ParkingLotProfile;

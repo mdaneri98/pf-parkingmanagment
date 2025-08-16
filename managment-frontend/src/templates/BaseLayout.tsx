@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
-import { useAppSelector } from '../hooks/redux';
 import type { User } from '../types';
 
 interface BaseLayoutProps {
@@ -10,7 +9,6 @@ interface BaseLayoutProps {
 
 const BaseLayout = ({ children }: BaseLayoutProps) => {
   const location = useLocation();
-  const { selectedParkingLot } = useAppSelector((state) => state.parkingLot);
   
   // Mock user data - en el futuro vendrá del estado de autenticación
   const currentUser: User = {

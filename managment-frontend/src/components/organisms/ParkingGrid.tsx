@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { addSpot, updateSpot, deleteSpot } from '../../stores/spotSlice';
-import type { Spot, ParkingLot } from '../../types';
+import type { Spot } from '../../types';
 import Card from '../atoms/Card';
 import SlotModal from '../molecules/SlotModal';
 import SlotCard from '../molecules/SlotCard';

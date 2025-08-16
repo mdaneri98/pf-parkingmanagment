@@ -1,12 +1,9 @@
-import type { ReactNode } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import clsx from 'clsx';
-import { useAppSelector } from '../hooks/redux';
 import type { User } from '../types';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
-  const { selectedParkingLot } = useAppSelector((state) => state.parkingLot);
   
   // Mock user data - in the future will come from authentication state
   const currentUser: User = {
@@ -25,7 +22,6 @@ const AppLayout: React.FC = () => {
     { name: 'Users', href: '/users', icon: '👥' },
     { name: 'Parking Lots', href: '/parking-lots', icon: '🅿️' },
     { name: 'Spots', href: '/spots', icon: '🚗' },
-    { name: 'Reports', href: '/reports', icon: '📊' },
     { name: 'Settings', href: '/settings', icon: '⚙️' },
   ];
 
