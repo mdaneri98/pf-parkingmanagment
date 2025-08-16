@@ -1,0 +1,16 @@
+package ar.edu.itba.parkingmanagmentapi.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class VerifyRecoveryTokenRequest {
+    private String token;
+}
+
+

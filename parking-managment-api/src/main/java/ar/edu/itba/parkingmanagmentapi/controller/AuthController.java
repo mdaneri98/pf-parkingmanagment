@@ -1,6 +1,12 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
-import ar.edu.itba.parkingmanagmentapi.dto.*;
+import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

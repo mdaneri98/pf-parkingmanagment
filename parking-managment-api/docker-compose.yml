@@ -18,12 +18,12 @@ services:
       - parking_network
     restart: unless-stopped
 
-  # Adminer para gestión de base de datos (opcional)
-  adminer:
-    image: adminer
-    container_name: parking_adminer
+  redis:
+    image: redis:7-alpine
+    container_name: parking_redis
     ports:
-      - "8080:8080"
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "parking_password"]
     networks:
       - parking_network
     restart: unless-stopped
