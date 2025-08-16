@@ -6,59 +6,73 @@
 -- Usuarios comunes 
 -- Contraseña "password123" hasheada con BCrypt: $2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.
 -- Contraseña "1234" hasheada con BCrypt: $2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS
-INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at) VALUES
-('John', 'Doe', 'admin@admin.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('María', 'González', 'maria.gonzalez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Carlos', 'Rodríguez', 'carlos.rodriguez@hotmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Ana', 'Martínez', 'ana.martinez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Roberto', 'López', 'roberto.lopez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Laura', 'Fernández', 'laura.fernandez@outlook.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Pepe', 'Usuario', 'pepe@gmail.com', '$2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at)
+VALUES ('John', 'Doe', 'admin@admin.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('María', 'González', 'maria.gonzalez@outlook.com',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Carlos', 'Rodríguez', 'carlos.rodriguez@hotmail.com',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Ana', 'Martínez', 'ana.martinez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Roberto', 'López', 'roberto.lopez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Laura', 'Fernández', 'laura.fernandez@outlook.com',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('Pepe', 'Usuario', 'pepe@gmail.com', '$2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS',
+        'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Detalles de usuarios
-INSERT INTO user_detail (user_id, phone, address, created_at, updated_at) VALUES
-(1, '+5411-2345-6789', 'Av. Corrientes 1234, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, '+5411-3456-7890', 'Av. Santa Fe 2345, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, '+5411-4567-8901', 'Av. Cabildo 3456, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, '+5411-5678-9012', 'Av. Rivadavia 4567, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, '+5411-6789-0123', 'Av. Belgrano 5678, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(6, '+5411-7890-1234', 'Av. Libertador 6789, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(7, '+5411-8901-2345', 'Av. Calle Falsa 123, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO user_detail (user_id, phone, address, created_at, updated_at)
+VALUES (1, '+5411-2345-6789', 'Av. Corrientes 1234, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (2, '+5411-3456-7890', 'Av. Santa Fe 2345, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (3, '+5411-4567-8901', 'Av. Cabildo 3456, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (4, '+5411-5678-9012', 'Av. Rivadavia 4567, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (5, '+5411-6789-0123', 'Av. Belgrano 5678, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (6, '+5411-7890-1234', 'Av. Libertador 6789, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (7, '+5411-8901-2345', 'Av. Calle Falsa 123, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Gerentes (usuarios 5 y 6 serán gerentes)
-INSERT INTO manager (user_id, created_at, updated_at) VALUES
-(7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO manager (user_id, created_at, updated_at)
+VALUES (7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Administradores (usuario 5 será admin)
-INSERT INTO admin (user_id, created_at, updated_at) VALUES
-(1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO admin (user_id, created_at, updated_at)
+VALUES (1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamientos
-INSERT INTO parking_lot (address, name, image_url, manager_id, created_at, updated_at)
+INSERT INTO parking_lot (address, name, image_url, manager_id, latitude, longitude, created_at, updated_at)
 VALUES ('Av. Corrientes 1500', 'Estacionamiento 1',
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', 1, -34.6025, -58.3958, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP),
        ('Av. Santa Fe 3000, Palermo, CABA', 'Estacionamiento 2',
-        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400', 2, -34.5833, -58.4196, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP),
        ('Av. Cabildo 2800, Belgrano, CABA', 'Estacionamiento 3',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', 1, -34.5705, -58.4415, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP);
 
 -- Espacios de estacionamiento
 -- Estacionamiento 1 (Corrientes) - 12 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at) VALUES
-('AUTO', 0, 'PB-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 0, 'PB-A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 0, 'PB-A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 0, 'PB-A04', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 1, '1P-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 1, '1P-A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('AUTO', 1, '1P-A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 0, 'PB-M01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 0, 'PB-M02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 0, 'PB-M03', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 0, 'PB-C01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 0, 'PB-C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
+VALUES ('AUTO', 0, 'PB-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'PB-A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'PB-A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'PB-A04', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 1, '1P-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 1, '1P-A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 1, '1P-A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', 0, 'PB-M01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', 0, 'PB-M02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', 0, 'PB-M03', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', 0, 'PB-C01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', 0, 'PB-C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 2 (Santa Fe) - 10 espacios
 INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
@@ -101,27 +115,29 @@ VALUES
 ('CAMIONETA', 1050.00, '2024-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Vehículos
-INSERT INTO vehicle (license_plate, brand, model, type, created_at, updated_at) VALUES
-('ABC123', 'Toyota', 'Corolla', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('DEF456', 'Honda', 'Civic', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('GHI789', 'Yamaha', 'YBR 125', 'MOTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('JKL012', 'Ford', 'EcoSport', 'CAMIONETA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MNO345', 'Chevrolet', 'Onix', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('PQR678', 'Bajaj', 'Pulsar', 'MOTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('STU901', 'Volkswagen', 'Amarok', 'CAMIONETA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO vehicle (license_plate, brand, model, type, created_at, updated_at)
+VALUES ('ABC123', 'Toyota', 'Corolla', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('DEF456', 'Honda', 'Civic', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('GHI789', 'Yamaha', 'YBR 125', 'MOTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('JKL012', 'Ford', 'EcoSport', 'CAMIONETA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MNO345', 'Chevrolet', 'Onix', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('PQR678', 'Bajaj', 'Pulsar', 'MOTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('STU901', 'Volkswagen', 'Amarok', 'CAMIONETA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Asignaciones usuario-vehículo
-INSERT INTO user_vehicle_assignment (user_id, vehicle_license_plate, created_at, updated_at) VALUES
-(1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'DEF456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'GHI789', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'JKL012', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'MNO345', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'PQR678', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(1, 'STU901', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO user_vehicle_assignment (user_id, vehicle_license_plate, created_at, updated_at)
+VALUES (1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (2, 'DEF456', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (2, 'GHI789', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (3, 'JKL012', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (4, 'MNO345', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (4, 'PQR678', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (1, 'STU901', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Reservas programadas
-INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, status, estimated_price, spot_id, vehicle_user_id, vehicle_license_plate, created_at, updated_at) VALUES
+INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, status, estimated_price, spot_id,
+                                   vehicle_user_id, vehicle_license_plate, created_at, updated_at)
+VALUES
 -- Reserva completada (ayer)
 ('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', CURRENT_TIMESTAMP,
  CURRENT_TIMESTAMP),

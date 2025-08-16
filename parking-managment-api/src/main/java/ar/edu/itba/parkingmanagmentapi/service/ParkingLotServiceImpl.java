@@ -44,6 +44,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         parkingLot.setName(request.getName());
         parkingLot.setAddress(request.getAddress());
         parkingLot.setImageUrl(request.getImageUrl());
+        parkingLot.setLatitude(request.getLatitude());
+        parkingLot.setLongitude(request.getLongitude());
         parkingLot.setSpots(Optional.ofNullable(request.getSpots())
                 .orElseGet(List::of)
                 .stream()
@@ -69,6 +71,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         parkingLot.setName(request.getName());
         parkingLot.setAddress(request.getAddress());
         parkingLot.setImageUrl(request.getImageUrl());
+        parkingLot.setLatitude(request.getLatitude());
+        parkingLot.setLongitude(request.getLongitude());
 
         return ParkingLotMapper.toParkingLotWithoutSpotsResponse(parkingLotRepository.save(parkingLot));
     }

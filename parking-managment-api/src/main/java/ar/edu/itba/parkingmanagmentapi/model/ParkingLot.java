@@ -25,6 +25,12 @@ public class ParkingLot {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -51,10 +57,6 @@ public class ParkingLot {
     public ParkingLot() {
     }
 
-    public ParkingLot(String address, Manager manager) {
-        this.address = address;
-        this.manager = manager;
-    }
 
     // Getters y Setters
     public Long getId() {
@@ -121,4 +123,11 @@ public class ParkingLot {
         this.name = name;
     }
 
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 } 

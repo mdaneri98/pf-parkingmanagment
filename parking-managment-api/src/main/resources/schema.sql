@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS parking_lot (
     name VARCHAR(100) NOT NULL,
     image_url VARCHAR(500),
     manager_id BIGINT,
+    latitude DECIMAL(9,6) NOT NULL,
+    longitude DECIMAL(9,6) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_parking_lot_manager FOREIGN KEY (manager_id) REFERENCES manager(id)

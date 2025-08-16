@@ -27,6 +27,8 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         request.setAddress("Av. Siempre Viva 123");
         request.setImageUrl("http://example.com/image.jpg");
         request.setManagerId(managerUser.getId());
+        request.setLatitude(-34.6037);
+        request.setLongitude(-58.3816);
         request.setSpots(List.of(SpotDTO.builder()
                 .vehicleType("car")
                 .code("A")
@@ -63,6 +65,8 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         parkingLot.setName("Estacionamiento Norte");
         parkingLot.setAddress("Calle Falsa 456");
         parkingLot.setImageUrl("http://example.com/image2.jpg");
+        parkingLot.setLatitude(-34.6037);
+        parkingLot.setLongitude(-58.3816);
         parkingLotRepository.save(parkingLot);
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));
@@ -100,11 +104,15 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         p1.setName("Uno");
         p1.setAddress("Calle 1");
         p1.setImageUrl("url1");
+        p1.setLatitude(-34.6037);
+        p1.setLongitude(-58.3816);
 
         ParkingLot p2 = new ParkingLot();
         p2.setName("Dos");
         p2.setAddress("Calle 2");
         p2.setImageUrl("url2");
+        p2.setLatitude(-34.6037);
+        p2.setLongitude(-58.3816);
 
         parkingLotRepository.saveAll(List.of(p1, p2));
 
@@ -129,12 +137,16 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         parkingLot.setName("Viejo Nombre");
         parkingLot.setAddress("Vieja Direccion");
         parkingLot.setImageUrl("viejo.jpg");
+        parkingLot.setLatitude(-34.6037);
+        parkingLot.setLongitude(-58.3816);
         parkingLotRepository.save(parkingLot);
 
         ParkingLotRequest updateRequest = new ParkingLotRequest();
         updateRequest.setName("Nuevo Nombre");
         updateRequest.setAddress("Nueva Direccion");
         updateRequest.setImageUrl("nuevo.jpg");
+        updateRequest.setLatitude(-34.6037);
+        updateRequest.setLongitude(-58.3816);
 
         HttpEntity<ParkingLotRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(managerUser));
         ResponseEntity<ApiResponse<ParkingLotResponse>> response = restTemplate.exchange(
@@ -175,6 +187,8 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         parkingLot.setName("Eliminar");
         parkingLot.setAddress("Calle X");
         parkingLot.setImageUrl("img.jpg");
+        parkingLot.setLatitude(-34.6037);
+        parkingLot.setLongitude(-58.3816);
         parkingLot = parkingLotRepository.save(parkingLot);
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));

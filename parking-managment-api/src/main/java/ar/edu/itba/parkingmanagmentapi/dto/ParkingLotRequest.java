@@ -16,5 +16,8 @@ public class ParkingLotRequest {
     private String address;
     private String imageUrl;
     private Long managerId;
+    //TODO: serán agregadas por API?
+    private Double latitude;
+    private Double longitude;
     private List<SpotDTO> spots;
 }
