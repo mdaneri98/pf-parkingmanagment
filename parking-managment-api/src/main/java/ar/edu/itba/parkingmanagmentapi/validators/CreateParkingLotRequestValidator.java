@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public class CreateParkingLotRequest {
+public class CreateParkingLotRequestValidator {
     private final MandatoryFieldValidator mandatoryFieldValidator;
     private final BlankFieldValidator blankFieldValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator;
     private final AlphanumericWithDashFieldValidator alphanumericValidator;
     private final NonEmptyCollectionValidator nonEmptyCollectionValidator;
 
-    public CreateParkingLotRequest(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, NonEmptyCollectionValidator nonEmptyCollectionValidator) {
+    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, NonEmptyCollectionValidator nonEmptyCollectionValidator) {
         this.mandatoryFieldValidator = mandatoryFieldValidator;
         this.blankFieldValidator = blankFieldValidator;
         this.lengthRangeFieldInfoValidator = lengthRangeFieldInfoValidator;

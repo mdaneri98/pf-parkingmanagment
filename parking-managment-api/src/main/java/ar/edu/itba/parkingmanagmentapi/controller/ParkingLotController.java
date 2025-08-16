@@ -3,6 +3,7 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.service.ParkingLotService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class ParkingLotController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ParkingLotResponse>> updateParkingLot(@PathVariable Long id,
-                                                                            @Valid @RequestBody ParkingLotRequest request) {
+                                                                            @Valid @RequestBody UpdateParkingLotRequest request) {
         ParkingLotResponse updated = parkingLotService.updateParkingLot(id, request);
         return ApiResponse.ok(updated);
     }
