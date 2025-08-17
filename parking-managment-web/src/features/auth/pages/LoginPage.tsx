@@ -1,9 +1,13 @@
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useLoginMutation } from '../api/authApi';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { setCredentials } from '../slice/authSlice';
+import { setCredentials, setUser } from '../slice/authSlice';
+import { useLazyGetUserByEmailQuery } from '../../users/api/usersApi';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { selectAuth, selectIsAuthenticated } from '../selectors';
+import { useEffect } from 'react';
 
 type FormValues = { email: string; password: string };
 
@@ -11,11 +15,27 @@ export function LoginPage() {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>();
   const [login, { isLoading, error }] = useLoginMutation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [triggerGetUserByEmail] = useLazyGetUserByEmailQuery();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const { user } = useAppSelector(selectAuth);
 
   const onSubmit = async (values: FormValues) => {
     const res = await login(values).unwrap();
     dispatch(setCredentials({ accessToken: res.data.token, refreshToken: res.data.refreshToken }));
+    try {
+      const userRes = await triggerGetUserByEmail(res.data.email).unwrap();
+      const u = userRes.data;
+      dispatch(setUser({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: 'manager' }));
+    } catch {}
+    navigate('/app', { replace: true });
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate('/app', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <AuthCard title="Sign in">
