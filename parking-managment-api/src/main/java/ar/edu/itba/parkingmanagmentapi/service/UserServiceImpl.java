@@ -105,37 +105,12 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Finds a user by Email
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-        //TODO: deberia quedar asi, analizar como quedaria esta respuesta, porque no podemos pasar el password
-        /*return userRepository.findByEmail(email)
-                .map(UserMapper::toUserResponse)
-                .orElseThrow(() -> new NotFoundException("User not found with email: " + email));*/
-    }
-
-    /**
      * Lists all users
      */
     @Override
     @Transactional(readOnly = true)
     public List<UserResponse> findAll() {
         return userRepository.findAll()
-                .stream()
-                .map(UserMapper::toUserResponse)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Searches users by search term
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List<UserResponse> searchUsers(String searchTerm) {
-        return userRepository.findByFirstNameOrLastNameContainingIgnoreCase(searchTerm)
                 .stream()
                 .map(UserMapper::toUserResponse)
                 .collect(Collectors.toList());
@@ -151,14 +126,38 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
+    // -------------------------- EXTENSIONS --------------------------
+
     /**
-     * Verifies user credentials
+     * Searches users by search term
      */
     @Override
     @Transactional(readOnly = true)
-    public boolean verifyCredentials(String email, String password) {
-        Optional<User> user = userRepository.findByEmail(email);
-        return user.isPresent() && passwordEncoder.matches(password, user.get().getPasswordHash());
+    public List<UserResponse> searchUsers(String searchTerm) {
+        return userRepository.findByFirstNameOrLastNameContainingIgnoreCase(searchTerm)
+                .stream()
+                .map(UserMapper::toUserResponse)
+                .collect(Collectors.toList());
     }
 
-} 
+    /**
+     * Finds a user by Email
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponse findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(UserMapper::toUserResponse)
+                .orElseThrow(() -> new NotFoundException("User not found with email: " + email));
+    }
+
+    // -------------------------- RAW ENTITIES --------------------------
+
+    /**
+     * Finds a raw user by Email
+     */
+    @Override
+    public Optional<User> findEntityByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+}

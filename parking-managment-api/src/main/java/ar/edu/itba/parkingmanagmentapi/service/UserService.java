@@ -26,14 +26,16 @@ public interface UserService {
     UserResponse findById(Long id);
 
     /**
-     * Finds a user by Email
-     */
-    Optional<User> findByEmail(String email);
-
-    /**
      * Lists all users
      */
     List<UserResponse> findAll();
+
+    /**
+     * Deletes a user
+     */
+    void deleteUser(Long id);
+
+    // -------------------------- EXTENSIONS --------------------------
 
     /**
      * Searches users by search term
@@ -41,13 +43,16 @@ public interface UserService {
     List<UserResponse> searchUsers(String searchTerm);
 
     /**
-     * Deletes a user
+     * Finds a user by Email
      */
-    void deleteUser(Long id);
+    UserResponse findByEmail(String email);
+
+    // -------------------------- RAW EXTENSIONS --------------------------
 
     /**
-     * Verifies user credentials
+     * Finds a raw user by Email
      */
-    boolean verifyCredentials(String email, String password);
+    Optional<User> findEntityByEmail(String email);
+
 
 }

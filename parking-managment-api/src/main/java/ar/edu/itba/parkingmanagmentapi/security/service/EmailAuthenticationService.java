@@ -46,7 +46,7 @@ public class EmailAuthenticationService {
     public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
         logger.debug("Loading user by email: {}", email);
 
-        User user = userService.findByEmail(email)
+        User user = userService.findEntityByEmail(email)
                 .orElseThrow(() -> {
                     logger.warn("User not found with email: {}", email);
                     return new NotFoundException("Email not found");
