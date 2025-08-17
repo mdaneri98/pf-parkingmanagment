@@ -2,7 +2,11 @@ package ar.edu.itba.parkingmanagmentapi.service;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
+import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -33,4 +37,7 @@ public interface ParkingLotService {
      */
     void deleteParkingLot(Long id);
 
+    ParkingLot findEntityById(Long id);
+
+    Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Pageable pageable);
 }

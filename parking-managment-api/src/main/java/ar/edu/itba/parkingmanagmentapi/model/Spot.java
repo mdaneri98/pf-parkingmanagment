@@ -50,11 +50,12 @@ public class Spot {
     public Spot() {
     }
 
-    public Spot(String vehicleType, String code, ParkingLot parkingLot) {
+    public Spot(String code, Boolean isAvailable, String vehicleType, Integer floor, ParkingLot parkingLot) {
         this.vehicleType = vehicleType;
         this.code = code;
         this.parkingLot = parkingLot;
-        this.isAvailable = true;
+        this.floor = floor;
+        this.isAvailable = isAvailable;
     }
 
     // Getters y Setters

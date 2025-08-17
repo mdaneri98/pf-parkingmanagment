@@ -15,12 +15,15 @@ public class CreateParkingLotRequestValidator {
     private final AlphanumericWithDashFieldValidator alphanumericValidator;
     private final NonEmptyCollectionValidator nonEmptyCollectionValidator;
 
-    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, NonEmptyCollectionValidator nonEmptyCollectionValidator) {
+    private final SpotRequestValidator spotRequestValidator;
+
+    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, NonEmptyCollectionValidator nonEmptyCollectionValidator, SpotRequestValidator spotRequestValidator) {
         this.mandatoryFieldValidator = mandatoryFieldValidator;
         this.blankFieldValidator = blankFieldValidator;
         this.lengthRangeFieldInfoValidator = lengthRangeFieldInfoValidator;
         this.alphanumericValidator = alphanumericValidator;
         this.nonEmptyCollectionValidator = nonEmptyCollectionValidator;
+        this.spotRequestValidator = spotRequestValidator;
     }
 
     public void validate(ParkingLotRequest parkingLotRequest) {
@@ -44,8 +47,9 @@ public class CreateParkingLotRequestValidator {
 
         mandatoryFieldValidator.validate(parkingLotRequest.getManagerId(), "managerId");
 
-        mandatoryFieldValidator.validate(parkingLotRequest.getSpots(), "spots");
-        nonEmptyCollectionValidator.validate(parkingLotRequest.getSpots(), "spots");
+        if (Objects.nonNull(parkingLotRequest.getSpots())) {
+            parkingLotRequest.getSpots().forEach(spot -> spotRequestValidator.validate(spot, true));
+        }
 
     }
 }

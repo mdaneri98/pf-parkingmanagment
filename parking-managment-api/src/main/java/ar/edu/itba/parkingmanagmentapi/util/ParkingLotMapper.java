@@ -1,7 +1,7 @@
 package ar.edu.itba.parkingmanagmentapi.util;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.SpotDTO;
+import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 
@@ -21,7 +21,7 @@ public class ParkingLotMapper {
 
         if (parkingLot.getSpots() != null) {
             dto.setSpots(parkingLot.getSpots().stream()
-                    .map(ParkingLotMapper::toSpotDTO)
+                    .map(ParkingLotMapper::toSpotResponse)
                     .collect(Collectors.toList()));
         } else {
             dto.setSpots(Collections.emptyList());
@@ -41,10 +41,10 @@ public class ParkingLotMapper {
         return dto;
     }
 
-    public static SpotDTO toSpotDTO(Spot spot) {
+    public static SpotResponse toSpotResponse(Spot spot) {
         if (Objects.isNull(spot)) return null;
 
-        SpotDTO dto = new SpotDTO();
+        SpotResponse dto = new SpotResponse();
         dto.setVehicleType(spot.getVehicleType());
         dto.setFloor(spot.getFloor());
         dto.setCode(spot.getCode());

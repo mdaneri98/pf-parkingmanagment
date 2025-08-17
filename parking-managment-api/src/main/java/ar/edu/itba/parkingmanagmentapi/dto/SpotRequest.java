@@ -4,12 +4,17 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class SpotDTO {
+public class SpotRequest {
     private String vehicleType;
+
     private Integer floor;
+
     private String code;
+
     private Boolean isAvailable;
+
+    private Long parkingLotId;
 }

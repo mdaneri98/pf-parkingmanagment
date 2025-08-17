@@ -19,5 +19,5 @@ public class ParkingLotRequest {
     //TODO: serán agregadas por API?
     private Double latitude;
     private Double longitude;
-    private List<SpotDTO> spots;
+    private List<SpotRequest> spots;
 }

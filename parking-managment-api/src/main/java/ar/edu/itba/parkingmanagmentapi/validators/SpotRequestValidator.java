@@ -1,0 +1,50 @@
+package ar.edu.itba.parkingmanagmentapi.validators;
+
+import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.VehicleType;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
+import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.BlankFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.MandatoryFieldValidator;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+@Component
+public class SpotRequestValidator {
+
+    private final MandatoryFieldValidator mandatoryFieldValidator;
+    private final BlankFieldValidator blankFieldValidator;
+    private final AlphanumericWithDashFieldValidator alphanumericValidator;
+
+    public SpotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator,
+                                BlankFieldValidator blankFieldValidator,
+                                AlphanumericWithDashFieldValidator alphanumericValidator) {
+        this.mandatoryFieldValidator = mandatoryFieldValidator;
+        this.blankFieldValidator = blankFieldValidator;
+        this.alphanumericValidator = alphanumericValidator;
+    }
+
+    public void validate(SpotRequest spotRequest, boolean isFromParkingLotCreation) {
+        mandatoryFieldValidator.validate(spotRequest.getVehicleType(), "vehicleType");
+        boolean validType = Arrays.stream(VehicleType.values())
+                .anyMatch(v -> v.getName().equalsIgnoreCase(spotRequest.getVehicleType()));
+        if (!validType) {
+            throw new BadRequestException("Invalid vehicleType");
+        }
+
+        if (Objects.nonNull(spotRequest.getFloor())) {
+            blankFieldValidator.validate(spotRequest.getCode(), "code");
+        }
+
+        mandatoryFieldValidator.validate(spotRequest.getCode(), "code");
+        blankFieldValidator.validate(spotRequest.getCode(), "code");
+        alphanumericValidator.validate(spotRequest.getCode(), "code");
+
+        if (!isFromParkingLotCreation) {
+            mandatoryFieldValidator.validate(spotRequest.getParkingLotId(), "parkingLotId");
+        }
+
+    }
+}

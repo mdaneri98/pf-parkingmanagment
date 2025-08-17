@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS parking_lot (
 CREATE TABLE IF NOT EXISTS spot (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     vehicle_type VARCHAR(30) NOT NULL,
-    floor INTEGER,
+    floor INTEGER NOT NULL,
     code VARCHAR(20) NOT NULL,
     is_available BOOLEAN NOT NULL DEFAULT TRUE,
     parking_lot_id BIGINT NOT NULL,

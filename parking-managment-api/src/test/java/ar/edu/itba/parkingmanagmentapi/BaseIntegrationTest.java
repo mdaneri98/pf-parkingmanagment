@@ -4,8 +4,11 @@ import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
+import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.SpotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.AdminRepository;
 import ar.edu.itba.parkingmanagmentapi.model.Admin;
@@ -37,15 +40,14 @@ public abstract class BaseIntegrationTest {
 
     @Autowired
     protected TestRestTemplate restTemplate;
-
     @Autowired
     protected UserRepository userRepository;
-
     @Autowired
     protected ManagerRepository managerRepository;
     @Autowired
     protected ParkingLotRepository parkingLotRepository;
-
+    @Autowired
+    protected SpotRepository spotRepository;
     @Autowired
     protected AdminRepository adminRepository;
 
@@ -58,6 +60,7 @@ public abstract class BaseIntegrationTest {
     protected TestUser normalUser;
     protected TestUser adminUser;
     protected TestUser managerUser;
+    protected ParkingLot existingParkingLot;
 
     @BeforeEach
     void clean() {
@@ -65,6 +68,7 @@ public abstract class BaseIntegrationTest {
         managerRepository.deleteAll();
         userRepository.deleteAll();
         parkingLotRepository.deleteAll();
+        spotRepository.deleteAll();
         setupTestUsers();
     }
 
@@ -89,6 +93,14 @@ public abstract class BaseIntegrationTest {
         managerRepository.save(manager);
         String managerUserToken = authenticateUser("manager@test.com", "password123");
         managerUser = new TestUser(managerUserEntity, managerUserToken);
+
+        ParkingLot parkingLotEntity = new ParkingLot();
+        parkingLotEntity.setName("Parking Test");
+        parkingLotEntity.setAddress("calle test 123");
+        parkingLotEntity.setImageUrl("http://test.com/parking.jpg");
+        parkingLotEntity.setManager(manager);
+
+        existingParkingLot = parkingLotRepository.save(parkingLotEntity);
     }
 
     /**
