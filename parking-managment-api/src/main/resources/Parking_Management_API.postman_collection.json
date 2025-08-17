@@ -630,6 +630,31 @@
 						"description": "Search users by query string (requires authentication)"
 					},
 					"response": []
+				},
+				{
+					"name": "Get User by Email",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/email/{{email}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"email",
+								"{{email}}"
+							]
+						},
+						"description": "Get user by email (requires authentication)"
+					},
+					"response": []
 				}
 			],
 			"description": "User management endpoints (CRUD operations and search)"
