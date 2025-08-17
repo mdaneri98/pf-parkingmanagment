@@ -773,6 +773,122 @@
 				}
 			],
 			"description": "Parking lot management endpoints (CRUD operations)"
+		},
+		{
+			"name": "Spots",
+			"item": [
+				{
+					"name": "Create Spot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{spotFloor}},\n  \"code\": \"{{spotCode}}\",\n  \"vehicleType\": \"{{spotVehicleType}}\"\n}"
+						},
+						"url": { "raw": "{{baseUrl}}/spots", "host": ["{{baseUrl}}"], "path": ["spots"] },
+						"description": "Crea un nuevo spot. vehicleType puede ser: bicicleta, auto, camioneta, moto"
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": { "type": "text/javascript", "exec": [
+								"pm.test('201 Created', function(){ pm.response.to.have.status(201); });",
+								"if (pm.response.code === 201) {",
+								"  const spot = pm.response.json();",
+								"  pm.environment.set('spotId', spot.id);",
+								"  console.log('Spot creado con ID:', spot.id);",
+								"}"
+							] }
+						}
+					]
+				},
+				{
+					"name": "Get Spot by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+						],
+						"url": { "raw": "{{baseUrl}}/spots/{{spotId}}", "host": ["{{baseUrl}}"], "path": ["spots", "{{spotId}}"] }
+					},
+					"event": [
+						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+							"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
+						] } }
+					]
+				},
+				{
+					"name": "Update Spot",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{updatedSpotFloor}},\n  \"code\": \"{{updatedSpotCode}}\",\n  \"vehicleType\": \"{{updatedSpotVehicleType}}\"\n}"
+						},
+						"url": { "raw": "{{baseUrl}}/spots/{{spotId}}", "host": ["{{baseUrl}}"], "path": ["spots", "{{spotId}}"] },
+						"description": "Actualiza datos de un spot."
+					},
+					"event": [
+						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+							"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
+						] } }
+					]
+				},
+				{
+					"name": "Delete Spot",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+						],
+						"url": { "raw": "{{baseUrl}}/spots/{{spotId}}", "host": ["{{baseUrl}}"], "path": ["spots", "{{spotId}}"] }
+					},
+					"event": [
+						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+							"pm.test('204 No Content', function(){ pm.response.to.have.status(204); });",
+							"if (pm.response.code === 204) {",
+							"  pm.environment.unset('spotId');",
+							"  console.log('Spot eliminado y spotId borrado del entorno');",
+							"}"
+						] } }
+					]
+				},
+				{
+					"name": "List Spots (with filters + pagination)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/{{parkingLotId}}/spots?available={{spotAvailable}}&vehicleType={{spotVehicleType}}&floor={{spotFloor}}&page={{page}}&size={{size}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["{{parkingLotId}}", "spots"],
+							"query": [
+								{ "key": "available", "value": "{{spotAvailable}}" },
+								{ "key": "vehicleType", "value": "{{spotVehicleType}}" },
+								{ "key": "floor", "value": "{{spotFloor}}" },
+								{ "key": "page", "value": "{{page}}" },
+								{ "key": "size", "value": "{{size}}" }
+							]
+						},
+						"description": "Lista spots de un parkingLot con filtros opcionales y paginación."
+					},
+					"event": [
+						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+							"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
+						] } }
+					]
+				}
+			]
 		}
 	],
 	"event": [
