@@ -23,7 +23,6 @@ public class ParkingLotController {
     }
 
     @PostMapping
-    @PreAuthorize("@authorizationService.isCurrentUser(#request.managerId)")
     public ResponseEntity<ApiResponse<ParkingLotResponse>> createParkingLot(
             @Valid @RequestBody ParkingLotRequest request) {
         ParkingLotResponse created = parkingLotService.createParkingLot(request);

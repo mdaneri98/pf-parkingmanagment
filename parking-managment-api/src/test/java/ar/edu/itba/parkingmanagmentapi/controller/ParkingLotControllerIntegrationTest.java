@@ -29,7 +29,6 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         request.setName("Estacionamiento Central");
         request.setAddress("Av. Siempre Viva 123");
         request.setImageUrl("http://example.com/image.jpg");
-        request.setManagerId(managerUser.getId());
         request.setLatitude(-34.6037);
         request.setLongitude(-58.3816);
         request.setSpots(List.of(SpotRequest.builder()
@@ -169,7 +168,6 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         ParkingLotRequest request = new ParkingLotRequest();
         request.setName("Parking Central");
         request.setAddress(address);
-        request.setManagerId(managerUser.getId());
 
         HttpEntity<ParkingLotRequest> requestEntity =
                 new HttpEntity<>(request, createAuthHeaders(managerUser));
@@ -201,7 +199,6 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
             Double longitude
     ) {
         ParkingLotRequest request = new ParkingLotRequest();
-        request.setManagerId(managerUser.getId());
         request.setAddress(address);
         request.setName(name);
         request.setImageUrl("http://example.com/parking.jpg");

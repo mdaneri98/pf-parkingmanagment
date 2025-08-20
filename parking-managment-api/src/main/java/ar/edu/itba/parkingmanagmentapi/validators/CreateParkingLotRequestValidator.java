@@ -49,8 +49,6 @@ public class CreateParkingLotRequestValidator {
 
         mandatoryFieldValidator.validate(parkingLotRequest.getLongitude(), "longitude");
 
-        mandatoryFieldValidator.validate(parkingLotRequest.getManagerId(), "managerId");
-
         if (Objects.nonNull(parkingLotRequest.getSpots())) {
             parkingLotRequest.getSpots().forEach(spot -> spotRequestValidator.validate(spot, true));
         }

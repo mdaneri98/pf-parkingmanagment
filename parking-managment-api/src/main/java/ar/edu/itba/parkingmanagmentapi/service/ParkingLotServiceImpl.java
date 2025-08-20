@@ -12,6 +12,7 @@ import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.SpotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.SpotSpecifications;
+import ar.edu.itba.parkingmanagmentapi.security.service.SecurityService;
 import ar.edu.itba.parkingmanagmentapi.util.ParkingLotMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.CreateParkingLotRequestValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.UpdateParkingLotRequestValidator;
@@ -37,12 +38,19 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     private final UpdateParkingLotRequestValidator updateParkingLotRequestValidator;
 
+    private final SecurityService securityService;
+
     @Override
     public ParkingLotResponse createParkingLot(ParkingLotRequest request) {
         createParkingLotRequestValidator.validate(request);
+
         if (parkingLotRepository.existsByAddress(request.getAddress())) {
-            throw new IllegalArgumentException("ParkingLot with address " + request.getAddress() + " already exists");
+            throw new IllegalArgumentException(
+                    "ParkingLot with address " + request.getAddress() + " already exists"
+            );
         }
+
+        Manager currentManager = securityService.getCurrentManager().get();
 
         ParkingLot parkingLot = new ParkingLot();
         parkingLot.setName(request.getName());
@@ -50,6 +58,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         parkingLot.setImageUrl(request.getImageUrl());
         parkingLot.setLatitude(request.getLatitude());
         parkingLot.setLongitude(request.getLongitude());
+        parkingLot.setManager(currentManager);
         parkingLot.setSpots(Optional.ofNullable(request.getSpots())
                 .orElseGet(List::of)
                 .stream()
@@ -65,6 +74,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
         return ParkingLotMapper.toParkingLotResponse(parkingLotRepository.save(parkingLot));
     }
+
 
     @Override
     public ParkingLotResponse updateParkingLot(Long id, UpdateParkingLotRequest request) {
