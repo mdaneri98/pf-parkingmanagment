@@ -113,7 +113,7 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         spot.setParkingLot(existingParkingLot);
         spot = spotRepository.save(spot);
 
-        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(adminUser));
+        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 "/spots/" + spot.getId(), HttpMethod.DELETE, requestEntity, Void.class);

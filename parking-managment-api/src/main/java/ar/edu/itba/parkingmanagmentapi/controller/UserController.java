@@ -7,6 +7,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@authorizationService.isCurrentUser(#id)")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest userDetails) {
@@ -53,6 +55,7 @@ public class UserController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@authorizationService.isCurrentUser(#id)")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ApiResponse.noContent();

@@ -5,8 +5,10 @@ import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
+import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.SpotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.SpotSpecifications;
@@ -16,6 +18,7 @@ import ar.edu.itba.parkingmanagmentapi.validators.UpdateParkingLotRequestValidat
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -114,4 +117,14 @@ public class ParkingLotServiceImpl implements ParkingLotService {
                 pageable
         ).map(ParkingLotMapper::toSpotResponse);
     }
+
+    @Override
+    public Optional<User> getManagerOfParkingLot(Long parkingLotId) {
+        return Optional.ofNullable(parkingLotRepository.findById(parkingLotId)
+                .map(ParkingLot::getManager)
+                .map(Manager::getUser)
+                .orElseThrow(() -> new AuthorizationDeniedException("Manager is not authorized to access this parking lot"))
+        );
+    }
+
 }

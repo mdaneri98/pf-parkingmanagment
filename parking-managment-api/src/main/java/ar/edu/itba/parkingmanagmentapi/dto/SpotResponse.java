@@ -13,5 +13,4 @@ public class SpotResponse {
     private Integer floor;
     private String code;
     private Boolean isAvailable;
-
 }
