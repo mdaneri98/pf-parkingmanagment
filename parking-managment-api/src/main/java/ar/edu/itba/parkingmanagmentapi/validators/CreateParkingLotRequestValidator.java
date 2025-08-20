@@ -2,7 +2,10 @@ package ar.edu.itba.parkingmanagmentapi.validators;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
-import ar.edu.itba.parkingmanagmentapi.validators.common.*;
+import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.BlankFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.LengthRangeFieldInfoValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.MandatoryFieldValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -13,16 +16,13 @@ public class CreateParkingLotRequestValidator {
     private final BlankFieldValidator blankFieldValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator;
     private final AlphanumericWithDashFieldValidator alphanumericValidator;
-    private final NonEmptyCollectionValidator nonEmptyCollectionValidator;
-
     private final SpotRequestValidator spotRequestValidator;
 
-    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, NonEmptyCollectionValidator nonEmptyCollectionValidator, SpotRequestValidator spotRequestValidator) {
+    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, SpotRequestValidator spotRequestValidator) {
         this.mandatoryFieldValidator = mandatoryFieldValidator;
         this.blankFieldValidator = blankFieldValidator;
         this.lengthRangeFieldInfoValidator = lengthRangeFieldInfoValidator;
         this.alphanumericValidator = alphanumericValidator;
-        this.nonEmptyCollectionValidator = nonEmptyCollectionValidator;
         this.spotRequestValidator = spotRequestValidator;
     }
 
@@ -44,6 +44,10 @@ public class CreateParkingLotRequestValidator {
         if (Objects.nonNull(parkingLotRequest.getImageUrl())) {
             blankFieldValidator.validate(parkingLotRequest.getImageUrl(), "imageUrl");
         }
+
+        mandatoryFieldValidator.validate(parkingLotRequest.getLatitude(), "latitude");
+
+        mandatoryFieldValidator.validate(parkingLotRequest.getLongitude(), "longitude");
 
         mandatoryFieldValidator.validate(parkingLotRequest.getManagerId(), "managerId");
 
