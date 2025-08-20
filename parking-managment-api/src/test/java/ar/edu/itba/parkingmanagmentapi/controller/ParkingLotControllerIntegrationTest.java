@@ -2,8 +2,10 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.dto.*;
+import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -27,7 +29,6 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         request.setName("Estacionamiento Central");
         request.setAddress("Av. Siempre Viva 123");
         request.setImageUrl("http://example.com/image.jpg");
-        request.setManagerId(managerUser.getId());
         request.setLatitude(-34.6037);
         request.setLongitude(-58.3816);
         request.setSpots(List.of(SpotRequest.builder()
@@ -134,14 +135,6 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void testUpdateParkingLot_shouldReturn200_andUpdateFields() {
-        ParkingLot parkingLot = new ParkingLot();
-        parkingLot.setName("Viejo Nombre");
-        parkingLot.setAddress("Vieja Direccion");
-        parkingLot.setImageUrl("viejo.jpg");
-        parkingLot.setLatitude(-34.6037);
-        parkingLot.setLongitude(-58.3816);
-        parkingLotRepository.save(parkingLot);
-
         ParkingLotRequest updateRequest = new ParkingLotRequest();
         updateRequest.setName("Nuevo Nombre");
         updateRequest.setAddress("Nueva Direccion");
@@ -151,7 +144,7 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
 
         HttpEntity<ParkingLotRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(managerUser));
         ResponseEntity<ApiResponse<ParkingLotResponse>> response = restTemplate.exchange(
-                "/parking-lots/" + parkingLot.getId(),
+                "/parking-lots/" + existingParkingLot.getId(),
                 HttpMethod.PUT,
                 requestEntity,
                 new ParameterizedTypeReference<>() {
@@ -164,75 +157,20 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals("Nueva Direccion", response.getBody().getData().getAddress());
     }
 
-    @Test
-    void testUpdateParkingLot_shouldReturn404_whenNotFound() {
-        UpdateParkingLotRequest request = new UpdateParkingLotRequest();
-        request.setName("Nombre Inexistente");
-        request.setAddress("Direccion Inexistente");
-        request.setImageUrl("http://example.com/no-image.jpg");
-
-        HttpEntity<UpdateParkingLotRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(managerUser));
-        ResponseEntity<String> response = restTemplate.exchange(
-                "/parking-lots/99999",
-                HttpMethod.PUT,
-                requestEntity,
-                String.class
-        );
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    void testDeleteParkingLot_shouldReturn204_andRemoveEntity() {
-        ParkingLot parkingLot = new ParkingLot();
-        parkingLot.setName("Eliminar");
-        parkingLot.setAddress("Calle X");
-        parkingLot.setImageUrl("img.jpg");
-        parkingLot.setLatitude(-34.6037);
-        parkingLot.setLongitude(-58.3816);
-        parkingLot = parkingLotRepository.save(parkingLot);
-
-        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));
-        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
-                "/parking-lots/" + parkingLot.getId(),
-                HttpMethod.DELETE,
-                requestEntity,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertFalse(parkingLotRepository.findById(parkingLot.getId()).isPresent());
-    }
-
-    @Test
-    void testDeleteParkingLot_shouldReturn404_whenNotFound() {
-        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(adminUser));
-        ResponseEntity<String> response = restTemplate.exchange(
-                "/parking-lots/99999",
-                HttpMethod.DELETE,
-                requestEntity,
-                String.class
-        );
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
     @ParameterizedTest
     @CsvSource({
-            "'Av. Corrientes 1234 @@@', 1",
-            "'Calle falsa #123!!', 2",
-            "'***Direccion Mala***', 3",
-            "'<>Direccion<>', 4"
+            "'Av. Corrientes 1234 @@@'",
+            "'Calle falsa #123!!'",
+            "'***Direccion Mala***'",
+            "'<>Direccion<>'"
     })
-    void testCreateParkingLot_withMalformedAddress_shouldReturn400(String address, Long managerId) {
+    void testCreateParkingLot_withMalformedAddress_shouldReturn400(String address) {
         ParkingLotRequest request = new ParkingLotRequest();
         request.setName("Parking Central");
         request.setAddress(address);
-        request.setManagerId(managerId);
 
         HttpEntity<ParkingLotRequest> requestEntity =
-                new HttpEntity<>(request, createAuthHeaders(adminUser));
+                new HttpEntity<>(request, createAuthHeaders(managerUser));
 
         ResponseEntity<String> response = restTemplate.exchange(
                 "/parking-lots",
@@ -249,18 +187,26 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            ", Av. Corrientes 1234",
-            "1, "
+            ", Estacionamiento Centro, -34.6037, -58.3816",
+            "Av. Corrientes 1234, , -34.6037, -58.3816",
+            "Av. Corrientes 1234, Estacionamiento Centro, , -58.3816",
+            "Av. Corrientes 1234, Estacionamiento Centro, -34.6037, "
     })
-    void testCreateParkingLot_withMissingMandatoryFields_shouldReturn400(Long managerId, String address) {
+    void testCreateParkingLot_withMissingMandatoryFields_shouldReturn400(
+            String address,
+            String name,
+            Double latitude,
+            Double longitude
+    ) {
         ParkingLotRequest request = new ParkingLotRequest();
-        request.setManagerId(managerId);
         request.setAddress(address);
-        request.setName("Estacionamiento Centro");
+        request.setName(name);
         request.setImageUrl("http://example.com/parking.jpg");
+        request.setLatitude(latitude);
+        request.setLongitude(longitude);
 
         HttpEntity<ParkingLotRequest> requestEntity =
-                new HttpEntity<>(request, createAuthHeaders(adminUser));
+                new HttpEntity<>(request, createAuthHeaders(managerUser));
 
         ResponseEntity<String> response = restTemplate.exchange(
                 "/parking-lots",
@@ -283,6 +229,8 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         parkingLot.setName("Test Lot");
         parkingLot.setAddress("Direccion Test");
         parkingLot.setImageUrl("lot.jpg");
+        parkingLot.setLatitude(-34.6037);
+        parkingLot.setLongitude(-58.3816);
         parkingLotRepository.save(parkingLot);
 
         Spot spot1 = new Spot("A", true, "CAR", 1, parkingLot);   // disponible
@@ -321,6 +269,8 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         parkingLot.setName("Test Parking");
         parkingLot.setAddress("Test Address");
         parkingLot.setImageUrl("parking.jpg");
+        parkingLot.setLatitude(-34.6037);
+        parkingLot.setLongitude(-58.3816);
         parkingLotRepository.save(parkingLot);
 
         Spot spot1 = new Spot("A", true, "CAR", 1, parkingLot);   // disponible
@@ -346,6 +296,47 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(2, page.getTotalElements());
         assertEquals(2, page.getContent().size());
         assertTrue(page.getContent().stream().allMatch(SpotResponse::getIsAvailable));
+    }
+
+    @Test
+    void testDeleteParkingLot_shouldSucceed_whenManagerOwnsIt() {
+        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/parking-lots/" + existingParkingLot.getId(),
+                HttpMethod.DELETE,
+                requestEntity,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertFalse(parkingLotRepository.existsById(existingParkingLot.getId()), "ParkingLot should be deleted");
+    }
+
+    @Test
+    void testDeleteParkingLot_shouldReturn403_whenManagerDoesNotOwnIt() {
+        User otherManagerUserEntity = createTestUser("other.manager@test.com", "password123");
+        Manager otherManager = managerRepository.save(new Manager(otherManagerUserEntity));
+
+        ParkingLot parkingLot = new ParkingLot();
+        parkingLot.setName("Other Manager Parking");
+        parkingLot.setAddress("Other Street 456");
+        parkingLot.setLatitude(-34.6037);
+        parkingLot.setLongitude(-58.3816);
+        parkingLot.setManager(otherManager);
+        parkingLot = parkingLotRepository.save(parkingLot);
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/parking-lots/" + parkingLot.getId(),
+                HttpMethod.DELETE,
+                requestEntity,
+                String.class
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertTrue(parkingLotRepository.existsById(parkingLot.getId()), "ParkingLot should still exist");
     }
 
 

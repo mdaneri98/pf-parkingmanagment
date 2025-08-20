@@ -5,6 +5,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.service.SpotService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class SpotController {
     }
 
     @PostMapping
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#spot.parkingLotId)")
     public ResponseEntity<ApiResponse<SpotResponse>> createSpot(@RequestBody SpotRequest spot) {
         SpotResponse createdSpot = spotService.createSpot(spot);
         return ApiResponse.created(createdSpot);
@@ -31,12 +33,14 @@ public class SpotController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfSpot(#id)")
     public ResponseEntity<ApiResponse<SpotResponse>> updateSpot(@PathVariable Long id, @RequestBody SpotRequest spot) {
         SpotResponse updatedSpot = spotService.updateSpot(id, spot);
         return ApiResponse.ok(updatedSpot);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfSpot(#id)")
     public ResponseEntity<ApiResponse<Void>> deleteSpot(@PathVariable Long id) {
         spotService.deleteSpot(id);
         return ApiResponse.noContent();

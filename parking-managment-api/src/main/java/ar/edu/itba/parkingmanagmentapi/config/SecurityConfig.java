@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -41,21 +43,21 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/incidents/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/actuator/**").authenticated()
 
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
 
-                        .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/spots/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
 
                         .requestMatchers(HttpMethod.POST, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                         .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")

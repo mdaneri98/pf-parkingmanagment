@@ -16,6 +16,5 @@ public class ParkingLotResponse {
     private String name;
     private String address;
     private String imageUrl;
-    private Long managerId;
     private List<SpotResponse> spots;
 }

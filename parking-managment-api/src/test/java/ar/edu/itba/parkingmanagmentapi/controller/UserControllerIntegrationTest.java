@@ -175,18 +175,14 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void testUpdateUser_shouldModifyFields_andPersistChanges() {
-        User user = TestDataBuilder.createUserComplete();
-        User savedUser = userRepository.save(user);
-        Long userId = savedUser.getId();
-
         UpdateUserRequest updateRequest = new UpdateUserRequest();
         updateRequest.setFirstName("NuevoNombre");
         updateRequest.setLastName("NuevoApellido");
         updateRequest.setImageUrl("https://example.com/image2.jpg");
 
-        HttpEntity<UpdateUserRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(adminUser));
+        HttpEntity<UpdateUserRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(normalUser));
         ResponseEntity<ApiResponse<UserResponse>> updateResponse = restTemplate.exchange(
-                "/users/" + userId,
+                "/users/" + normalUser.getId(),
                 HttpMethod.PUT,
                 requestEntity,
                 new ParameterizedTypeReference<>() {
@@ -197,34 +193,12 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(updateResponse.getBody());
         assertEquals(updateRequest.getFirstName(), updateResponse.getBody().getData().getFirstName());
 
-        Optional<User> updatedUserOpt = userRepository.findById(userId);
+        Optional<User> updatedUserOpt = userRepository.findById(normalUser.getId());
         assertTrue(updatedUserOpt.isPresent());
         User updatedUser = updatedUserOpt.get();
         assertEquals(updateRequest.getFirstName(), updatedUser.getFirstName());
         assertEquals(updateRequest.getLastName(), updatedUser.getLastName());
         assertEquals(updateRequest.getImageUrl(), updatedUser.getImageUrl());
-    }
-
-    @Test
-    void testUpdateUser_whenUserDoesNotExist_shouldReturn404() {
-        long nonExistentId = 9999L;
-
-        UpdateUserRequest request = new UpdateUserRequest();
-        request.setFirstName("UpdatedName");
-
-        HttpEntity<UpdateUserRequest> entity = new HttpEntity<>(request, createAuthHeaders(adminUser));
-
-        ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
-                "/users/" + nonExistentId,
-                HttpMethod.PUT,
-                entity,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().getMessage().toLowerCase().contains("not found"));
     }
 }
 

@@ -34,6 +34,7 @@ public class ParkingLotMapper {
         if (parkingLot == null) return null;
 
         ParkingLotResponse dto = new ParkingLotResponse();
+        dto.setId(parkingLot.getId());
         dto.setName(parkingLot.getName());
         dto.setAddress(parkingLot.getAddress());
         dto.setImageUrl(parkingLot.getImageUrl());
@@ -45,6 +46,7 @@ public class ParkingLotMapper {
         if (Objects.isNull(spot)) return null;
 
         SpotResponse dto = new SpotResponse();
+        dto.setId(spot.getId());
         dto.setVehicleType(spot.getVehicleType());
         dto.setFloor(spot.getFloor());
         dto.setCode(spot.getCode());

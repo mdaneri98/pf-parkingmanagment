@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,16 +41,18 @@ public class ParkingLotController {
         return ApiResponse.ok(list);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteParkingLot(@PathVariable Long id) {
-        parkingLotService.deleteParkingLot(id);
+    @DeleteMapping("/{parkingLotId}")
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
+    public ResponseEntity<ApiResponse<Void>> deleteParkingLot(@PathVariable Long parkingLotId) {
+        parkingLotService.deleteParkingLot(parkingLotId);
         return ApiResponse.noContent();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ParkingLotResponse>> updateParkingLot(@PathVariable Long id,
+    @PutMapping("/{parkingLotId}")
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
+    public ResponseEntity<ApiResponse<ParkingLotResponse>> updateParkingLot(@PathVariable Long parkingLotId,
                                                                             @Valid @RequestBody UpdateParkingLotRequest request) {
-        ParkingLotResponse updated = parkingLotService.updateParkingLot(id, request);
+        ParkingLotResponse updated = parkingLotService.updateParkingLot(parkingLotId, request);
         return ApiResponse.ok(updated);
     }
 
