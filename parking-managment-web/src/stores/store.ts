@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authReducer } from '../features/auth/slice/authSlice';
+import { authReducer, initializeAuthFromStorage } from '../features/auth/slice/authSlice';
 import { authApi } from '../features/auth/api/authApi';
 import { usersApi } from '../features/users/api/usersApi';
 import { parkingApi } from '../features/parking/api/parkingApi';
@@ -22,5 +22,10 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+// Function to initialize auth from stored tokens
+export const initializeAuth = () => {
+  store.dispatch(initializeAuthFromStorage());
+};
 
 

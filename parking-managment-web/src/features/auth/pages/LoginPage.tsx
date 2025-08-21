@@ -40,6 +40,7 @@ export function LoginPage() {
       }
 
       // Step 3: Set credentials so the user API can use the token
+      // This will automatically persist tokens to localStorage via the enhanced setCredentials action
       dispatch(setCredentials({ accessToken: res.data.token, refreshToken: res.data.refreshToken }));
       
       // Step 4: Retrieve user information
@@ -61,6 +62,7 @@ export function LoginPage() {
   };
 
   useEffect(() => {
+    // If user is already authenticated (either from fresh login or restored from storage), redirect to dashboard
     if (isAuthenticated && user) {
       navigate('/app', { replace: true });
     }
