@@ -8,7 +8,6 @@ export const authApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     prepareHeaders: (headers, { getState }) => {
-      // Optionally attach token from state
       return headers;
     },
   }),
@@ -16,8 +15,8 @@ export const authApi = createApi({
     login: builder.mutation<ApiResponse<LoginResponse>, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
     }),
-    register: builder.mutation<ApiResponse<RegisterResponse>, { firstName: string; lastName: string; email: string; password: string; manager?: boolean }>({
-      query: ({ manager = false, ...body }) => ({ url: `/auth/register?manager=${manager}`, method: 'POST', body }),
+    register: builder.mutation<ApiResponse<RegisterResponse>, { firstName: string; lastName: string; email: string; password: string;}>({
+      query: (body) => ({ url: '/auth/register?manager=true', method: 'POST', body }),
     }),
     refresh: builder.mutation<ApiResponse<RefreshTokenResponse>, { refreshToken: string }>({
       query: (body) => ({ url: '/auth/refresh', method: 'POST', body }),
