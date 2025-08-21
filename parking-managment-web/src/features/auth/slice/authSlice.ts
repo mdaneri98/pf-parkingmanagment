@@ -7,7 +7,7 @@ const initialState: AuthState = {
   refreshToken: null,
   isAuthenticated: false,
   isLoading: false,
-  roleValidationError: null,
+  error: null,
 };
 
 const slice = createSlice({
@@ -24,13 +24,13 @@ const slice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
       state.isAuthenticated = true;
-      state.roleValidationError = null;
+      state.error = null;
     },
     setUser(state, action: PayloadAction<AuthUser | null>) {
       state.user = action.payload;
     },
-    setRoleValidationError(state, action: PayloadAction<string>) {
-      state.roleValidationError = action.payload;
+    setError(state, action: PayloadAction<string>) {
+      state.error = action.payload;
       state.isAuthenticated = false;
       state.accessToken = null;
       state.refreshToken = null;
@@ -40,12 +40,12 @@ const slice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
-      state.roleValidationError = null;
+      state.error = null;
     },
   },
 });
 
-export const { startLoading, stopLoading, setCredentials, setUser, setRoleValidationError, clearSession } = slice.actions;
+export const { startLoading, stopLoading, setCredentials, setUser, setError, clearSession } = slice.actions;
 export const authReducer = slice.reducer;
 
 
