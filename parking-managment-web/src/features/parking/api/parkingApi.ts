@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { ApiResponse } from '../../../features/auth/types';
+import type { ApiResponse } from '../../../shared/types';
 import type { ParkingLotResponse } from '../types';
 import type { RootState } from '../../../stores/store';
 import { config } from '../../../shared/config/env';
