@@ -14,6 +14,7 @@ export interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  roleValidationError: string | null;
 }
 
 export interface LoginRequest {

@@ -10,7 +10,7 @@ export function RegisterPage() {
   const [doRegister, { isLoading, error, isSuccess }] = useRegisterMutation();
 
   const onSubmit = async (values: FormValues) => {
-    await doRegister({ ...values, manager: false }).unwrap();
+    await doRegister(values).unwrap();
   };
 
   return (
