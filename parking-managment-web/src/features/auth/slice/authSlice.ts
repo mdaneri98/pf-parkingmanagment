@@ -12,51 +12,28 @@ export const initializeAuthFromStorage = createAsyncThunk(
     const validation = validateStoredTokens();
     logger.debug('Token validation result', validation);
     
-    // If we have both tokens (even if expired), try to initialize
     if (validation.accessToken && validation.refreshToken) {
       logger.info('Found stored tokens, initializing authentication state');
       
-      // Set credentials in state (even if expired - let refresh logic handle it)
+      // Set credentials in state (even if expired - we let refresh logic handle it)
       dispatch(setCredentials({ 
         accessToken: validation.accessToken, 
         refreshToken: validation.refreshToken 
       }));
 
-      // Extract user email from JWT payload
-      const tokenPayload = decodeJWT(validation.accessToken);
-      if (!tokenPayload?.sub) {
-        logger.warn('Invalid token payload found, clearing stored auth');
-        appStorage.clearAuth();
-        return { success: false };
-      }
-
       logger.info('Authentication initialization successful', {
         hasAccessToken: !!validation.accessToken,
-        hasRefreshToken: !!validation.refreshToken,
-        userRole: validation.userRole || 'manager'
+        hasRefreshToken: !!validation.refreshToken
       });
       return { 
         success: true, 
         accessToken: validation.accessToken,
-        refreshToken: validation.refreshToken,
-        userRole: validation.userRole || 'manager'
+        refreshToken: validation.refreshToken
       };
     }
     
     logger.debug('No stored tokens found, skipping authentication initialization');
     return { success: false };
-  }
-);
-
-// Async thunk to restore user data
-export const restoreUserData = createAsyncThunk(
-  'auth/restoreUserData',
-  async (email: string, { dispatch }) => {
-    try {
-      return { success: true, email };
-    } catch (error) {
-      return { success: false, error };
-    }
   }
 );
 
@@ -66,8 +43,8 @@ const initialState: AuthState & { isInitialized: boolean } = {
   refreshToken: null,
   isAuthenticated: false,
   isLoading: false,
-  error: null,
-  isInitialized: false
+  isInitialized: false,
+  error: null
 };
 
 const slice = createSlice({
@@ -100,7 +77,6 @@ const slice = createSlice({
       state.refreshToken = null;
       state.user = null;
       
-      // Clear stored tokens on error
       appStorage.clearAuth();
     },
     clearSession(state) {
@@ -110,7 +86,6 @@ const slice = createSlice({
       state.isAuthenticated = false;
       state.error = null;
       
-      // Clear stored tokens
       appStorage.clearAuth();
     },
     setInitialized(state, action: PayloadAction<boolean>) {
@@ -135,12 +110,6 @@ const slice = createSlice({
         state.isLoading = false;
         state.isInitialized = true;
         state.isAuthenticated = false;
-      })
-      .addCase(restoreUserData.fulfilled, (state, action) => {
-        if (action.payload.success) {
-          // User data restoration completed successfully
-          // Additional logic can be added here if needed
-        }
       });
   },
 });

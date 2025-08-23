@@ -4,7 +4,6 @@ import { usersApi } from '@features/users/api/usersApi';
 import { decodeJWT, extractUserRole } from './jwt';
 import { logger } from './logger';
 import type { AuthUser } from '@shared/types/auth';
-import type { LoginResponse } from '@shared/types/auth';
 
 /**
  * Centralized authentication utilities to eliminate code duplication

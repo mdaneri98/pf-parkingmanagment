@@ -1,9 +1,8 @@
 import { store } from '../../stores/store';
-import { setCredentials, clearSession } from '../../features/auth/slice/authSlice';
-import { appStorage } from '../utils/storage';
+import { setCredentials, clearSession, setUser } from '../../features/auth/slice/authSlice';
 import { logger } from '../utils/logger';
 import { isTokenExpired } from '../utils/jwt';
-import type { RefreshTokenResponse, ApiResponse } from '../types';
+import type { RefreshTokenResponse, ApiResponse, User } from '../types';
 import { config } from '../config/env';
 
 interface AuthServiceConfig {
@@ -107,6 +106,9 @@ class AuthService {
         refreshTime,
       });
 
+      // Fetch and set user data after successful token refresh
+      await this.fetchAndSetUser(result.data.token);
+
       return result.data.token;
 
     } catch (error) {
@@ -120,6 +122,112 @@ class AuthService {
 
       // Clear session and redirect to login
       this.handleAuthFailure();
+      return null;
+    }
+  }
+
+  /**
+   * Fetch user data and update store
+   */
+  private async fetchAndSetUser(accessToken: string): Promise<void> {
+    const requestId = Math.random().toString(36).substring(7);
+    
+    try {
+      logger.debug('Fetching user data after token refresh', { requestId });
+
+      const response = await fetch(`${this.config.baseUrl}/auth/me`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        logger.warn('Failed to fetch user data', {
+          requestId,
+          status: response.status,
+        });
+        return; // Don't throw error here, token refresh was successful
+      }
+
+      const result: ApiResponse<User> = await response.json();
+
+      if (result.success && result.data) {
+        store.dispatch(setUser(result.data));
+        logger.debug('User data updated successfully', { requestId });
+      } else {
+        logger.warn('User data fetch response indicates failure', {
+          requestId,
+          responseSuccess: result.success,
+        });
+      }
+
+    } catch (error) {
+      logger.error('Exception while fetching user data', {
+        requestId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      // Don't throw error here, token refresh was successful
+    }
+  }
+
+  /**
+   * Fetch user data with current token
+   */
+  async fetchUser(): Promise<User | null> {
+    const accessToken = await this.getValidAccessToken();
+    
+    if (!accessToken) {
+      logger.debug('No valid token available for user fetch');
+      return null;
+    }
+
+    const requestId = Math.random().toString(36).substring(7);
+
+    try {
+      logger.debug('Fetching current user data', { requestId });
+
+      const response = await fetch(`${this.config.baseUrl}/auth/me`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        logger.warn('Failed to fetch user data', {
+          requestId,
+          status: response.status,
+        });
+        
+        if (response.status === 401) {
+          this.handleAuthFailure();
+        }
+        
+        return null;
+      }
+
+      const result: ApiResponse<User> = await response.json();
+
+      if (result.success && result.data) {
+        store.dispatch(setUser(result.data));
+        logger.debug('User data fetched and updated successfully', { requestId });
+        return result.data;
+      } else {
+        logger.warn('User data fetch response indicates failure', {
+          requestId,
+          responseSuccess: result.success,
+        });
+        return null;
+      }
+
+    } catch (error) {
+      logger.error('Exception while fetching user data', {
+        requestId,
+        error: error instanceof Error ? error.message : String(error),
+      });
       return null;
     }
   }

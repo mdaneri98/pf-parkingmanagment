@@ -12,13 +12,11 @@ export interface User {
   updatedAt?: string;
 }
 
-// Auth-specific user type (extends base User)
 export interface AuthUser extends User {
-  // Add any auth-specific fields here if needed
 }
 
 export interface AuthState {
-  user: AuthUser | null;
+  user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;

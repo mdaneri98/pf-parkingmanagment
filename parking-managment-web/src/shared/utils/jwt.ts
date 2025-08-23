@@ -77,25 +77,11 @@ export function validateStoredTokens(): {
   return { isValid: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, userRole };
 }
 
-export function isTokenExpiringSoon(token: string, thresholdSeconds = 60): boolean {
-  const payload = decodeJWT(token);
-  if (!payload) return true;
-  const now = Math.floor(Date.now() / 1000);
-  return payload.exp - now <= thresholdSeconds;
-}
-
 export function isTokenExpired(token: string): boolean {
   const payload = decodeJWT(token);
   if (!payload) return true;
   const now = Math.floor(Date.now() / 1000);
   return payload.exp <= now;
-}
-
-export function getTokenTimeToExpiry(token: string): number {
-  const payload = decodeJWT(token);
-  if (!payload) return 0;
-  const now = Math.floor(Date.now() / 1000);
-  return Math.max(0, payload.exp - now);
 }
 
 

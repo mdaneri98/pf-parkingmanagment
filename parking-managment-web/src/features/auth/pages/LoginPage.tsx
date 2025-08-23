@@ -56,7 +56,6 @@ export function LoginPage() {
   };
 
   useEffect(() => {
-    // If user is already authenticated (either from fresh login or restored from storage), redirect to dashboard
     if (isAuthenticated && user) {
       navigate('/app', { replace: true });
     }
