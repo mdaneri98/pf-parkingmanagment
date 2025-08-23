@@ -5,6 +5,7 @@ import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.service.ManagerService;
 import ar.edu.itba.parkingmanagmentapi.service.ParkingLotService;
 import ar.edu.itba.parkingmanagmentapi.service.SpotService;
+import ar.edu.itba.parkingmanagmentapi.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class AuthorizationService {
     private final ManagerService managerService;
 
     private final UserRepository userRepository;
+
+    private final VehicleService vehicleService;
 
     public boolean isCurrentUserAdmin() {
         return securityService.getCurrentUser()
@@ -63,6 +66,12 @@ public class AuthorizationService {
         return securityService.getCurrentUser()
                 .flatMap(user -> spotService.getManagerOfSpot(spotId)
                         .map(managerUser -> managerUser.getId().equals(user.getId())))
+                .orElse(false);
+    }
+
+    public boolean isCurrentUserOwnerOfVehicle(String licensePlate) {
+        return securityService.getCurrentUser()
+                .map(user -> vehicleService.isUserOwnerOfVehicle(user.getId(), licensePlate))
                 .orElse(false);
     }
 }

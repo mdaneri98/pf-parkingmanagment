@@ -43,6 +43,10 @@ public abstract class BaseIntegrationTest {
     protected SpotRepository spotRepository;
     @Autowired
     protected AdminRepository adminRepository;
+    @Autowired
+    protected VehicleRepository vehicleRepository;
+    @Autowired
+    protected UserVehicleAssignmentRepository userVehicleAssignmentRepository;
 
     @Autowired
     protected PasswordEncoder passwordEncoder;
@@ -62,6 +66,8 @@ public abstract class BaseIntegrationTest {
         userRepository.deleteAll();
         parkingLotRepository.deleteAll();
         spotRepository.deleteAll();
+        vehicleRepository.deleteAll();
+        userVehicleAssignmentRepository.deleteAll();
         setupTestUsers();
     }
 
