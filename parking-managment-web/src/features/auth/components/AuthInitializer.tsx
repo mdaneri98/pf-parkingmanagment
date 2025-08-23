@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useAppDispatch } from '@hooks/useAppDispatch';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { useLogger } from '@hooks/useLogger';
-import { setUser } from '../slice/authSlice';
+import { setUser, setCredentials, setInitialized, startLoading, stopLoading } from '../slice/authSlice';
 import { selectAuth } from '../selectors';
-import { decodeJWT } from '@shared/utils/jwt';
+import { decodeJWT, validateStoredTokens } from '@shared/utils/jwt';
 
 export function AuthInitializer() {
   const dispatch = useAppDispatch();
@@ -24,6 +24,45 @@ export function AuthInitializer() {
       log.componentUnmount('AuthInitializer');
     };
   }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      log.debug('Auth already initialized, skipping storage check');
+      return;
+    }
+
+    log.debug('Starting auth initialization from stored tokens');
+    dispatch(startLoading());
+
+    try {
+      const validation = validateStoredTokens();
+      log.debug('Token validation result', validation);
+      
+      if (validation.accessToken && validation.refreshToken) {
+        log.info('Found stored tokens, initializing authentication state');
+        
+        // Set credentials in state (even if expired - refresh logic will handle it)
+        dispatch(setCredentials({ 
+          accessToken: validation.accessToken, 
+          refreshToken: validation.refreshToken 
+        }));
+
+        log.info('Authentication initialization successful', {
+          hasAccessToken: !!validation.accessToken,
+          hasRefreshToken: !!validation.refreshToken
+        });
+      } else {
+        log.debug('No stored tokens found, skipping authentication initialization');
+      }
+
+      dispatch(setInitialized(true));
+    } catch (error) {
+      log.error('Error during auth initialization', { error });
+      dispatch(setInitialized(true));
+    } finally {
+      dispatch(stopLoading());
+    }
+  }, [dispatch, log, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) {
