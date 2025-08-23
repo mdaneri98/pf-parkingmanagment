@@ -4,27 +4,26 @@
 -- =============================================
 
 -- Usuarios comunes 
--- Contraseña "password123" hasheada con BCrypt: $2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.
--- Contraseña "1234" hasheada con BCrypt: $2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS
+-- Contraseña "password123" hasheada con BCrypt: $2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m
 INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at)
-VALUES ('John', 'Doe', 'admin@admin.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+VALUES ('John', 'Doe', 'admin@admin.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+       ('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('María', 'González', 'maria.gonzalez@outlook.com',
-        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Carlos', 'Rodríguez', 'carlos.rodriguez@hotmail.com',
-        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('Ana', 'Martínez', 'ana.martinez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+       ('Ana', 'Martínez', 'ana.martinez@gmail.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('Roberto', 'López', 'roberto.lopez@gmail.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+       ('Roberto', 'López', 'roberto.lopez@gmail.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Laura', 'Fernández', 'laura.fernandez@outlook.com',
-        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
+        '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('Pepe', 'Usuario', 'pepe@gmail.com', '$2a$10$CbTX2brpT4sPbGgznfoodOYpCbDXjX9nJGioH77vJaaO7Mm2NuIoS',
+       ('Pepe', 'Usuario', 'pepe@gmail.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Detalles de usuarios
