@@ -4,7 +4,10 @@ import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
+import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
+import ar.edu.itba.parkingmanagmentapi.security.service.SecurityService;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
+import ar.edu.itba.parkingmanagmentapi.util.UserMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +21,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final SecurityService securityService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SecurityService securityService) {
         this.userService = userService;
+        this.securityService = securityService;
     }
 
     /**
@@ -62,6 +67,15 @@ public class UserController {
     }
 
     // -------------------------- EXTENSIONS --------------------------
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
+        UserResponse currentUser = securityService.getCurrentUser()
+                .map(UserMapper::toUserResponse)
+                .orElseThrow(() -> new AuthenticationFailedException("No authenticated user found"));
+        return ApiResponse.ok(currentUser);
+    }
 
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<UserResponse>>> searchUsers(@RequestParam String q) {
