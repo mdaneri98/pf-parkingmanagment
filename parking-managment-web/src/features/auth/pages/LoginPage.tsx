@@ -49,7 +49,6 @@ export function LoginPage() {
         const u = userRes.data;
         dispatch(setUser({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: userRole as 'manager' }));
       } catch (userError) {
-        // If we can't fetch user details, show error and ask to try again
         dispatch(setError('Unable to fetch user details. Please try logging in again.'));
         return;
       }
@@ -57,7 +56,7 @@ export function LoginPage() {
       // Step 5: Redirect to dashboard page
       navigate('/app', { replace: true });
     } catch (loginError) {
-      // Login error is handled by the useLoginMutation hook
+      dispatch(setError('Unknown error. Please, try again.'))
     }
   };
 
