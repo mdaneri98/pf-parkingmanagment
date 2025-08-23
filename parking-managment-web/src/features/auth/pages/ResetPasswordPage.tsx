@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useResetPasswordMutation } from '../api/authApi';
+import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
 
 type FormValues = { token: string; newPassword: string };
 
@@ -15,24 +16,72 @@ export function ResetPasswordPage() {
 
   return (
     <AuthCard title="Reset password">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Token</label>
-          <input className="w-full border rounded px-3 py-2 bg-transparent" {...register('token', { required: true })} />
+      <div className="space-y-5">
+        <div className="text-center">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            Enter your reset token and create a new password for your account.
+          </p>
         </div>
-        <div>
-          <label className="block text-sm mb-1">New password</label>
-          <input type="password" className="w-full border rounded px-3 py-2 bg-transparent" {...register('newPassword', { required: true })} />
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <Input
+            label="Reset token"
+            placeholder="Enter the token from your email"
+            {...register('token', { required: true })}
+            leftIcon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+              </svg>
+            }
+          />
+
+          <Input
+            type="password"
+            label="New password"
+            placeholder="Create a strong password"
+            helpText="Use at least 8 characters with a mix of letters, numbers and symbols"
+            {...register('newPassword', { required: true })}
+            leftIcon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            }
+          />
+
+          {error && (
+            <Alert variant="error">
+              <AlertDescription>
+                Password reset failed. Please check your token and try again.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {isSuccess && (
+            <Alert variant="success">
+              <AlertDescription>
+                Password reset successfully! You can now sign in with your new password.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Button 
+            type="submit" 
+            className="w-full" 
+            size="lg"
+            loading={isSubmitting || isLoading}
+          >
+            Reset password
+          </Button>
+        </form>
+        
+        <div className="flex justify-center pt-4 border-t border-neutral-200 dark:border-neutral-700">
+          <Link 
+            to="/login" 
+            className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
+          >
+            Back to sign in
+          </Link>
         </div>
-        {error ? <p className="text-sm text-red-600">Reset failed</p> : null}
-        {isSuccess ? <p className="text-sm text-green-600">Password reset successfully.</p> : null}
-        <button type="submit" disabled={isSubmitting || isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2">
-          {isSubmitting || isLoading ? 'Resetting...' : 'Reset password'}
-        </button>
-      </form>
-      <div className="mt-4 text-sm flex justify-between">
-        <span />
-        <Link to="/login" className="text-blue-600 hover:underline">Back to login</Link>
       </div>
     </AuthCard>
   );

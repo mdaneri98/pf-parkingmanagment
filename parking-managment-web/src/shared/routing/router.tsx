@@ -24,7 +24,6 @@ export const router = createBrowserRouter([
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
       { path: 'password-recovery', element: <RequestRecoveryPage /> },
-      { path: 'password-recovery/verify', element: <VerifyTokenPage /> },
       { path: 'password-recovery/reset', element: <ResetPasswordPage /> },
     ],
   },

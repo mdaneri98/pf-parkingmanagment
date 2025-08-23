@@ -6,3 +6,4 @@ export {
   validateStoredTokens
 } from './jwt';
 export { appStorage, type AuthData } from './storage';
+export { cn } from './classNames';

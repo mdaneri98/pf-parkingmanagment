@@ -8,6 +8,7 @@ import { useAppSelector } from '@hooks/useAppSelector';
 import { selectAuth, selectIsAuthenticated } from '../selectors';
 import { useEffect } from 'react';
 import { useErrorHandler, ErrorCodes } from '@shared/utils/errorHandling';
+import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
 
 type FormValues = { email: string; password: string };
 
@@ -57,24 +58,62 @@ export function LoginPage() {
 
   return (
     <AuthCard title="Sign in">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Email</label>
-          <input type="email" className="w-full border rounded px-3 py-2 bg-transparent" {...register('email', { required: true })} />
-        </div>
-        <div>
-          <label className="block text-sm mb-1">Password</label>
-          <input type="password" className="w-full border rounded px-3 py-2 bg-transparent" {...register('password', { required: true })} />
-        </div>
-        {error ? <p className="text-sm text-red-600">Login failed</p> : null}
-        {authError ? <p className="text-sm text-red-600">{authError}</p> : null}
-        <button type="submit" disabled={isSubmitting || isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2">
-          {isSubmitting || isLoading ? 'Signing in...' : 'Sign in'}
-        </button>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <Input
+          type="email"
+          label="Email address"
+          placeholder="Enter your email"
+          {...register('email', { required: true })}
+          leftIcon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+            </svg>
+          }
+        />
+        
+        <Input
+          type="password"
+          label="Password"
+          placeholder="Enter your password"
+          {...register('password', { required: true })}
+          leftIcon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          }
+        />
+
+        {(error || authError) && (
+          <Alert variant="error">
+            <AlertDescription>
+              {authError || 'Login failed. Please check your credentials and try again.'}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <Button 
+          type="submit" 
+          className="w-full" 
+          size="lg"
+          loading={isSubmitting || isLoading}
+        >
+          Sign in
+        </Button>
       </form>
-      <div className="mt-4 text-sm flex justify-between">
-        <Link to="/register" className="text-blue-600 hover:underline">Create account</Link>
-        <Link to="/password-recovery" className="text-blue-600 hover:underline">Forgot password?</Link>
+      
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+        <Link 
+          to="/register" 
+          className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
+        >
+          Create an account
+        </Link>
+        <Link 
+          to="/password-recovery" 
+          className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
+        >
+          Forgot password?
+        </Link>
       </div>
     </AuthCard>
   );

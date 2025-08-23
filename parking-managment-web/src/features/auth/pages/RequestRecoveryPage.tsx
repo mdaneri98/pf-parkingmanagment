@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useRequestPasswordRecoveryMutation } from '../api/authApi';
+import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
 
 type FormValues = { email: string };
 
@@ -15,20 +16,60 @@ export function RequestRecoveryPage() {
 
   return (
     <AuthCard title="Password recovery">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Email</label>
-          <input type="email" className="w-full border rounded px-3 py-2 bg-transparent" {...register('email', { required: true })} />
+      <div className="space-y-5">
+        <div className="text-center">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
         </div>
-        {error ? <p className="text-sm text-red-600">Request failed</p> : null}
-        {isSuccess ? <p className="text-sm text-green-600">Email sent if account exists.</p> : null}
-        <button type="submit" disabled={isSubmitting || isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2">
-          {isSubmitting || isLoading ? 'Sending...' : 'Send recovery link'}
-        </button>
-      </form>
-      <div className="mt-4 text-sm flex justify-between">
-        <span />
-        <Link to="/login" className="text-blue-600 hover:underline">Back to login</Link>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <Input
+            type="email"
+            label="Email address"
+            placeholder="Enter your email"
+            {...register('email', { required: true })}
+            leftIcon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+              </svg>
+            }
+          />
+
+          {error && (
+            <Alert variant="error">
+              <AlertDescription>
+                Recovery request failed. Please try again.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {isSuccess && (
+            <Alert variant="success">
+              <AlertDescription>
+                If an account with that email exists, we've sent you a password reset link.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Button 
+            type="submit" 
+            className="w-full" 
+            size="lg"
+            loading={isSubmitting || isLoading}
+          >
+            Send recovery link
+          </Button>
+        </form>
+        
+        <div className="flex justify-center pt-4 border-t border-neutral-200 dark:border-neutral-700">
+          <Link 
+            to="/login" 
+            className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
+          >
+            Back to sign in
+          </Link>
+        </div>
       </div>
     </AuthCard>
   );
