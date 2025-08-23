@@ -1,20 +1,11 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import type { ApiResponse } from '../../../shared/types';
 import type { ParkingLotResponse } from '../types';
-import type { RootState } from '../../../stores/store';
-import { config } from '../../../shared/config/env';
+import { baseQueryWithReauth } from '../../../shared/api/baseQuery';
 
 export const parkingApi = createApi({
   reducerPath: 'parkingApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: config.apiBaseUrl,
-    prepareHeaders: (headers, { getState }) => {
-      const state = getState() as RootState;
-      const token = state.auth.accessToken;
-      if (token) headers.set('Authorization', `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ['ParkingLot'],
   endpoints: (builder) => ({
     getParkingLots: builder.query<ApiResponse<ParkingLotResponse[]>, void>({

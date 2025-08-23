@@ -136,6 +136,7 @@ export const {
   clearSession,
   setInitialized 
 } = slice.actions;
+
 export const authReducer = slice.reducer;
 
 
