@@ -75,7 +75,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   Refresh Page
                 </button>
               </div>
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <details className="mt-4">
                   <summary className="text-xs text-red-600 cursor-pointer">
                     Error Details (Development)
@@ -93,18 +93,4 @@ export class ErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
-}
-
-// Higher-order component for easier use
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  fallback?: ReactNode
-) {
-  return function WithErrorBoundaryComponent(props: P) {
-    return (
-      <ErrorBoundary fallback={fallback}>
-        <Component {...props} />
-      </ErrorBoundary>
-    );
-  };
 }

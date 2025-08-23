@@ -124,57 +124,6 @@ class Logger {
     });
   }
 
-  tokenRefresh(attempt: number, success: boolean, context?: LogContext): void {
-    const level = success ? LogLevel.DEBUG : LogLevel.WARN;
-    const message = `Token Refresh: Attempt ${attempt} - ${success ? 'SUCCESS' : 'FAILED'}`;
-    const logContext = {
-      attempt,
-      success,
-      timestamp: new Date().toISOString(),
-      ...context,
-    };
-
-    if (level === LogLevel.WARN) {
-      this.warn(message, logContext);
-    } else {
-      this.debug(message, logContext);
-    }
-  }
-
-  // Performance logging
-  performance(operation: string, duration: number, context?: LogContext): void {
-    this.debug(`Performance: ${operation} took ${duration}ms`, {
-      operation,
-      duration,
-      timestamp: new Date().toISOString(),
-      ...context,
-    });
-  }
-
-  // Set log level dynamically
-  setLevel(level: LogLevel): void {
-    this.currentLevel = level;
-    this.info(`Log level changed to: ${LogLevel[level]}`);
-  }
-
-  // Enable/disable logging
-  setEnabled(enabled: boolean): void {
-    this.isEnabled = enabled;
-    this.info(`Logging ${enabled ? 'enabled' : 'disabled'}`);
-  }
-
-  // Storage cleanup for development
-  cleanupStorage(): void {
-    try {
-      // Import cleanup function dynamically to avoid circular dependencies
-      import('./jwt').then(({ cleanupConflictingStorage }) => {
-        cleanupConflictingStorage();
-        this.info('Storage cleanup completed');
-      });
-    } catch (error) {
-      this.error('Failed to cleanup storage', { error: String(error) });
-    }
-  }
 }
 
 // Create and export a singleton instance

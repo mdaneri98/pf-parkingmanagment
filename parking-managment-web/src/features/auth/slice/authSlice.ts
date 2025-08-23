@@ -51,12 +51,6 @@ const slice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    startLoading(state) {
-      state.isLoading = true;
-    },
-    stopLoading(state) {
-      state.isLoading = false;
-    },
     setCredentials(state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) {
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
@@ -115,8 +109,6 @@ const slice = createSlice({
 });
 
 export const { 
-  startLoading, 
-  stopLoading, 
   setCredentials, 
   setUser, 
   setError, 
