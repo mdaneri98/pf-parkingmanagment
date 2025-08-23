@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { AuthState, AuthUser } from '../../../shared/types';
-import { jwtStorage, validateStoredTokens, decodeJWT } from '../../../shared/utils/jwt';
+import { validateStoredTokens, decodeJWT, extractUserRole } from '../../../shared/utils/jwt';
+import { appStorage } from '../../../shared/utils/storage';
 
 // Async thunk to initialize auth from stored tokens
 export const initializeAuthFromStorage = createAsyncThunk(
@@ -21,7 +22,7 @@ export const initializeAuthFromStorage = createAsyncThunk(
     // Extract user email from JWT payload
     const tokenPayload = decodeJWT(validation.accessToken!);
     if (!tokenPayload?.sub) {
-      jwtStorage.clearTokens();
+      appStorage.clearAuth();
       return { success: false };
     }
 
@@ -73,7 +74,8 @@ const slice = createSlice({
       state.error = null;
       
       // Persist tokens to storage
-      jwtStorage.setTokens(action.payload.accessToken, action.payload.refreshToken);
+      const userRole = extractUserRole(action.payload.accessToken);
+      appStorage.setAuth(action.payload.accessToken, action.payload.refreshToken, userRole);
     },
     setUser(state, action: PayloadAction<AuthUser | null>) {
       state.user = action.payload;
@@ -86,7 +88,7 @@ const slice = createSlice({
       state.user = null;
       
       // Clear stored tokens on error
-      jwtStorage.clearTokens();
+      appStorage.clearAuth();
     },
     clearSession(state) {
       state.user = null;
@@ -96,7 +98,7 @@ const slice = createSlice({
       state.error = null;
       
       // Clear stored tokens
-      jwtStorage.clearTokens();
+      appStorage.clearAuth();
     },
     setInitialized(state, action: PayloadAction<boolean>) {
       state.isInitialized = action.payload;
@@ -122,7 +124,10 @@ const slice = createSlice({
         state.isAuthenticated = false;
       })
       .addCase(restoreUserData.fulfilled, (state, action) => {
-        if (action.payload.success) {}
+        if (action.payload.success) {
+          // User data restoration completed successfully
+          // Additional logic can be added here if needed
+        }
       });
   },
 });

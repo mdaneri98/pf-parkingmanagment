@@ -6,6 +6,7 @@ import { useAppSelector } from '../hooks/useAppSelector';
 import { setSelectedParkingLotId } from '../features/parking/slice/parkingSlice';
 import { selectAuth } from '../features/auth/selectors';
 import { ParkingLotSelector } from '../features/parking/components/ParkingLotSelector';
+import { appStorage } from '../shared/utils/storage';
 
 export function DashboardLayout() {
   const navigate = useNavigate();
@@ -20,18 +21,16 @@ export function DashboardLayout() {
     [allLots, user]
   );
 
-  // Sync selection and URL
   useEffect(() => {
     const urlLotId = params.lotId ? Number(params.lotId) : null;
     if (urlLotId) {
       dispatch(setSelectedParkingLotId(urlLotId));
-      localStorage.setItem('selectedParkingLotId', String(urlLotId));
+      appStorage.setSelectedParkingLotId(urlLotId);
       return;
     }
 
     // Resolve from storage or first managed
-    const stored = localStorage.getItem('selectedParkingLotId');
-    const storedId = stored ? Number(stored) : null;
+    const storedId = appStorage.getSelectedParkingLotId();
     const fallbackId = managedLots[0]?.id ?? null;
     const nextId = storedId ?? fallbackId;
     if (nextId) {

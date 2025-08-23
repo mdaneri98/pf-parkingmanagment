@@ -25,6 +25,7 @@ export type AppDispatch = typeof store.dispatch;
 
 // Function to initialize auth from stored tokens
 export const initializeAuth = () => {
+  console.log('[initializeAuth] Dispatching auth initialization...');
   store.dispatch(initializeAuthFromStorage());
 };
 
