@@ -65,8 +65,7 @@ export function validateStoredTokens(): {
   }
 
   if (!isTokenValid(auth.accessToken)) {
-    appStorage.clearAuth();
-    return { isValid: false, accessToken: null, refreshToken: null, userRole: null };
+    return { isValid: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken, userRole: null };
   }
 
   const userRole = extractUserRole(auth.accessToken);
@@ -83,6 +82,20 @@ export function isTokenExpiringSoon(token: string, thresholdSeconds = 60): boole
   if (!payload) return true;
   const now = Math.floor(Date.now() / 1000);
   return payload.exp - now <= thresholdSeconds;
+}
+
+export function isTokenExpired(token: string): boolean {
+  const payload = decodeJWT(token);
+  if (!payload) return true;
+  const now = Math.floor(Date.now() / 1000);
+  return payload.exp <= now;
+}
+
+export function getTokenTimeToExpiry(token: string): number {
+  const payload = decodeJWT(token);
+  if (!payload) return 0;
+  const now = Math.floor(Date.now() / 1000);
+  return Math.max(0, payload.exp - now);
 }
 
 

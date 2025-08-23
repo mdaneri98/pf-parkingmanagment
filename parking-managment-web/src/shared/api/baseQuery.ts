@@ -4,8 +4,9 @@ import type { ApiResponse, RefreshTokenResponse } from '../types';
 import { setCredentials, clearSession } from '../../features/auth/slice/authSlice';
 import { config } from '../config/env';
 import { logger } from '../utils/logger';
+import { isTokenExpired } from '../utils/jwt';
 
-const baseQuery = fetchBaseQuery({
+export const baseQuery = fetchBaseQuery({
   baseUrl: config.apiBaseUrl,
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState;
@@ -25,7 +26,7 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-export const baseQueryWithReauth: BaseQueryFn<
+const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
@@ -33,7 +34,115 @@ export const baseQueryWithReauth: BaseQueryFn<
   const startTime = Date.now();
   const requestId = Math.random().toString(36).substring(7);
   
-  // Log the incoming request
+  logger.debug('Executing refresh token request', { requestId });
+  
+  try {
+    const refreshResult = await baseQuery(args, api, extraOptions);
+    const refreshTime = Date.now() - startTime;
+
+    if (refreshResult.data) {
+      const refreshResponse = refreshResult.data as ApiResponse<RefreshTokenResponse>;
+      if (refreshResponse.success && refreshResponse.data) {
+        logger.tokenRefresh(1, true, {
+          requestId,
+          refreshTime,
+          hasNewToken: !!refreshResponse.data.token,
+          hasNewRefreshToken: !!refreshResponse.data.refreshToken,
+        });
+
+        // Store the new tokens
+        api.dispatch(setCredentials({
+          accessToken: refreshResponse.data.token,
+          refreshToken: refreshResponse.data.refreshToken,
+        }));
+        
+        logger.authEvent('Token refresh successful', {
+          requestId,
+          refreshTime,
+        });
+
+        return refreshResult;
+      } else {
+        logger.warn('Token refresh response indicates failure', {
+          requestId,
+          refreshTime,
+          responseSuccess: refreshResponse.success,
+        });
+      }
+    }
+    
+    // Refresh failed
+    logger.authEvent('Token refresh failed, clearing session', {
+      requestId,
+      refreshTime: Date.now() - startTime,
+      reason: 'refresh_response_failure',
+    });
+
+    api.dispatch(clearSession());
+    window.location.href = '/login';
+    return refreshResult;
+    
+  } catch (error) {
+    // Refresh failed with exception
+    logger.error('Token refresh request failed with exception', {
+      requestId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
+    api.dispatch(clearSession());
+    window.location.href = '/login';
+    throw error;
+  }
+};
+
+// Smart base query that checks JWT expiration and handles refresh + retry logic
+export const smartBaseQuery: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  const startTime = Date.now();
+  const requestId = Math.random().toString(36).substring(7);
+  
+  const state = api.getState() as RootState;
+  const { accessToken, refreshToken } = state.auth;
+  
+  // If we have an access token, check if it's expired
+  if (accessToken && isTokenExpired(accessToken)) {
+    logger.info('JWT token expired, attempting refresh before request', { requestId });
+    
+    if (!refreshToken) {
+      logger.warn('No refresh token available, clearing session', { requestId });
+      api.dispatch(clearSession());
+      window.location.href = '/login';
+      return { error: { status: 401, data: 'No refresh token available' } as FetchBaseQueryError };
+    }
+    
+    try {
+      // Use the refresh-specific query to get new tokens
+      const refreshResult = await baseQueryWithReauth(
+        {
+          url: '/auth/refresh',
+          method: 'POST',
+          body: { refreshToken },
+        },
+        api,
+        extraOptions
+      );
+      
+      if (refreshResult.error) {
+        logger.warn('Token refresh failed, request cannot proceed', { requestId });
+        return refreshResult;
+      }
+      
+      logger.info('Token refreshed successfully, proceeding with original request', { requestId });
+    } catch (error) {
+      logger.error('Token refresh threw exception', { requestId, error });
+      return { error: { status: 401, data: 'Token refresh failed' } as FetchBaseQueryError };
+    }
+  }
+  
+  // Execute the original request with valid token
   const url = typeof args === 'string' ? args : args.url;
   const method = typeof args === 'string' ? 'GET' : (args.method || 'GET');
   
@@ -42,12 +151,10 @@ export const baseQueryWithReauth: BaseQueryFn<
     hasExtraOptions: !!extraOptions,
     timestamp: new Date().toISOString(),
   });
-
-  // Proceed with the original request
-  logger.debug('Executing base query', { requestId, url, method });
+  
   const result = await baseQuery(args, api, extraOptions);
   const responseTime = Date.now() - startTime;
-
+  
   // Log the response
   if (result.error) {
     logger.apiError(result.error, url, {
@@ -63,149 +170,7 @@ export const baseQueryWithReauth: BaseQueryFn<
       dataType: result.data ? typeof result.data : 'undefined',
     });
   }
-
-  // Handle 401 UNAUTHORIZED responses (JWT expired)
-  if (result.error && result.error.status === 401) {
-    logger.warn('Received 401 Unauthorized, attempting token refresh', {
-      requestId,
-      url,
-      responseTime,
-      errorDetails: result.error,
-    });
-
-    const state = api.getState() as RootState;
-    const { refreshToken } = state.auth;
-    
-    // Try to refresh token if we have one
-    if (refreshToken) {
-      logger.info('Attempting token refresh', {
-        requestId,
-        hasRefreshToken: !!refreshToken,
-        refreshTokenLength: refreshToken.length,
-      });
-
-      try {
-        const refreshStartTime = Date.now();
-        const refreshResult = await baseQuery(
-          {
-            url: '/auth/refresh',
-            method: 'POST',
-            body: { refreshToken },
-          },
-          api,
-          extraOptions
-        );
-        const refreshTime = Date.now() - refreshStartTime;
-
-        if (refreshResult.data) {
-          const refreshResponse = refreshResult.data as ApiResponse<RefreshTokenResponse>;
-          if (refreshResponse.success && refreshResponse.data) {
-            logger.tokenRefresh(1, true, {
-              requestId,
-              refreshTime,
-              hasNewToken: !!refreshResponse.data.token,
-              hasNewRefreshToken: !!refreshResponse.data.refreshToken,
-            });
-
-            // Store the new tokens
-            logger.authEvent('Storing new credentials after refresh', {
-              requestId,
-              newTokenLength: refreshResponse.data.token?.length,
-              newRefreshTokenLength: refreshResponse.data.refreshToken?.length,
-            });
-
-            api.dispatch(setCredentials({
-              accessToken: refreshResponse.data.token,
-              refreshToken: refreshResponse.data.refreshToken,
-            }));
-            
-            // Retry the original request with the new token
-            logger.info('Retrying original request with new token', {
-              requestId,
-              url,
-              method,
-            });
-
-            const retryStartTime = Date.now();
-            const retryResult = await baseQuery(args, api, extraOptions);
-            const retryTime = Date.now() - retryStartTime;
-
-            if (retryResult.error) {
-              logger.error('Retry request failed', {
-                requestId,
-                url,
-                retryTime,
-                error: retryResult.error,
-              });
-            } else {
-              logger.info('Retry request successful', {
-                requestId,
-                url,
-                retryTime,
-                totalTime: responseTime + refreshTime + retryTime,
-              });
-            }
-
-            return retryResult;
-          } else {
-            logger.warn('Token refresh response indicates failure', {
-              requestId,
-              refreshTime,
-              responseSuccess: refreshResponse.success,
-              responseData: !!refreshResponse.data,
-            });
-          }
-        } else {
-          logger.warn('Token refresh returned no data', {
-            requestId,
-            refreshTime,
-            refreshError: refreshResult.error,
-          });
-        }
-        
-        // Refresh failed, clear session and redirect to login
-        logger.authEvent('Token refresh failed, clearing session', {
-          requestId,
-          refreshTime,
-          reason: 'refresh_response_failure',
-        });
-
-        api.dispatch(clearSession());
-        window.location.href = '/login';
-      } catch (error) {
-        // Refresh failed, clear session and redirect to login
-        logger.error('Token refresh request failed with exception', {
-          requestId,
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-        });
-
-        logger.authEvent('Token refresh exception, clearing session', {
-          requestId,
-          reason: 'refresh_exception',
-        });
-
-        api.dispatch(clearSession());
-        window.location.href = '/login';
-      }
-    } else {
-      // No refresh token available, clear session and redirect to login
-      logger.warn('No refresh token available for 401 response', {
-        requestId,
-        url,
-        reason: 'no_refresh_token',
-      });
-
-      logger.authEvent('No refresh token, clearing session', {
-        requestId,
-        reason: 'no_refresh_token',
-      });
-
-      api.dispatch(clearSession());
-      window.location.href = '/login';
-    }
-  }
-
+  
   // Log performance metrics
   logger.performance(`API Request: ${method} ${url}`, responseTime, {
     requestId,
@@ -214,6 +179,6 @@ export const baseQueryWithReauth: BaseQueryFn<
     hasError: !!result.error,
     status: result.error?.status || 200,
   });
-
+  
   return result;
 };

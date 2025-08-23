@@ -2,36 +2,49 @@ import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { AuthState, AuthUser } from '../../../shared/types';
 import { validateStoredTokens, decodeJWT, extractUserRole } from '../../../shared/utils/jwt';
 import { appStorage } from '../../../shared/utils/storage';
+import { logger } from '../../../shared/utils/logger';
 
 // Async thunk to initialize auth from stored tokens
 export const initializeAuthFromStorage = createAsyncThunk(
   'auth/initializeFromStorage',
   async (_, { dispatch }) => {
+    logger.debug('Starting auth initialization from stored tokens');
     const validation = validateStoredTokens();
+    logger.debug('Token validation result', validation);
     
-    if (!validation.isValid) {
-      return { success: false };
+    // If we have both tokens (even if expired), try to initialize
+    if (validation.accessToken && validation.refreshToken) {
+      logger.info('Found stored tokens, initializing authentication state');
+      
+      // Set credentials in state (even if expired - let refresh logic handle it)
+      dispatch(setCredentials({ 
+        accessToken: validation.accessToken, 
+        refreshToken: validation.refreshToken 
+      }));
+
+      // Extract user email from JWT payload
+      const tokenPayload = decodeJWT(validation.accessToken);
+      if (!tokenPayload?.sub) {
+        logger.warn('Invalid token payload found, clearing stored auth');
+        appStorage.clearAuth();
+        return { success: false };
+      }
+
+      logger.info('Authentication initialization successful', {
+        hasAccessToken: !!validation.accessToken,
+        hasRefreshToken: !!validation.refreshToken,
+        userRole: validation.userRole || 'manager'
+      });
+      return { 
+        success: true, 
+        accessToken: validation.accessToken,
+        refreshToken: validation.refreshToken,
+        userRole: validation.userRole || 'manager'
+      };
     }
-
-    // Set credentials in state
-    dispatch(setCredentials({ 
-      accessToken: validation.accessToken!, 
-      refreshToken: validation.refreshToken! 
-    }));
-
-    // Extract user email from JWT payload
-    const tokenPayload = decodeJWT(validation.accessToken!);
-    if (!tokenPayload?.sub) {
-      appStorage.clearAuth();
-      return { success: false };
-    }
-
-    return { 
-      success: true, 
-      accessToken: validation.accessToken!,
-      refreshToken: validation.refreshToken!,
-      userRole: validation.userRole!
-    };
+    
+    logger.debug('No stored tokens found, skipping authentication initialization');
+    return { success: false };
   }
 );
 

@@ -1,10 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { ApiResponse, LoginRequest, LoginResponse, RefreshTokenResponse, RegisterResponse } from '../../../shared/types';
-import { baseQueryWithReauth } from '../../../shared/api/baseQuery';
+import { smartBaseQuery, baseQuery } from '../../../shared/api/baseQuery';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: baseQueryWithReauth,
+  baseQuery: smartBaseQuery,
   endpoints: (builder) => ({
     login: builder.mutation<ApiResponse<LoginResponse>, LoginRequest>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),

@@ -1,11 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { ApiResponse } from '../../../shared/types';
 import type { ParkingLotResponse } from '../types';
-import { baseQueryWithReauth } from '../../../shared/api/baseQuery';
+import { smartBaseQuery } from '../../../shared/api/baseQuery';
 
 export const parkingApi = createApi({
   reducerPath: 'parkingApi',
-  baseQuery: baseQueryWithReauth,
+  baseQuery: smartBaseQuery,
   tagTypes: ['ParkingLot'],
   endpoints: (builder) => ({
     getParkingLots: builder.query<ApiResponse<ParkingLotResponse[]>, void>({
