@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
         '@hooks': path.resolve(__dirname, './src/hooks'),
         '@components': path.resolve(__dirname, './src/components'),
         '@assets': path.resolve(__dirname, './src/assets'),
+        '@services': path.resolve(__dirname, './src/shared/services'),
       }
     },
     define: {

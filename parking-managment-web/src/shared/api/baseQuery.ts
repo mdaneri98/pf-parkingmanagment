@@ -1,7 +1,7 @@
 import { fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 import { config } from '../config/env';
 import { logger } from '../utils/logger';
-import { authService } from '../services/authService';
+import { authService } from '@services/authService';
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: config.apiBaseUrl,

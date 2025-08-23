@@ -1,16 +1,29 @@
 import { store } from '../../stores/store';
-import { setCredentials, clearSession, setUser } from '../../features/auth/slice/authSlice';
+import { setCredentials, clearSession } from '../../features/auth/slice/authSlice';
 import { logger } from '../utils/logger';
 import { isTokenExpired } from '../utils/jwt';
-import type { RefreshTokenResponse, ApiResponse, User } from '../types';
+import type { RefreshTokenResponse, ApiResponse } from '../types';
 import { config } from '../config/env';
 
 interface AuthServiceConfig {
   baseUrl: string;
   onAuthFailure?: () => void;
-  navigateToLogin?: () => void;
 }
 
+/**
+ * Clean AuthService focused solely on token management and authentication state
+ * 
+ * Responsibilities:
+ * - Token lifecycle management (validation, refresh, expiry)
+ * - Authentication state checking
+ * - Session clearing
+ * - Token storage coordination
+ * 
+ * NOT responsible for:
+ * - User data fetching (handled by authApi RTK Query)
+ * - Navigation (handled by router/components)
+ * - Direct Redux dispatching from external calls
+ */
 class AuthService {
   private config: AuthServiceConfig;
   private refreshPromise: Promise<string | null> | null = null;
@@ -21,6 +34,7 @@ class AuthService {
 
   /**
    * Get current access token, refreshing if expired
+   * This is the main method used by API interceptors
    */
   async getValidAccessToken(): Promise<string | null> {
     const state = store.getState();
@@ -56,7 +70,93 @@ class AuthService {
   }
 
   /**
-   * Perform the actual token refresh
+   * Manually refresh the access token
+   * Returns true if successful, false otherwise
+   */
+  async refreshToken(): Promise<boolean> {
+    const state = store.getState();
+    const { refreshToken } = state.auth;
+
+    if (!refreshToken) {
+      logger.debug('No refresh token available');
+      return false;
+    }
+
+    try {
+      const newToken = await this.performTokenRefresh(refreshToken);
+      return newToken !== null;
+    } catch (error) {
+      logger.error('Manual token refresh failed', { error });
+      return false;
+    }
+  }
+
+  /**
+   * Check if user is currently authenticated
+   */
+  isAuthenticated(): boolean {
+    const state = store.getState();
+    const { accessToken, refreshToken, isAuthenticated } = state.auth;
+    
+    // Must have tokens and be marked as authenticated
+    return isAuthenticated && !!accessToken && !!refreshToken;
+  }
+
+  /**
+   * Get current user from state
+   */
+  getCurrentUser() {
+    const state = store.getState();
+    return state.auth.user;
+  }
+
+  /**
+   * Clear all authentication data and tokens
+   */
+  clearTokens(): void {
+    logger.debug('Clearing all authentication tokens');
+    store.dispatch(clearSession());
+  }
+
+  /**
+   * Complete logout - clear session and trigger auth failure callback
+   */
+  logout(): void {
+    logger.authEvent('User logout initiated');
+    this.clearTokens();
+    this.config.onAuthFailure?.();
+  }
+
+  /**
+   * Get current tokens from state (for external usage if needed)
+   */
+  getCurrentTokens(): { accessToken: string | null; refreshToken: string | null } {
+    const state = store.getState();
+    return {
+      accessToken: state.auth.accessToken,
+      refreshToken: state.auth.refreshToken,
+    };
+  }
+
+  /**
+   * Check if access token is expired without refreshing
+   */
+  isAccessTokenExpired(): boolean {
+    const state = store.getState();
+    const { accessToken } = state.auth;
+    
+    if (!accessToken) {
+      return true;
+    }
+    
+    return isTokenExpired(accessToken);
+  }
+
+  // Private methods
+
+  /**
+   * Perform the actual token refresh operation
+   * This is the core token refresh logic, isolated and focused
    */
   private async performTokenRefresh(refreshToken: string): Promise<string | null> {
     const startTime = Date.now();
@@ -95,7 +195,7 @@ class AuthService {
         throw new Error('Refresh response indicates failure');
       }
 
-      // Update tokens in store and storage
+      // Update tokens in store
       store.dispatch(setCredentials({
         accessToken: result.data.token,
         refreshToken: result.data.refreshToken,
@@ -105,9 +205,6 @@ class AuthService {
         requestId,
         refreshTime,
       });
-
-      // Fetch and set user data after successful token refresh
-      await this.fetchAndSetUser(result.data.token);
 
       return result.data.token;
 
@@ -120,169 +217,19 @@ class AuthService {
         error: error instanceof Error ? error.message : String(error),
       });
 
-      // Clear session and redirect to login
+      // Clear session on refresh failure
       this.handleAuthFailure();
       return null;
     }
   }
 
   /**
-   * Fetch user data and update store
-   */
-  private async fetchAndSetUser(accessToken: string): Promise<void> {
-    const requestId = Math.random().toString(36).substring(7);
-    
-    try {
-      logger.debug('Fetching user data after token refresh', { requestId });
-
-      const response = await fetch(`${this.config.baseUrl}/auth/me`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        logger.warn('Failed to fetch user data', {
-          requestId,
-          status: response.status,
-        });
-        return; // Don't throw error here, token refresh was successful
-      }
-
-      const result: ApiResponse<User> = await response.json();
-
-      if (result.success && result.data) {
-        store.dispatch(setUser(result.data));
-        logger.debug('User data updated successfully', { requestId });
-      } else {
-        logger.warn('User data fetch response indicates failure', {
-          requestId,
-          responseSuccess: result.success,
-        });
-      }
-
-    } catch (error) {
-      logger.error('Exception while fetching user data', {
-        requestId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      // Don't throw error here, token refresh was successful
-    }
-  }
-
-  /**
-   * Fetch user data with current token
-   */
-  async fetchUser(): Promise<User | null> {
-    const accessToken = await this.getValidAccessToken();
-    
-    if (!accessToken) {
-      logger.debug('No valid token available for user fetch');
-      return null;
-    }
-
-    const requestId = Math.random().toString(36).substring(7);
-
-    try {
-      logger.debug('Fetching current user data', { requestId });
-
-      const response = await fetch(`${this.config.baseUrl}/auth/me`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        logger.warn('Failed to fetch user data', {
-          requestId,
-          status: response.status,
-        });
-        
-        if (response.status === 401) {
-          this.handleAuthFailure();
-        }
-        
-        return null;
-      }
-
-      const result: ApiResponse<User> = await response.json();
-
-      if (result.success && result.data) {
-        store.dispatch(setUser(result.data));
-        logger.debug('User data fetched and updated successfully', { requestId });
-        return result.data;
-      } else {
-        logger.warn('User data fetch response indicates failure', {
-          requestId,
-          responseSuccess: result.success,
-        });
-        return null;
-      }
-
-    } catch (error) {
-      logger.error('Exception while fetching user data', {
-        requestId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return null;
-    }
-  }
-
-  /**
-   * Handle authentication failure
+   * Handle authentication failure by clearing session and triggering callback
    */
   private handleAuthFailure(): void {
     logger.authEvent('Authentication failure, clearing session');
-    
-    // Clear Redux state
-    store.dispatch(clearSession());
-    
-    // Call custom auth failure handler if provided
+    this.clearTokens();
     this.config.onAuthFailure?.();
-    
-    // Navigate to login
-    this.navigateToLogin();
-  }
-
-  /**
-   * Navigate to login page
-   */
-  private navigateToLogin(): void {
-    if (this.config.navigateToLogin) {
-      this.config.navigateToLogin();
-    } else {
-      // Fallback to window.location
-      window.location.href = '/login';
-    }
-  }
-
-  /**
-   * Clear all authentication data
-   */
-  logout(): void {
-    logger.authEvent('User logout initiated');
-    store.dispatch(clearSession());
-    this.navigateToLogin();
-  }
-
-  /**
-   * Check if user is currently authenticated
-   */
-  isAuthenticated(): boolean {
-    const state = store.getState();
-    return state.auth.isAuthenticated && !!state.auth.accessToken;
-  }
-
-  /**
-   * Get current user from state
-   */
-  getCurrentUser() {
-    const state = store.getState();
-    return state.auth.user;
   }
 }
 
@@ -291,6 +238,7 @@ export const authService = new AuthService({
   baseUrl: config.apiBaseUrl,
   onAuthFailure: () => {
     // Custom auth failure handling can be added here
+    // Navigation should be handled by the component/router that receives this callback
     logger.authEvent('Auth service handling authentication failure');
   },
 });

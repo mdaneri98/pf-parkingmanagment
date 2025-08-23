@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import type { ApiResponse, LoginRequest, LoginResponse, RefreshTokenResponse, RegisterResponse } from '@shared/types';
+import type { ApiResponse, LoginRequest, LoginResponse, RefreshTokenResponse, RegisterResponse, User } from '@shared/types';
 import { smartBaseQuery } from '@shared/api/baseQuery';
 
 export const authApi = createApi({
@@ -27,6 +27,9 @@ export const authApi = createApi({
     resetPassword: builder.mutation<ApiResponse<{ done: boolean }>, { token: string; newPassword: string }>({
       query: (body) => ({ url: '/auth/password-recovery/reset', method: 'POST', body }),
     }),
+    getCurrentUser: builder.query<ApiResponse<User>, void>({
+      query: () => ({ url: '/auth/me', method: 'GET' }),
+    }),
   }),
 });
 
@@ -38,6 +41,7 @@ export const {
   useRequestPasswordRecoveryMutation,
   useVerifyRecoveryTokenMutation,
   useResetPasswordMutation,
+  useGetCurrentUserQuery,
 } = authApi;
 
 
