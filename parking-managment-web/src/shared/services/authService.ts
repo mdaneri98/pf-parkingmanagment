@@ -1,4 +1,4 @@
-import { store } from '../../stores/store';
+import { store } from '@stores/store';
 import { setCredentials, clearSession } from '../../features/auth/slice/authSlice';
 import { logger } from '../utils/logger';
 import { isTokenExpired } from '../utils/jwt';

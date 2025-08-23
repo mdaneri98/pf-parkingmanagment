@@ -15,17 +15,9 @@ function App() {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Check for stored tokens
         const validation = validateStoredTokens();
         
         if (validation.isValid && validation.accessToken && validation.refreshToken) {
-          // Set credentials in Redux
-          dispatch(setCredentials({
-            accessToken: validation.accessToken,
-            refreshToken: validation.refreshToken
-          }));
-
-          // Initialize user session
           const tokenPayload = JSON.parse(atob(validation.accessToken.split('.')[1]));
           if (tokenPayload?.sub) {
             await initializeUserSession(

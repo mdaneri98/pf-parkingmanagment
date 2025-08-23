@@ -1,8 +1,9 @@
 import { store } from '@stores/store';
 import { setCredentials, setUser, setError } from '@features/auth/slice/authSlice';
 import { usersApi } from '@features/users/api/usersApi';
-import { decodeJWT, extractUserRole } from './jwt';
+import { decodeJWT, extractUserRole, isTokenExpired } from './jwt';
 import { logger } from './logger';
+import { authService } from '@shared/services/authService';
 import type { AuthUser } from '@shared/types/auth';
 
 /**
@@ -34,15 +35,26 @@ export async function initializeUserSession(
       hasRefreshToken: !!refreshToken,
     });
 
-    // Step 1: Validate and extract role from JWT
-    const tokenPayload = decodeJWT(accessToken);
-    if (!tokenPayload?.sub) {
-      const error = 'Invalid token payload';
-      logger.warn(error, { email, tokenLength: accessToken.length });
+    // Step 1: Set credentials in store first (required for authService to work)
+    store.dispatch(setCredentials({ accessToken, refreshToken }));
+
+    // Step 2: Get valid access token (refreshes if expired)
+    const validAccessToken = await authService.getValidAccessToken();
+    if (!validAccessToken) {
+      const error = 'Unable to obtain valid access token';
+      logger.warn(error, { email, hadInitialToken: !!accessToken });
       return { success: false, error };
     }
 
-    const userRole = extractUserRole(accessToken);
+    // Step 3: Validate and extract role from JWT
+    const tokenPayload = decodeJWT(validAccessToken);
+    if (!tokenPayload?.sub) {
+      const error = 'Invalid token payload';
+      logger.warn(error, { email, tokenLength: validAccessToken.length });
+      return { success: false, error };
+    }
+
+    const userRole = extractUserRole(validAccessToken);
     if (!userRole || userRole !== 'manager') {
       const error = 'Access denied. Only manager accounts can log in.';
       logger.warn('Role validation failed', { 
@@ -53,11 +65,7 @@ export async function initializeUserSession(
       return { success: false, error };
     }
 
-    // Step 2: Set credentials in store (this persists to localStorage)
-    store.dispatch(setCredentials({ accessToken, refreshToken }));
-    logger.debug('Credentials set in store', { email });
-
-    // Step 3: Fetch user details
+    // Step 4: Fetch user details
     const userResult = await store.dispatch(
       usersApi.endpoints.getUserByEmail.initiate(email)
     );
@@ -72,7 +80,13 @@ export async function initializeUserSession(
       return { success: false, error };
     }
 
-    // Step 4: Create complete user object
+    // Step 5: Create complete user object
+    if (!userResult.data?.data) {
+      const error = 'Invalid user data received';
+      logger.error(error, { email, duration: Date.now() - startTime });
+      return { success: false, error };
+    }
+    
     const userData = userResult.data.data;
     const user: AuthUser = {
       id: userData.id,
@@ -85,7 +99,7 @@ export async function initializeUserSession(
       updatedAt: userData.updatedAt,
     };
 
-    // Step 5: Set user in store
+    // Step 6: Set user in store
     store.dispatch(setUser(user));
 
     const duration = Date.now() - startTime;
