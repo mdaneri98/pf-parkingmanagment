@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { AuthState, AuthUser } from '../../../shared/types';
-import { validateStoredTokens, decodeJWT, extractUserRole } from '../../../shared/utils/jwt';
-import { appStorage } from '../../../shared/utils/storage';
-import { logger } from '../../../shared/utils/logger';
+import type { AuthState, AuthUser } from '@shared/types';
+import { validateStoredTokens, decodeJWT, extractUserRole } from '@shared/utils/jwt';
+import { appStorage } from '@shared/utils/storage';
+import { logger } from '@shared/utils/logger';
 
 // Async thunk to initialize auth from stored tokens
 export const initializeAuthFromStorage = createAsyncThunk(

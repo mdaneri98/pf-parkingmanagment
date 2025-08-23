@@ -1,16 +1,15 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { useAppSelector } from '../../../hooks/useAppSelector';
-import { useLazyGetUserByEmailQuery } from '../../users/api/usersApi';
+import { useAppDispatch } from '@hooks/useAppDispatch';
+import { useAppSelector } from '@hooks/useAppSelector';
+import { useLogger } from '@hooks/useLogger';
 import { setUser } from '../slice/authSlice';
 import { selectAuth } from '../selectors';
-import { decodeJWT } from '../../../shared/utils/jwt';
-import { useLogger } from '../../../hooks/useLogger';
+import { decodeJWT } from '@shared/utils/jwt';
 
 export function AuthInitializer() {
   const dispatch = useAppDispatch();
-  const { accessToken, isAuthenticated, user, isInitialized } = useAppSelector(selectAuth);
-  const [triggerGetUserByEmail] = useLazyGetUserByEmailQuery();
+  const { accessToken, refreshToken, isAuthenticated, user, isInitialized } = useAppSelector(selectAuth);
+
   const log = useLogger();
 
   useEffect(() => {
@@ -45,63 +44,39 @@ export function AuthInitializer() {
         hasUser: !!user,
       });
 
+      // Extract email from token for user session initialization
       const tokenPayload = decodeJWT(accessToken);
       
       if (tokenPayload?.sub) {
-        log.debug('Token decoded successfully, fetching user data', {
+        log.debug('Token decoded successfully, initializing session', {
           userId: tokenPayload.sub,
           tokenExpiry: tokenPayload.exp ? new Date(tokenPayload.exp * 1000).toISOString() : undefined,
           tokenIssuedAt: tokenPayload.iat ? new Date(tokenPayload.iat * 1000).toISOString() : undefined,
         });
 
-        const startTime = Date.now();
-        
-        triggerGetUserByEmail(tokenPayload.sub)
-          .unwrap()
-          .then((userRes) => {
-            const responseTime = Date.now() - startTime;
-            const u = userRes.data;
-            
-            log.info('User data restored successfully', {
-              userId: u.id,
-              email: u.email,
-              responseTime,
-              userRole: 'manager', // Default role since UserResponse doesn't have role
-            });
+        // Use centralized auth utility (no need to set credentials again, they're already set)
+        import('@shared/utils/authUtils').then(async ({ initializeUserSession }) => {
+          // Since credentials are already set, just use the current tokens
+          
+          const result = await initializeUserSession(
+            accessToken,
+            refreshToken!,
+            tokenPayload.sub
+          );
 
-            dispatch(setUser({ 
-              id: u.id, 
-              email: u.email, 
-              firstName: u.firstName, 
-              lastName: u.lastName, 
-              role: 'manager' as const 
-            }));
-
+          if (result.success) {
             log.authEvent('user_session_restored', {
-              userId: u.id,
-              email: u.email,
+              userId: result.user?.id,
+              email: result.user?.email,
               method: 'stored_token',
-              responseTime,
             });
-          })
-          .catch((error) => {
-            const responseTime = Date.now() - startTime;
-            
-            log.error('Failed to restore user data from stored token', {
+          } else {
+            log.error('Failed to restore user session from stored token', {
               userId: tokenPayload.sub,
-              responseTime,
-              error: error?.message || error?.toString(),
-              status: error?.status,
+              error: result.error,
             });
-
-            // Log additional context for debugging
-            if (error?.data) {
-              log.debug('Error response data', {
-                userId: tokenPayload.sub,
-                errorData: error.data,
-              });
-            }
-          });
+          }
+        });
       } else {
         log.warn('Invalid token payload, cannot restore user session', {
           hasToken: !!accessToken,
@@ -118,7 +93,7 @@ export function AuthInitializer() {
         reason: !isInitialized ? 'not_initialized' : !accessToken ? 'no_token' : !isAuthenticated ? 'not_authenticated' : 'user_exists',
       });
     }
-  }, [accessToken, isAuthenticated, user, isInitialized, dispatch, triggerGetUserByEmail, log]);
+  }, [accessToken, isAuthenticated, user, isInitialized, dispatch, log]);
 
   return null;
 }

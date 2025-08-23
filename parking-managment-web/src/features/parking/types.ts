@@ -1,8 +1,4 @@
-export interface BaseEntity {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { BaseEntity } from '../users/types';
 
 export interface SpotDTO extends BaseEntity {
   vehicleType: string;
@@ -18,14 +14,6 @@ export interface ParkingLotResponse extends BaseEntity {
   imageUrl: string;
   managerId: number;
   spots: SpotDTO[];
-}
-
-export interface UserResponse {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  imageUrl: string;
 }
 
 

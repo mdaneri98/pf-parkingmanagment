@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import type { ApiResponse } from '../../../shared/types';
-import type { UserResponse } from '../../parking/types';
-import { smartBaseQuery } from '../../../shared/api/baseQuery';
+import type { ApiResponse } from '@shared/types';
+import type { UserResponse } from '../types';
+import { smartBaseQuery } from '@shared/api/baseQuery';
 
 export const usersApi = createApi({
   reducerPath: 'usersApi',

@@ -2,13 +2,12 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useLoginMutation } from '../api/authApi';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { setCredentials, setUser, setError } from '../slice/authSlice';
-import { useLazyGetUserByEmailQuery } from '../../users/api/usersApi';
-import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '@hooks/useAppDispatch';
+import { setError } from '../slice/authSlice';
+import { useAppSelector } from '@hooks/useAppSelector';
 import { selectAuth, selectIsAuthenticated } from '../selectors';
 import { useEffect } from 'react';
-import { decodeJWT, extractUserRole } from '../../../shared/utils/jwt';
+import { useErrorHandler, ErrorCodes } from '@shared/utils/errorHandling';
 
 type FormValues = { email: string; password: string };
 
@@ -17,46 +16,42 @@ export function LoginPage() {
   const [login, { isLoading, error }] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [triggerGetUserByEmail] = useLazyGetUserByEmailQuery();
+
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const { user, error: authError } = useAppSelector(selectAuth);
+  const { handleError, getUserFriendlyMessage } = useErrorHandler();
 
   const onSubmit = async (values: FormValues) => {
     try {
       // Step 1: Login and get JWT token
       const res = await login(values).unwrap();
       
-      // Step 2: Check if JWT payload tells that the role is manager
-      const tokenPayload = decodeJWT(res.data.token);
-      if (!tokenPayload) {
-        dispatch(setError('Please try again.'));
-        return;
-      }
+      // Step 2: Initialize complete user session (tokens + user data + role validation)
+      const { initializeUserSession } = await import('@shared/utils/authUtils');
+      const result = await initializeUserSession(
+        res.data.token,
+        res.data.refreshToken,
+        res.data.email
+      );
 
-      const userRole = extractUserRole(res.data.token);
-      if (!userRole || userRole !== 'manager') {
-        dispatch(setError('Access denied. Only manager accounts can log in. Please try again with a different account.'));
-        return;
-      }
-
-      // Step 3: Set credentials so the user API can use the token
-      // This will automatically persist tokens to localStorage via the enhanced setCredentials action
-      dispatch(setCredentials({ accessToken: res.data.token, refreshToken: res.data.refreshToken }));
-      
-      // Step 4: Retrieve user information
-      try {
-        const userRes = await triggerGetUserByEmail(res.data.email).unwrap();
-        const u = userRes.data;
-        dispatch(setUser({ id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, role: userRole as 'manager' }));
-      } catch (userError) {
-        dispatch(setError('Unable to fetch user details. Please try logging in again.'));
+      if (!result.success) {
+        const error = handleError(result.error || 'Authentication failed', {
+          component: 'LoginPage',
+          action: 'session_initialization',
+          code: ErrorCodes.AUTH_ACCESS_DENIED,
+        });
+        dispatch(setError(getUserFriendlyMessage(error)));
         return;
       }
       
-      // Step 5: Redirect to dashboard page
+      // Step 3: Redirect to dashboard page
       navigate('/app', { replace: true });
     } catch (loginError) {
-      dispatch(setError('Unknown error. Please, try again.'))
+      const error = handleError(loginError, {
+        component: 'LoginPage',
+        action: 'login_attempt',
+      });
+      dispatch(setError(getUserFriendlyMessage(error)));
     }
   };
 

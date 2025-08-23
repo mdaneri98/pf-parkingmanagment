@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetParkingLotByIdQuery } from '../api/parkingApi';
+import { config } from '../../../shared/config/env';
 
 export function DashboardPage() {
   const params = useParams();
   const lotId = params.lotId ? Number(params.lotId) : NaN;
   const { data, isLoading, isError, refetch } = useGetParkingLotByIdQuery(lotId, {
-    pollingInterval: 5000,
+    pollingInterval: config.polling.dashboardInterval,
     refetchOnFocus: true,
     refetchOnReconnect: true,
     skip: isNaN(lotId),
@@ -52,7 +53,7 @@ export function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold">{lotName}</h2>
-        <p className="text-sm text-gray-500">Live overview updates every 5s</p>
+        <p className="text-sm text-gray-500">Live overview updates every {Math.round(config.polling.dashboardInterval / 1000)}s</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

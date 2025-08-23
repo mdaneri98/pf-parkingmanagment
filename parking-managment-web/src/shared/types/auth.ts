@@ -1,11 +1,20 @@
 export type UserRole = 'user' | 'manager' | 'admin';
 
-export interface AuthUser {
+// Base user interface - unified across the application
+export interface User {
   id: number;
   email: string;
   firstName: string;
   lastName: string;
   role: UserRole;
+  imageUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Auth-specific user type (extends base User)
+export interface AuthUser extends User {
+  // Add any auth-specific fields here if needed
 }
 
 export interface AuthState {
@@ -15,6 +24,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  isInitialized: boolean; // Add missing field from slice
 }
 
 export interface LoginRequest {
