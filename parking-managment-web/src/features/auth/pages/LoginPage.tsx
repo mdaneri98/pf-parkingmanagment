@@ -55,12 +55,6 @@ export function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      navigate('/app', { replace: true });
-    }
-  }, [isAuthenticated, user, navigate]);
-
   return (
     <AuthCard title="Sign in">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
