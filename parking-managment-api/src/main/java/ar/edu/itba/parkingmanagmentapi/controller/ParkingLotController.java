@@ -35,6 +35,7 @@ public class ParkingLotController {
         return ApiResponse.ok(parkingLot);
     }
 
+    //FIXME: Paginated
     @GetMapping
     public ResponseEntity<ApiResponse<List<ParkingLotResponse>>> getAllParkingLots() {
         List<ParkingLotResponse> list = parkingLotService.findAll();
@@ -66,5 +67,12 @@ public class ParkingLotController {
         Page<SpotResponse> spots = parkingLotService.findByFilters(parkingLotId, available, vehicleType, floor, pageable);
         return ApiResponse.ok(PageResponse.of(spots));
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<ParkingLotResponse>>> getParkingLotsByUserId(@PathVariable Long userId) {
+        List<ParkingLotResponse> parkingLots = parkingLotService.findByUserId(userId);
+        return ApiResponse.ok(parkingLots);
+    }
+
 }
 

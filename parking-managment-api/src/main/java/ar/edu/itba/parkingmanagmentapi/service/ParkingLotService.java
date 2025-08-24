@@ -47,4 +47,9 @@ public interface ParkingLotService {
      */
     Optional<User> getManagerOfParkingLot(Long parkingLotId);
 
+    /**
+     * Finds all parking lots owned by a specific user ID
+     */
+    List<ParkingLotResponse> findByUserId(Long userId);
+
 }

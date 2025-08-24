@@ -655,9 +655,173 @@
 						"description": "Get user by email (requires authentication)"
 					},
 					"response": []
+				},
+				{
+					"name": "Get Current User (Me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user information (requires authentication)"
+					},
+					"response": []
 				}
 			],
 			"description": "User management endpoints (CRUD operations and search)"
+		},
+		{
+			"name": "Vehicles",
+			"item": [
+				{
+					"name": "Create Vehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"{{vehicleLicensePlate}}\",\n    \"vehicleType\": \"{{vehicleType}}\",\n    \"brand\": \"{{vehicleBrand}}\",\n    \"model\": \"{{vehicleModel}}\",\n    \"color\": \"{{vehicleColor}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						},
+						"description": "Create a new vehicle (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Vehicles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						},
+						"description": "Get all vehicles (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vehicle by License Plate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"{{vehicleLicensePlate}}"
+							]
+						},
+						"description": "Get vehicle by license plate (requires authentication and ownership)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Vehicle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"licensePlate\": \"{{updatedVehicleLicensePlate}}\",\n    \"vehicleType\": \"{{updatedVehicleType}}\",\n    \"brand\": \"{{updatedVehicleBrand}}\",\n    \"model\": \"{{updatedVehicleModel}}\",\n    \"color\": \"{{updatedVehicleColor}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"{{vehicleLicensePlate}}"
+							]
+						},
+						"description": "Update vehicle information (requires authentication and ownership)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Vehicle",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"{{vehicleLicensePlate}}"
+							]
+						},
+						"description": "Delete vehicle by license plate (requires authentication and ownership)"
+					},
+					"response": []
+				}
+			],
+			"description": "Vehicle management endpoints (CRUD operations)"
 		},
 		{
 			"name": "Parking Lots",
@@ -795,6 +959,31 @@
 						"description": "Delete parking lot by ID (requires authentication)"
 					},
 					"response": []
+				},
+				{
+					"name": "Get Parking Lots by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/user/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"user",
+								"{{userId}}"
+							]
+						},
+						"description": "Get all parking lots owned by a specific user ID (requires authentication)"
+					},
+					"response": []
 				}
 			],
 			"description": "Parking lot management endpoints (CRUD operations)"
@@ -894,9 +1083,9 @@
 							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
 						],
 						"url": {
-							"raw": "{{baseUrl}}/{{parkingLotId}}/spots?available={{spotAvailable}}&vehicleType={{spotVehicleType}}&floor={{spotFloor}}&page={{page}}&size={{size}}",
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}/spots?available={{spotAvailable}}&vehicleType={{spotVehicleType}}&floor={{spotFloor}}&page={{page}}&size={{size}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["{{parkingLotId}}", "spots"],
+							"path": ["parking-lots", "{{parkingLotId}}", "spots"],
 							"query": [
 								{ "key": "available", "value": "{{spotAvailable}}" },
 								{ "key": "vehicleType", "value": "{{spotVehicleType}}" },
@@ -1188,6 +1377,56 @@
 		{
 			"key": "currentUser",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "vehicleLicensePlate",
+			"value": "ABC123",
+			"type": "string"
+		},
+		{
+			"key": "vehicleType",
+			"value": "CAR",
+			"type": "string"
+		},
+		{
+			"key": "vehicleBrand",
+			"value": "Toyota",
+			"type": "string"
+		},
+		{
+			"key": "vehicleModel",
+			"value": "Camry",
+			"type": "string"
+		},
+		{
+			"key": "vehicleColor",
+			"value": "Blue",
+			"type": "string"
+		},
+		{
+			"key": "updatedVehicleLicensePlate",
+			"value": "XYZ789",
+			"type": "string"
+		},
+		{
+			"key": "updatedVehicleType",
+			"value": "SUV",
+			"type": "string"
+		},
+		{
+			"key": "updatedVehicleBrand",
+			"value": "Honda",
+			"type": "string"
+		},
+		{
+			"key": "updatedVehicleModel",
+			"value": "CR-V",
+			"type": "string"
+		},
+		{
+			"key": "updatedVehicleColor",
+			"value": "Red",
 			"type": "string"
 		}
 	]

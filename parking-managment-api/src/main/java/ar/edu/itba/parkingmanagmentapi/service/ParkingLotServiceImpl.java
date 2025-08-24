@@ -137,4 +137,12 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         );
     }
 
+    @Override
+    public List<ParkingLotResponse> findByUserId(Long userId) {
+        return parkingLotRepository.findByManagerUserId(userId)
+                .stream()
+                .map(ParkingLotMapper::toParkingLotWithoutSpotsResponse)
+                .collect(Collectors.toList());
+    }
+
 }
