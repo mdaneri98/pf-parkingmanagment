@@ -2,12 +2,9 @@ package ar.edu.itba.parkingmanagmentapi.service;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
-import ar.edu.itba.parkingmanagmentapi.model.User;
-import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import ar.edu.itba.parkingmanagmentapi.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +38,6 @@ public interface ParkingLotService {
 
     ParkingLot findEntityById(Long id);
 
-    Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Pageable pageable);
     /**
      * Gets the manager (User) of a parking lot by its ID
      */

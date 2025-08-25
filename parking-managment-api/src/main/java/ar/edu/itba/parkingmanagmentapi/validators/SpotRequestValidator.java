@@ -26,7 +26,7 @@ public class SpotRequestValidator {
         this.alphanumericValidator = alphanumericValidator;
     }
 
-    public void validate(SpotRequest spotRequest, boolean isFromParkingLotCreation) {
+    public void validate(SpotRequest spotRequest) {
         mandatoryFieldValidator.validate(spotRequest.getVehicleType(), "vehicleType");
         boolean validType = Arrays.stream(VehicleType.values())
                 .anyMatch(v -> v.getName().equalsIgnoreCase(spotRequest.getVehicleType()));
@@ -41,10 +41,6 @@ public class SpotRequestValidator {
         mandatoryFieldValidator.validate(spotRequest.getCode(), "code");
         blankFieldValidator.validate(spotRequest.getCode(), "code");
         alphanumericValidator.validate(spotRequest.getCode(), "code");
-
-        if (!isFromParkingLotCreation) {
-            mandatoryFieldValidator.validate(spotRequest.getParkingLotId(), "parkingLotId");
-        }
 
     }
 }

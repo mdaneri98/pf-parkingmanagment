@@ -47,7 +47,8 @@ public abstract class BaseIntegrationTest {
     protected VehicleRepository vehicleRepository;
     @Autowired
     protected UserVehicleAssignmentRepository userVehicleAssignmentRepository;
-
+    @Autowired
+    protected ParkingPriceRepository parkingPriceRepository;
     @Autowired
     protected PasswordEncoder passwordEncoder;
 

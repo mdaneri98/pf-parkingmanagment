@@ -1,15 +1,18 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.PageResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.service.SpotService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/spots")
+@RequestMapping("/parking-lots/{parkingLotId}/spots")
 @CrossOrigin(origins = "*")
 public class SpotController {
 
@@ -20,30 +23,41 @@ public class SpotController {
     }
 
     @PostMapping
-    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#spot.parkingLotId)")
-    public ResponseEntity<ApiResponse<SpotResponse>> createSpot(@RequestBody SpotRequest spot) {
-        SpotResponse createdSpot = spotService.createSpot(spot);
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
+    public ResponseEntity<ApiResponse<SpotResponse>> createSpot(@PathVariable Long parkingLotId, @RequestBody SpotRequest spot) {
+        SpotResponse createdSpot = spotService.createSpot(parkingLotId, spot);
         return ApiResponse.created(createdSpot);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<SpotResponse>> getSpotById(@PathVariable Long id) {
-        SpotResponse spot = spotService.findById(id);
+    public ResponseEntity<ApiResponse<SpotResponse>> getSpotById(@PathVariable Long parkingLotId, @PathVariable Long id) {
+        SpotResponse spot = spotService.findById(parkingLotId, id);
         return ApiResponse.ok(spot);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfSpot(#id)")
-    public ResponseEntity<ApiResponse<SpotResponse>> updateSpot(@PathVariable Long id, @RequestBody SpotRequest spot) {
-        SpotResponse updatedSpot = spotService.updateSpot(id, spot);
+    public ResponseEntity<ApiResponse<SpotResponse>> updateSpot(@PathVariable Long parkingLotId, @PathVariable Long id, @RequestBody SpotRequest spot) {
+        SpotResponse updatedSpot = spotService.updateSpot(parkingLotId, id, spot);
         return ApiResponse.ok(updatedSpot);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfSpot(#id)")
-    public ResponseEntity<ApiResponse<Void>> deleteSpot(@PathVariable Long id) {
-        spotService.deleteSpot(id);
+    public ResponseEntity<ApiResponse<Void>> deleteSpot(@PathVariable Long parkingLotId, @PathVariable Long id) {
+        spotService.deleteSpot(parkingLotId, id);
         return ApiResponse.noContent();
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<SpotResponse>>> getSpots(
+            @PathVariable Long parkingLotId,
+            @RequestParam(required = false) Boolean available,
+            @RequestParam(required = false) String vehicleType,
+            @RequestParam(required = false) Integer floor,
+            Pageable pageable) {
+        Page<SpotResponse> spots = spotService.findByFilters(parkingLotId, available, vehicleType, floor, pageable);
+        return ApiResponse.ok(PageResponse.of(spots));
     }
 }
 

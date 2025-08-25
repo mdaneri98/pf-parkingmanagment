@@ -4,7 +4,6 @@ import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
-import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -220,82 +219,6 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
         ApiResponse<ApiResponse> apiResponse = parseApiResponse(response, ApiResponse.class);
         assertNotNull(apiResponse);
         assertTrue(apiResponse.getMessage().contains("is mandatory"));
-    }
-
-
-    @Test
-    void testGetSpots_shouldReturnPagedResults() {
-        ParkingLot parkingLot = new ParkingLot();
-        parkingLot.setName("Test Lot");
-        parkingLot.setAddress("Direccion Test");
-        parkingLot.setImageUrl("lot.jpg");
-        parkingLot.setLatitude(-34.6037);
-        parkingLot.setLongitude(-58.3816);
-        parkingLotRepository.save(parkingLot);
-
-        Spot spot1 = new Spot("A", true, "CAR", 1, parkingLot);   // disponible
-        Spot spot2 = new Spot("B", false, "CAR", 1, parkingLot);  // no disponible
-        Spot spot3 = new Spot("B", true, "MOTORCYCLE", 2, parkingLot); // moto
-
-        spotRepository.saveAll(List.of(spot1, spot2, spot3));
-
-        HttpEntity<Void> requestEntity =
-                new HttpEntity<>(createAuthHeaders(managerUser));
-
-
-        ResponseEntity<ApiResponse<PageResponse<SpotResponse>>> response = restTemplate.exchange(
-                "/parking-lots/" + parkingLot.getId() + "/spots",
-                HttpMethod.GET,
-                requestEntity,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-
-        PageResponse<SpotResponse> page = response.getBody().getData();
-
-        assertEquals(0, page.getPageNumber());             // Página actual (0-based)
-        assertEquals(1, page.getTotalPages());         // 3 spots en 1 page
-        assertEquals(3, page.getTotalElements());      // Total de spots
-        assertTrue(page.getContent().stream().anyMatch(s -> s.getCode().equals("A")));
-        assertTrue(page.getContent().stream().anyMatch(s -> s.getCode().equals("A")));
-    }
-
-    @Test
-    void testGetSpots_withFilters_shouldReturnFilteredResults() {
-        ParkingLot parkingLot = new ParkingLot();
-        parkingLot.setName("Test Parking");
-        parkingLot.setAddress("Test Address");
-        parkingLot.setImageUrl("parking.jpg");
-        parkingLot.setLatitude(-34.6037);
-        parkingLot.setLongitude(-58.3816);
-        parkingLotRepository.save(parkingLot);
-
-        Spot spot1 = new Spot("A", true, "CAR", 1, parkingLot);   // disponible
-        Spot spot2 = new Spot("B", false, "CAR", 1, parkingLot);  // no disponible
-        Spot spot3 = new Spot("B", true, "MOTORCYCLE", 2, parkingLot); // moto
-        spotRepository.saveAll(List.of(spot1, spot2, spot3));
-
-        HttpEntity<Void> requestEntity = new HttpEntity<>(createAuthHeaders(managerUser));
-
-        ResponseEntity<ApiResponse<PageResponse<SpotResponse>>> response = restTemplate.exchange(
-                "/parking-lots/" + parkingLot.getId() + "/spots?available=true",
-                HttpMethod.GET,
-                requestEntity,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-
-        PageResponse<SpotResponse> page = response.getBody().getData();
-        assertEquals(2, page.getTotalElements());
-        assertEquals(2, page.getContent().size());
-        assertTrue(page.getContent().stream().allMatch(SpotResponse::getIsAvailable));
     }
 
     @Test

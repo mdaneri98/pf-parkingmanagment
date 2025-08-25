@@ -27,7 +27,7 @@ class VehicleControllerIntegrationTest extends BaseIntegrationTest {
         request.setLicensePlate("ABC123");
         request.setBrand("Toyota");
         request.setModel("Corolla");
-        request.setType("Sedan");
+        request.setType("AUTO");
 
         HttpEntity<VehicleRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(normalUser));
 
@@ -47,14 +47,14 @@ class VehicleControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals("ABC123", vehicleResponse.getLicensePlate());
         assertEquals("Toyota", vehicleResponse.getBrand());
         assertEquals("Corolla", vehicleResponse.getModel());
-        assertEquals("Sedan", vehicleResponse.getType());
+        assertEquals("AUTO", vehicleResponse.getType());
 
         Optional<Vehicle> savedVehicleOpt = vehicleRepository.findById(request.getLicensePlate());
         assertTrue(savedVehicleOpt.isPresent(), "El vehículo debería estar en la base de datos");
         Vehicle savedVehicle = savedVehicleOpt.get();
         assertEquals("Toyota", savedVehicle.getBrand());
         assertEquals("Corolla", savedVehicle.getModel());
-        assertEquals("Sedan", savedVehicle.getType());
+        assertEquals("AUTO", savedVehicle.getType());
     }
 
     @Test

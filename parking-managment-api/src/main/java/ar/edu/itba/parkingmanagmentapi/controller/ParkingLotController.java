@@ -1,10 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
-import ar.edu.itba.parkingmanagmentapi.dto.*;
+import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.service.ParkingLotService;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +36,6 @@ public class ParkingLotController {
         return ApiResponse.ok(parkingLot);
     }
 
-    //FIXME: Paginated
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<ParkingLotResponse>>> getAllParkingLots() {
-        List<ParkingLotResponse> list = parkingLotService.findAll();
-        return ApiResponse.ok(list);
-    }
-
     @DeleteMapping("/{parkingLotId}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
     public ResponseEntity<ApiResponse<Void>> deleteParkingLot(@PathVariable Long parkingLotId) {
@@ -55,17 +49,6 @@ public class ParkingLotController {
                                                                             @Valid @RequestBody UpdateParkingLotRequest request) {
         ParkingLotResponse updated = parkingLotService.updateParkingLot(parkingLotId, request);
         return ApiResponse.ok(updated);
-    }
-
-    @GetMapping("/{parkingLotId}/spots")
-    public ResponseEntity<ApiResponse<PageResponse<SpotResponse>>> getSpots(
-            @PathVariable Long parkingLotId,
-            @RequestParam(required = false) Boolean available,
-            @RequestParam(required = false) String vehicleType,
-            @RequestParam(required = false) Integer floor,
-            Pageable pageable) {
-        Page<SpotResponse> spots = parkingLotService.findByFilters(parkingLotId, available, vehicleType, floor, pageable);
-        return ApiResponse.ok(PageResponse.of(spots));
     }
 
     @GetMapping("/user/{userId}")

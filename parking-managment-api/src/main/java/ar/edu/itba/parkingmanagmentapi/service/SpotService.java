@@ -3,18 +3,22 @@ package ar.edu.itba.parkingmanagmentapi.service;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
 public interface SpotService {
-    SpotResponse createSpot(SpotRequest request);
+    SpotResponse createSpot(Long parkingLotId, SpotRequest request);
 
-    SpotResponse findById(Long id);
+    SpotResponse findById(Long parkingLotId, Long id);
 
-    SpotResponse updateSpot(Long id, SpotRequest request);
+    SpotResponse updateSpot(Long parkingLotId, Long id, SpotRequest request);
 
-    void deleteSpot(Long id);
+    void deleteSpot(Long parkingLotId, Long id);
 
     Optional<User> getManagerOfSpot(Long spotId);
+
+    Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Pageable pageable);
 
 }
