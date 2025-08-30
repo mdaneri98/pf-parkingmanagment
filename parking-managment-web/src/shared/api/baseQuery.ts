@@ -17,13 +17,11 @@ export const baseQuery = fetchBaseQuery({
   },
 });
 
-// Enhanced base query with automatic token refresh and comprehensive logging
 export const smartBaseQuery: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  const startTime = Date.now();
   const requestId = Math.random().toString(36).substring(7);
 
   // Extract URL and method for logging
@@ -36,8 +34,7 @@ export const smartBaseQuery: BaseQueryFn<
     timestamp: new Date().toISOString(),
   });
 
-  // Execute the request (baseQuery will handle token refresh through authService.getValidAccessToken)
-  let result = await baseQuery(args, api, extraOptions);
+  const result = await baseQuery(args, api, extraOptions);
 
   return result;
 };

@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
-      port: 8081,
+      port: 8082,
       open: false
     },
     preview: {

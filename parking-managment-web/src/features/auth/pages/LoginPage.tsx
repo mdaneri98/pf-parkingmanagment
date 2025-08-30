@@ -3,32 +3,31 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useLoginMutation } from '../api/authApi';
 import { useAppDispatch } from '@hooks/useAppDispatch';
-import { setError } from '../slice/authSlice';
+import { setError, setInitialized } from '../slice/authSlice';
 import { useAppSelector } from '@hooks/useAppSelector';
-import { selectAuth, selectIsAuthenticated } from '../selectors';
-import { useEffect } from 'react';
+import { selectAuth } from '../selectors';
 import { useErrorHandler, ErrorCodes } from '@shared/utils/errorHandling';
 import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
+import { initializeUserSession } from '@shared/utils/sessionInitializer';
+
 
 type FormValues = { email: string; password: string };
 
 export function LoginPage() {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>();
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const { user, error: authError } = useAppSelector(selectAuth);
+  const { error: authError } = useAppSelector(selectAuth);
   const { handleError, getUserFriendlyMessage } = useErrorHandler();
 
   const onSubmit = async (values: FormValues) => {
     try {
-      // Step 1: Login and get JWT token
+      // 1. Call login API
       const res = await login(values).unwrap();
-      
-      // Step 2: Initialize complete user session (tokens + user data + role validation)
-      const { initializeUserSession } = await import('@shared/utils/authUtils');
+
+      // 2. Initialize complete user session (tokens + user data + role validation)
       const result = await initializeUserSession(
         res.data.token,
         res.data.refreshToken,
@@ -41,18 +40,21 @@ export function LoginPage() {
           action: 'session_initialization',
           code: ErrorCodes.AUTH_ACCESS_DENIED,
         });
-        dispatch(setError(getUserFriendlyMessage(error)));
+        dispatch(setError(getUserFriendlyMessage("Invalid credentials")));
         return;
       }
-      
-      // Step 3: Redirect to dashboard page
+
+      // 3. Mark initialization as complete
+      dispatch(setInitialized(true));
+
+      // 4. Redirect to dashboard
       navigate('/app', { replace: true });
     } catch (loginError) {
       const error = handleError(loginError, {
         component: 'LoginPage',
         action: 'login_attempt',
       });
-      dispatch(setError(getUserFriendlyMessage(error)));
+      dispatch(setError(getUserFriendlyMessage("Invalid credentials")));
     }
   };
 
@@ -70,7 +72,7 @@ export function LoginPage() {
             </svg>
           }
         />
-        
+
         <Input
           type="password"
           label="Password"
@@ -83,7 +85,7 @@ export function LoginPage() {
           }
         />
 
-        {(error || authError) && (
+        {authError && (
           <Alert variant="error">
             <AlertDescription>
               {authError || 'Login failed. Please check your credentials and try again.'}
@@ -91,25 +93,25 @@ export function LoginPage() {
           </Alert>
         )}
 
-        <Button 
-          type="submit" 
-          className="w-full" 
+        <Button
+          type="submit"
+          className="w-full"
           size="lg"
           loading={isSubmitting || isLoading}
         >
           Sign in
         </Button>
       </form>
-      
+
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-700">
-        <Link 
-          to="/register" 
+        <Link
+          to="/register"
           className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
         >
           Create an account
         </Link>
-        <Link 
-          to="/password-recovery" 
+        <Link
+          to="/password-recovery"
           className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
         >
           Forgot password?
@@ -118,5 +120,3 @@ export function LoginPage() {
     </AuthCard>
   );
 }
-
-

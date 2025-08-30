@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate} from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useRegisterMutation } from '../api/authApi';
 import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
@@ -9,10 +10,17 @@ type FormValues = { firstName: string; lastName: string; email: string; password
 export function RegisterPage() {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>();
   const [doRegister, { isLoading, error, isSuccess }] = useRegisterMutation();
+  const navigate = useNavigate();
 
   const onSubmit = async (values: FormValues) => {
     await doRegister(values).unwrap();
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/login", { replace: true });
+    }
+  }, [isSuccess]);
 
   return (
     <AuthCard title="Create account">
@@ -76,7 +84,7 @@ export function RegisterPage() {
         {isSuccess && (
           <Alert variant="success">
             <AlertDescription>
-              Registration successful! You can now sign in with your credentials.
+              Registration successful!
             </AlertDescription>
           </Alert>
         )}

@@ -6,9 +6,11 @@ import { store } from './stores/store';
 import { ErrorBoundary } from './shared/components/ErrorBoundary';
 import App from './App';
 
+
 const container = document.getElementById('root');
 if (!container) throw new Error('Root container not found');
 const root = createRoot(container);
+
 
 root.render(
   <React.StrictMode>
@@ -19,5 +21,3 @@ root.render(
     </ErrorBoundary>
   </React.StrictMode>
 );
-
-

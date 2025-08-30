@@ -1,11 +1,8 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
-import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AlreadyExistsException;
+import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
@@ -70,7 +67,8 @@ public class AuthServiceImpl implements AuthService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found"));
         List<String> roles = userDetails.getAuthorities().stream().map(
                 authority -> authority.getAuthority().replace("ROLE_", "")
         ).collect(Collectors.toList());

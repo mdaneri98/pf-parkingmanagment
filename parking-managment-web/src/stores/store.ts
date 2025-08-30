@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authReducer, initializeAuthFromStorage } from '../features/auth/slice/authSlice';
+import { authReducer } from '../features/auth/slice/authSlice';
 import { authApi } from '../features/auth/api/authApi';
 import { usersApi } from '../features/users/api/usersApi';
 import { parkingApi } from '../features/parking/api/parkingApi';
 import { parkingReducer } from '../features/parking/slice/parkingSlice';
+
 
 export const store = configureStore({
   reducer: {
@@ -20,11 +21,6 @@ export const store = configureStore({
       .concat(parkingApi.middleware),
 });
 
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export const initializeAuth = () => {
-  store.dispatch(initializeAuthFromStorage());
-};
-
-

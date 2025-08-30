@@ -1,4 +1,4 @@
-import type { User, UserRole } from '@shared/types/auth';
+// Types for user management (if needed in the future)
 
 export interface BaseEntity {
   id: number;

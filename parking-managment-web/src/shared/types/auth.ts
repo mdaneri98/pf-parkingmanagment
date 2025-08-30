@@ -8,12 +8,9 @@ export interface User {
   lastName: string;
   role: UserRole;
   imageUrl?: string;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
-export interface AuthUser extends User {
-}
+export type AuthUser = User;
 
 export interface AuthState {
   user: User | null;
@@ -44,4 +41,11 @@ export interface RefreshTokenResponse {
   token: string;
   email: string;
   refreshToken: string;
+}
+
+export interface JWTPayload {
+  sub: string;
+  exp: number;
+  iat: number;
+  roles: string[];
 }

@@ -91,7 +91,7 @@ export class AppErrorHandler {
         return 'You do not have access to this parking lot.';
       
       case ErrorCodes.USER_NOT_FOUND:
-        return 'User not found. Please try again or contact support.';
+        return 'User not found';
       
       case 401:
         return 'Authentication required. Please sign in.';
@@ -112,7 +112,7 @@ export class AppErrorHandler {
         return 'Server error. Please try again later.';
       
       default:
-        return 'An unexpected error occurred. Please try again or contact support.';
+        return 'An unexpected error occurred.';
     }
   }
 

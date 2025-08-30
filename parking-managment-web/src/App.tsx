@@ -2,47 +2,54 @@ import { useEffect, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './hooks';
 import { selectAuth } from './features/auth/selectors';
-import { setCredentials, setInitialized } from './features/auth/slice/authSlice';
+import { setInitialized } from './features/auth/slice/authSlice';
 import { validateStoredTokens } from './shared/utils/jwt';
-import { initializeUserSession } from './shared/utils/authUtils';
+import { initializeUserSession } from './shared/utils/sessionInitializer';
 import { router } from './shared/routing/router';
+
 
 function App() {
   const dispatch = useAppDispatch();
   const { isInitialized } = useAppSelector(selectAuth);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const validation = validateStoredTokens();
-        
-        if (validation.isValid && validation.accessToken && validation.refreshToken) {
-          const tokenPayload = JSON.parse(atob(validation.accessToken.split('.')[1]));
-          if (tokenPayload?.sub) {
-            await initializeUserSession(
-              validation.accessToken,
-              validation.refreshToken,
-              tokenPayload.sub
-            );
-          }
+        const validation = validateStoredTokens({ allowedRoles: ['MANAGER'] });
+
+
+        if (
+          validation.isValid &&
+          validation.accessToken &&
+          validation.refreshToken &&
+          validation.payload?.sub
+        ) {
+          await initializeUserSession(
+            validation.accessToken,
+            validation.refreshToken,
+            validation.payload.sub
+          );
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
       } finally {
+        // Initialize once regardless of success/failure
         dispatch(setInitialized(true));
         setIsLoading(false);
       }
     };
 
+
     if (!isInitialized) {
-      initializeAuth();
+      void initializeAuth();
     } else {
       setIsLoading(false);
     }
   }, [dispatch, isInitialized]);
 
-  // Show loading screen until auth is initialized
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -54,7 +61,9 @@ function App() {
     );
   }
 
+
   return <RouterProvider router={router} />;
 }
+
 
 export default App;
