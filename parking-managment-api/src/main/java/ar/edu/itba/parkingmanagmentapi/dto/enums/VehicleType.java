@@ -1,4 +1,4 @@
-package ar.edu.itba.parkingmanagmentapi.dto;
+package ar.edu.itba.parkingmanagmentapi.dto.enums;
 
 public enum VehicleType {
     BICYCLE("bicicleta"),

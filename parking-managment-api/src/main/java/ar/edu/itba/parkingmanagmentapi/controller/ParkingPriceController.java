@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/parking-lots/{parkingLotId}/prices")
+@CrossOrigin(origins = "*")
 public class ParkingPriceController {
 
     private final ParkingPriceService parkingPriceService;
@@ -26,7 +27,7 @@ public class ParkingPriceController {
 
     @PostMapping
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
-    public ResponseEntity<ApiResponse<ParkingPriceResponse>> create(
+    public ResponseEntity<?> create(
             @PathVariable Long parkingLotId,
             @Valid @RequestBody ParkingPriceRequest request) {
         ParkingPriceResponse response = parkingPriceService.create(parkingLotId, request);
@@ -35,7 +36,7 @@ public class ParkingPriceController {
 
     @PutMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
-    public ResponseEntity<ApiResponse<ParkingPriceResponse>> update(
+    public ResponseEntity<?> update(
             @PathVariable Long parkingLotId,
             @PathVariable Long id,
             @Valid @RequestBody ParkingPriceRequest request
@@ -46,7 +47,7 @@ public class ParkingPriceController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
-    public ResponseEntity<ApiResponse<Void>> delete(
+    public ResponseEntity<?> delete(
             @PathVariable Long parkingLotId,
             @PathVariable Long id
     ) {

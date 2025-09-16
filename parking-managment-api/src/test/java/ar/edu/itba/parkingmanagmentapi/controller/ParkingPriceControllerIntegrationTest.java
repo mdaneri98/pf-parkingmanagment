@@ -4,6 +4,7 @@ import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingPriceRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingPriceResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingPrice;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +30,7 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     void testCreateParkingPrice_shouldReturn201_andPersisted() {
         ParkingPriceRequest request = new ParkingPriceRequest();
-        request.setVehicleType("Car");
+        request.setVehicleType(VehicleType.BICYCLE.getName());
         request.setPrice(new BigDecimal("100"));
         request.setValidFrom(LocalDateTime.now());
         request.setValidTo(LocalDateTime.now().plusDays(7));
@@ -47,20 +48,20 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         ParkingPriceResponse responseData = response.getBody().getData();
-        assertEquals("Car", responseData.getVehicleType());
+        assertEquals(VehicleType.BICYCLE.getName(), responseData.getVehicleType());
         assertEquals(new BigDecimal("100"), responseData.getPrice());
 
         Optional<ParkingPrice> savedOpt = parkingPriceRepository.findById(responseData.getId());
         assertTrue(savedOpt.isPresent());
         ParkingPrice saved = savedOpt.get();
-        assertEquals("Car", saved.getVehicleType());
+        assertEquals(VehicleType.BICYCLE.getName(), saved.getVehicleType());
         assertEquals(new BigDecimal("100.00"), saved.getPrice());
     }
 
     @Test
     void testGetByParkingLot_shouldReturnAllPrices() {
-        ParkingPrice price1 = new ParkingPrice("Car", new BigDecimal("50"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
-        ParkingPrice price2 = new ParkingPrice("Motorcycle", new BigDecimal("30"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
+        ParkingPrice price1 = existingParkingPrice;
+        ParkingPrice price2 = new ParkingPrice(VehicleType.MOTORCYCLE.getName(), new BigDecimal("30"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
         parkingPriceRepository.saveAll(List.of(price1, price2));
 
         ResponseEntity<ApiResponse<List<ParkingPriceResponse>>> response = restTemplate.exchange(
@@ -76,18 +77,18 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
         List<ParkingPriceResponse> prices = response.getBody().getData();
         assertEquals(2, prices.size());
         List<String> vehicleTypes = prices.stream().map(ParkingPriceResponse::getVehicleType).toList();
-        assertTrue(vehicleTypes.containsAll(List.of("Car", "Motorcycle")));
+        assertTrue(vehicleTypes.containsAll(List.of(VehicleType.CAR.getName(), VehicleType.MOTORCYCLE.getName())));
     }
 
     @ParameterizedTest
     @CsvSource({
-            "30, 50, 2",    // ambos precios entran en el rango
-            "40, 50, 1",    // solo el de 50 entra
+            "10, 50, 2",    // ambos precios entran en el rango
+            "10, 20, 1",    // solo el de 10 entra
             "60, 70, 0"     // ninguno entra
     })
     void testGetPrices_shouldReturnAllPricesInRange(String minStr, String maxStr, int expectedCount) {
-        ParkingPrice price1 = new ParkingPrice("Car", new BigDecimal("50"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
-        ParkingPrice price2 = new ParkingPrice("Motorcycle", new BigDecimal("30"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
+        ParkingPrice price1 = existingParkingPrice;
+        ParkingPrice price2 = new ParkingPrice(VehicleType.MOTORCYCLE.getName(), new BigDecimal("30"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
         parkingPriceRepository.saveAll(List.of(price1, price2));
 
         BigDecimal min = new BigDecimal(minStr);
@@ -113,8 +114,8 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
             "desc"
     })
     void testGetPrices_shouldReturnAllPricesSorted(String sort) {
-        ParkingPrice price1 = new ParkingPrice("Car", new BigDecimal("50"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
-        ParkingPrice price2 = new ParkingPrice("Motorcycle", new BigDecimal("30"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
+        ParkingPrice price1 = existingParkingPrice;
+        ParkingPrice price2 = new ParkingPrice(VehicleType.MOTORCYCLE.getName(), new BigDecimal("30"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
         parkingPriceRepository.saveAll(List.of(price1, price2));
 
         ResponseEntity<ApiResponse<List<ParkingPriceResponse>>> response = restTemplate.exchange(
@@ -142,11 +143,10 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void testUpdateParkingPrice_shouldReturn200_andPersisted() {
-        ParkingPrice price = new ParkingPrice("Car", new BigDecimal("50"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
-        parkingPriceRepository.save(price);
+        ParkingPrice price = existingParkingPrice;
 
         ParkingPriceRequest updateRequest = new ParkingPriceRequest();
-        updateRequest.setVehicleType("Car");
+        updateRequest.setVehicleType(VehicleType.CAR.getName());
         updateRequest.setPrice(new BigDecimal("60"));
         updateRequest.setValidFrom(LocalDateTime.now());
         updateRequest.setValidTo(LocalDateTime.now().plusDays(5));
@@ -172,11 +172,10 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void testDeleteParkingPrice_shouldReturn204_andRemoved() {
-        ParkingPrice price = new ParkingPrice("Car", new BigDecimal("50"), LocalDateTime.now(), LocalDateTime.now().plusDays(3), existingParkingLot);
-        parkingPriceRepository.save(price);
+        ParkingPrice price = existingParkingPrice;
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                "/parking-lots/" + existingParkingLot.getId() + "/prices/" + price.getId(),
+                "/parking-lots/" + existingParkingLot.getId() + "/prices/" + existingParkingPrice.getId(),
                 HttpMethod.DELETE,
                 new HttpEntity<>(createAuthHeaders(managerUser)),
                 Void.class
@@ -189,7 +188,7 @@ class ParkingPriceControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     void testCreateParkingPrice_shouldReturn403_ifNotManager() {
         ParkingPriceRequest request = new ParkingPriceRequest();
-        request.setVehicleType("Car");
+        request.setVehicleType(VehicleType.CAR.getName());
         request.setPrice(new BigDecimal("100"));
         request.setValidFrom(LocalDateTime.now());
 

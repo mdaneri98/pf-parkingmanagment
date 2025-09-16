@@ -32,26 +32,26 @@ public class UserController {
      * Crea un nuevo usuario
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(@Valid @RequestBody CreateUserRequest user) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest user) {
         UserResponse createdUser = userService.createUser(user);
         return ApiResponse.created(createdUser);
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
+    public ResponseEntity<?> getAllUsers() {
         List<UserResponse> users = userService.findAll();
         return ApiResponse.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         UserResponse user = userService.findById(id);
         return ApiResponse.ok(user);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUser(#id)")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(
+    public ResponseEntity<?> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest userDetails) {
         UserResponse updatedUser = userService.updateUser(id, userDetails);
@@ -61,7 +61,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUser(#id)")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ApiResponse.noContent();
     }
@@ -70,7 +70,7 @@ public class UserController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
+    public ResponseEntity<?> getCurrentUser() {
         UserResponse currentUser = securityService.getCurrentUser()
                 .map(UserMapper::toUserResponse)
                 .orElseThrow(() -> new AuthenticationFailedException("No authenticated user found"));
@@ -78,13 +78,13 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> searchUsers(@RequestParam String q) {
+    public ResponseEntity<?> searchUsers(@RequestParam String q) {
         List<UserResponse> users = userService.searchUsers(q);
         return ApiResponse.ok(users);
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         UserResponse user = userService.findByEmail(email);
         return ApiResponse.ok(user);
     }

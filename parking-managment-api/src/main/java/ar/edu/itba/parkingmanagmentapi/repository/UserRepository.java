@@ -11,22 +11,23 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    
+    Optional<User> findById(Long id);
+
     /**
      * Busca un usuario por su email
      */
     Optional<User> findByEmail(String email);
-    
+
     /**
      * Verifica si existe un usuario con el email especificado
      */
     boolean existsByEmail(String email);
-    
+
     /**
      * Busca usuarios por nombre o apellido (búsqueda parcial)
      */
     @Query("SELECT u FROM User u WHERE LOWER(u.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-           "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<User> findByFirstNameOrLastNameContainingIgnoreCase(@Param("searchTerm") String searchTerm);
 
 }

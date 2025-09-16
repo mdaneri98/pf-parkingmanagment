@@ -37,11 +37,10 @@ public class Vehicle {
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserVehicleAssignment> userAssignments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ScheduledReservation> scheduledReservations = new ArrayList<>();
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WalkInStay> walkInStays = new ArrayList<>();
+    private final List<WalkInStay> walkInStays = new ArrayList<>();
+
 
     // Constructores
     public Vehicle() {
@@ -109,21 +108,5 @@ public class Vehicle {
 
     public void setUserAssignments(List<UserVehicleAssignment> userAssignments) {
         this.userAssignments = userAssignments;
-    }
-
-    public List<ScheduledReservation> getScheduledReservations() {
-        return scheduledReservations;
-    }
-
-    public void setScheduledReservations(List<ScheduledReservation> scheduledReservations) {
-        this.scheduledReservations = scheduledReservations;
-    }
-
-    public List<WalkInStay> getWalkInStays() {
-        return walkInStays;
-    }
-
-    public void setWalkInStays(List<WalkInStay> walkInStays) {
-        this.walkInStays = walkInStays;
     }
 } 

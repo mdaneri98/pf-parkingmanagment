@@ -3,7 +3,7 @@
 -- Sistema de Gestión de Estacionamientos
 -- =============================================
 
--- Usuarios comunes 
+-- Usuarios comunes
 -- Contraseña "password123" hasheada con BCrypt: $2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m
 INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at)
 VALUES ('John', 'Doe', 'admin@admin.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
@@ -135,7 +135,7 @@ VALUES (1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
 -- Reservas programadas
 INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, status, estimated_price, spot_id,
-                                   vehicle_user_id, vehicle_license_plate, created_at, updated_at)
+                                   user_id, vehicle_license_plate, created_at, updated_at)
 VALUES
 -- Reserva completada (ayer)
 ('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', CURRENT_TIMESTAMP,
@@ -154,7 +154,7 @@ VALUES
  CURRENT_TIMESTAMP);
 
 -- Estancias walk-in
-INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, spot_id, vehicle_user_id, vehicle_license_plate,
+INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, spot_id, user_id, vehicle_license_plate,
                           created_at, updated_at)
 VALUES
 -- Estancia completada
@@ -188,4 +188,4 @@ VALUES
 -- Incidente reportado
 ('Falta de iluminación en el sector de motos', 'REPORTED', 2, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Incidente cerrado
-('Derrame de aceite en el espacio PB-A03', 'CLOSED', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP); 
+('Derrame de aceite en el espacio PB-A03', 'CLOSED', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

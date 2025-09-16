@@ -1,18 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
-import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.RefreshTokenResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.RegisterResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         logger.info("Procesando login para usuario: {}", loginRequest.getEmail());
 
         LoginResponse response = authService.login(loginRequest);
@@ -36,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<RegisterResponse>> register(
+    public ResponseEntity<?> register(
             @Valid @RequestBody RegisterRequest registerRequest,
             @RequestParam(value = "manager", defaultValue = "false") boolean isManager) {
 
@@ -48,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<RefreshTokenResponse>> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<?> refresh(@Valid @RequestBody RefreshTokenRequest request) {
         logger.info("Procesando refresh");
 
         RefreshTokenResponse response = authService.refresh(request.getRefreshToken());
@@ -56,8 +49,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    @PreAuthorize("@authorizationService.isCurrentUser(#request.userId)")
-    public ResponseEntity<ApiResponse<Void>> logout(@Valid @RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<?> logout(@Valid @RequestBody RefreshTokenRequest request) {
         logger.info("Procesando logout");
         authService.logout(request.getRefreshToken());
         return ApiResponse.ok(null);

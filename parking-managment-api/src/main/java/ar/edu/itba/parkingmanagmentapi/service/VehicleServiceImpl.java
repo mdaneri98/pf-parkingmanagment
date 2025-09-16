@@ -2,12 +2,12 @@ package ar.edu.itba.parkingmanagmentapi.service;
 
 import ar.edu.itba.parkingmanagmentapi.dto.VehicleRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.VehicleResponse;
-import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
 import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
+import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserVehicleAssignmentRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.VehicleRepository;
 import ar.edu.itba.parkingmanagmentapi.security.service.SecurityService;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
@@ -28,14 +29,17 @@ public class VehicleServiceImpl implements VehicleService {
 
     private final UserVehicleAssignmentRepository userVehicleAssignmentRepository;
 
+    private final UserRepository userRepository;
+
     private final CreateVehicleValidator createVehicleValidator;
 
     private final UpdateVehicleValidator updateVehicleValidator;
 
-    public VehicleServiceImpl(VehicleRepository vehicleRepository, SecurityService securityService, UserVehicleAssignmentRepository userVehicleAssignmentRepository, CreateVehicleValidator createVehicleValidator, UpdateVehicleValidator updateVehicleValidator) {
+    public VehicleServiceImpl(VehicleRepository vehicleRepository, SecurityService securityService, UserVehicleAssignmentRepository userVehicleAssignmentRepository, UserRepository userRepository, CreateVehicleValidator createVehicleValidator, UpdateVehicleValidator updateVehicleValidator) {
         this.vehicleRepository = vehicleRepository;
         this.securityService = securityService;
         this.userVehicleAssignmentRepository = userVehicleAssignmentRepository;
+        this.userRepository = userRepository;
         this.createVehicleValidator = createVehicleValidator;
         this.updateVehicleValidator = updateVehicleValidator;
     }
@@ -48,18 +52,18 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
         Vehicle vehicle = VehicleMapper.toEntity(request);
-        vehicleRepository.save(vehicle);
 
-        User currentUser = securityService.getCurrentUser()
-                .orElseThrow(() -> new AuthenticationFailedException("User no authenticated to create vehicle"));
+        Optional<UserVehicleAssignment> uva = userVehicleAssignmentRepository.findByUserIdAndVehicleLicensePlate(request.getUserId(), request.getLicensePlate());
+        if (uva.isPresent()) {
+            throw new BadRequestException("There is already an assignment for user " + request.getUserId() + " and vehicle " + request.getLicensePlate());
+        }
 
-        UserVehicleAssignment assignment = new UserVehicleAssignment();
-        assignment.setUser(currentUser);
-        assignment.setVehicle(vehicle);
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new NotFoundException("Not found user with id " + request.getUserId()));
 
-        userVehicleAssignmentRepository.save(assignment);
-
-        return VehicleMapper.toResponse(vehicle);
+        UserVehicleAssignment assignment = new UserVehicleAssignment(user, vehicle);
+        vehicle.getUserAssignments().add(assignment);
+        
+        return VehicleMapper.toResponse(vehicleRepository.save(vehicle));
     }
 
 

@@ -28,6 +28,7 @@ class VehicleControllerIntegrationTest extends BaseIntegrationTest {
         request.setBrand("Toyota");
         request.setModel("Corolla");
         request.setType("AUTO");
+        request.setUserId(normalUser.getId());
 
         HttpEntity<VehicleRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(normalUser));
 
@@ -60,12 +61,12 @@ class VehicleControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     void testGetVehicle_shouldReturn200_ifOwner() {
         Vehicle vehicle = new Vehicle("XYZ987", "Ford", "Focus", "Hatchback");
-        vehicleRepository.save(vehicle);
         UserVehicleAssignment assignment = new UserVehicleAssignment();
         assignment.setId(new UserVehicleAssignmentId(normalUser.getId(), vehicle.getLicensePlate()));
         assignment.setUser(normalUser.getUser());
         assignment.setVehicle(vehicle);
-        userVehicleAssignmentRepository.save(assignment);
+        vehicle.getUserAssignments().add(assignment);
+        vehicleRepository.save(vehicle);
 
         ResponseEntity<ApiResponse<VehicleResponse>> response = restTemplate.exchange(
                 "/vehicles/" + vehicle.getLicensePlate(),

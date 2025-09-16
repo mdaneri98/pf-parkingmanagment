@@ -37,7 +37,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/parking-lots/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/vehicles/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/spots/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/reservations/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/reviews/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/incidents/**").authenticated()
@@ -54,10 +53,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasAnyRole("ADMIN", "USER")
-
-                        .requestMatchers(HttpMethod.POST, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/spots/**").hasAnyRole("ADMIN", "MANAGER")
 
                         .requestMatchers(HttpMethod.POST, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                         .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")

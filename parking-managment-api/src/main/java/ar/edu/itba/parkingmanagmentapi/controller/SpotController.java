@@ -24,33 +24,33 @@ public class SpotController {
 
     @PostMapping
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
-    public ResponseEntity<ApiResponse<SpotResponse>> createSpot(@PathVariable Long parkingLotId, @RequestBody SpotRequest spot) {
+    public ResponseEntity<?> createSpot(@PathVariable Long parkingLotId, @RequestBody SpotRequest spot) {
         SpotResponse createdSpot = spotService.createSpot(parkingLotId, spot);
         return ApiResponse.created(createdSpot);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<SpotResponse>> getSpotById(@PathVariable Long parkingLotId, @PathVariable Long id) {
+    public ResponseEntity<?> getSpotById(@PathVariable Long parkingLotId, @PathVariable Long id) {
         SpotResponse spot = spotService.findById(parkingLotId, id);
         return ApiResponse.ok(spot);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfSpot(#id)")
-    public ResponseEntity<ApiResponse<SpotResponse>> updateSpot(@PathVariable Long parkingLotId, @PathVariable Long id, @RequestBody SpotRequest spot) {
+    public ResponseEntity<?> updateSpot(@PathVariable Long parkingLotId, @PathVariable Long id, @RequestBody SpotRequest spot) {
         SpotResponse updatedSpot = spotService.updateSpot(parkingLotId, id, spot);
         return ApiResponse.ok(updatedSpot);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfSpot(#id)")
-    public ResponseEntity<ApiResponse<Void>> deleteSpot(@PathVariable Long parkingLotId, @PathVariable Long id) {
+    public ResponseEntity<?> deleteSpot(@PathVariable Long parkingLotId, @PathVariable Long id) {
         spotService.deleteSpot(parkingLotId, id);
         return ApiResponse.noContent();
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<SpotResponse>>> getSpots(
+    public ResponseEntity<?> getSpots(
             @PathVariable Long parkingLotId,
             @RequestParam(required = false) Boolean available,
             @RequestParam(required = false) String vehicleType,

@@ -1,7 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
-import ar.edu.itba.parkingmanagmentapi.dto.*;
+import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.User;

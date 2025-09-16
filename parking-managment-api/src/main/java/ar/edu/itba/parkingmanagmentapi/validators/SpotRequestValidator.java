@@ -1,7 +1,7 @@
 package ar.edu.itba.parkingmanagmentapi.validators;
 
 import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.VehicleType;
+import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.BlankFieldValidator;

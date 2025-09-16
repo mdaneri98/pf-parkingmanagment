@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "parking-management-api-collection",
-		"name": "Parking Management API",
+		"_postman_id": "ec16ff0c-a73e-44e8-bfac-f86536acabda",
+		"name": "Parking Management API Copy",
 		"description": "Complete API collection for Parking Management System with authentication scripts and all endpoints",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "parking-management-api"
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25082324"
 	},
 	"item": [
 		{
@@ -117,31 +117,6 @@
 				},
 				{
 					"name": "Login User",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						},
-						"description": "Login with regular user credentials to get access token and refresh token"
-					},
-					"response": [],
 					"event": [
 						{
 							"listen": "test",
@@ -163,10 +138,7 @@
 								"type": "text/javascript"
 							}
 						}
-					]
-				},
-				{
-					"name": "Login Manager",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -177,21 +149,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{managerEmail}}\",\n    \"password\": \"{{managerPassword}}\"\n}"
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						},
-						"description": "Login with manager credentials to get access token and refresh token"
+						"url": "{{baseUrl}}/auth/login",
+						"description": "Login with regular user credentials to get access token and refresh token"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "Login Manager",
 					"event": [
 						{
 							"listen": "test",
@@ -213,10 +179,7 @@
 								"type": "text/javascript"
 							}
 						}
-					]
-				},
-				{
-					"name": "Login Admin",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -227,21 +190,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{adminEmail}}\",\n    \"password\": \"{{adminPassword}}\"\n}"
+							"raw": "{\n    \"email\": \"{{managerEmail}}\",\n    \"password\": \"{{managerPassword}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						},
-						"description": "Login with admin credentials to get access token and refresh token"
+						"url": "{{baseUrl}}/auth/login",
+						"description": "Login with manager credentials to get access token and refresh token"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "Login Admin",
 					"event": [
 						{
 							"listen": "test",
@@ -263,10 +220,7 @@
 								"type": "text/javascript"
 							}
 						}
-					]
-				},
-				{
-					"name": "Refresh Token",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -277,21 +231,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
+							"raw": "{\n    \"email\": \"{{adminEmail}}\",\n    \"password\": \"{{adminPassword}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/refresh",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"refresh"
-							]
-						},
-						"description": "Refresh access token using refresh token"
+						"url": "{{baseUrl}}/auth/login",
+						"description": "Login with admin credentials to get access token and refresh token"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
 					"event": [
 						{
 							"listen": "test",
@@ -311,10 +259,7 @@
 								"type": "text/javascript"
 							}
 						}
-					]
-				},
-				{
-					"name": "Logout",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -327,19 +272,13 @@
 							"mode": "raw",
 							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/logout",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"logout"
-							]
-						},
-						"description": "Logout and invalidate refresh token"
+						"url": "{{baseUrl}}/auth/refresh",
+						"description": "Refresh access token using refresh token"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "Logout",
 					"event": [
 						{
 							"listen": "test",
@@ -354,10 +293,7 @@
 								"type": "text/javascript"
 							}
 						}
-					]
-				},
-				{
-					"name": "Request Password Recovery",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -368,22 +304,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{recoveryEmail}}\"\n}"
+							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/password-recovery/request",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"password-recovery",
-								"request"
-							]
-						},
-						"description": "Request password recovery for an email address"
+						"url": "{{baseUrl}}/auth/logout",
+						"description": "Logout and invalidate refresh token"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "Request Password Recovery",
 					"event": [
 						{
 							"listen": "test",
@@ -400,7 +329,23 @@
 								"type": "text/javascript"
 							}
 						}
-					]
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{recoveryEmail}}\"\n}"
+						},
+						"url": "{{baseUrl}}/auth/password-recovery/request",
+						"description": "Request password recovery for an email address"
+					},
+					"response": []
 				},
 				{
 					"name": "Verify Recovery Token",
@@ -416,17 +361,7 @@
 							"mode": "raw",
 							"raw": "{\n    \"token\": \"{{recoveryToken}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/password-recovery/verify",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"password-recovery",
-								"verify"
-							]
-						},
+						"url": "{{baseUrl}}/auth/password-recovery/verify",
 						"description": "Verify if a recovery token is valid"
 					},
 					"response": []
@@ -445,17 +380,7 @@
 							"mode": "raw",
 							"raw": "{\n    \"token\": \"{{recoveryToken}}\",\n    \"newPassword\": \"{{newPassword}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/password-recovery/reset",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"password-recovery",
-								"reset"
-							]
-						},
+						"url": "{{baseUrl}}/auth/password-recovery/reset",
 						"description": "Reset password using recovery token"
 					},
 					"response": []
@@ -484,15 +409,7 @@
 							"mode": "raw",
 							"raw": "{\n    \"email\": \"{{newUserEmail}}\",\n    \"password\": \"{{newUserPassword}}\",\n    \"firstName\": \"{{newUserFirstName}}\",\n    \"lastName\": \"{{newUserLastName}}\",\n    \"imageUrl\": \"{{newUserImageUrl}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							]
-						},
+						"url": "{{baseUrl}}/users",
 						"description": "Create a new user (requires authentication)"
 					},
 					"response": []
@@ -507,15 +424,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							]
-						},
+						"url": "{{baseUrl}}/users",
 						"description": "Get all users (requires authentication)"
 					},
 					"response": []
@@ -530,16 +439,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/users/{{userId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"{{userId}}"
-							]
-						},
+						"url": "{{baseUrl}}/users/{{userId}}",
 						"description": "Get user by ID (requires authentication)"
 					},
 					"response": []
@@ -562,16 +462,7 @@
 							"mode": "raw",
 							"raw": "{\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\",\n    \"imageUrl\": \"{{updatedImageUrl}}\",\n    \"userDetail\": {\n        \"phone\": \"{{updatedPhone}}\",\n        \"address\": \"{{updatedAddress}}\"\n    }\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/users/{{userId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"{{userId}}"
-							]
-						},
+						"url": "{{baseUrl}}/users/{{userId}}",
 						"description": "Update user information (requires authentication)"
 					},
 					"response": []
@@ -586,16 +477,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/users/{{userId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"{{userId}}"
-							]
-						},
+						"url": "{{baseUrl}}/users/{{userId}}",
 						"description": "Delete user by ID (requires authentication)"
 					},
 					"response": []
@@ -641,17 +523,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/users/email/{{email}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"email",
-								"{{email}}"
-							]
-						},
+						"url": "{{baseUrl}}/users/email/{{email}}",
 						"description": "Get user by email (requires authentication)"
 					},
 					"response": []
@@ -666,16 +538,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/users/me",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"me"
-							]
-						},
+						"url": "{{baseUrl}}/users/me",
 						"description": "Get current authenticated user information (requires authentication)"
 					},
 					"response": []
@@ -702,17 +565,9 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"licensePlate\": \"{{vehicleLicensePlate}}\",\n    \"vehicleType\": \"{{vehicleType}}\",\n    \"brand\": \"{{vehicleBrand}}\",\n    \"model\": \"{{vehicleModel}}\",\n    \"color\": \"{{vehicleColor}}\"\n}"
+							"raw": "{\n    \"licensePlate\": \"ABC234\",\n    \"type\": \"{{vehicleType}}\",\n    \"brand\": \"{{vehicleBrand}}\",\n    \"model\": \"{{vehicleModel}}\",\n    \"color\": \"{{vehicleColor}}\",\n    \"userId\": 9\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/vehicles",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"vehicles"
-							]
-						},
+						"url": "{{baseUrl}}/vehicles",
 						"description": "Create a new vehicle (requires authentication)"
 					},
 					"response": []
@@ -727,15 +582,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/vehicles",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"vehicles"
-							]
-						},
+						"url": "{{baseUrl}}/vehicles",
 						"description": "Get all vehicles (requires authentication)"
 					},
 					"response": []
@@ -750,16 +597,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"vehicles",
-								"{{vehicleLicensePlate}}"
-							]
-						},
+						"url": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
 						"description": "Get vehicle by license plate (requires authentication and ownership)"
 					},
 					"response": []
@@ -782,16 +620,7 @@
 							"mode": "raw",
 							"raw": "{\n    \"licensePlate\": \"{{updatedVehicleLicensePlate}}\",\n    \"vehicleType\": \"{{updatedVehicleType}}\",\n    \"brand\": \"{{updatedVehicleBrand}}\",\n    \"model\": \"{{updatedVehicleModel}}\",\n    \"color\": \"{{updatedVehicleColor}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"vehicles",
-								"{{vehicleLicensePlate}}"
-							]
-						},
+						"url": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
 						"description": "Update vehicle information (requires authentication and ownership)"
 					},
 					"response": []
@@ -806,16 +635,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"vehicles",
-								"{{vehicleLicensePlate}}"
-							]
-						},
+						"url": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
 						"description": "Delete vehicle by license plate (requires authentication and ownership)"
 					},
 					"response": []
@@ -842,17 +662,9 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"{{parkingLotName}}\",\n    \"address\": \"{{parkingLotAddress}}\",\n    \"imageUrl\": \"{{parkingLotImageUrl}}\",\n    \"managerId\": {{managerId}},\n    \"spots\": [\n        {\n            \"vehicleType\": \"{{spotVehicleType}}\",\n            \"floor\": {{spotFloor}},\n            \"code\": \"{{spotCode}}\",\n            \"isAvailable\": {{spotIsAvailable}}\n        }\n    ]\n}"
+							"raw": "{\n    \"name\": \"{{parkingLotName}}\",\n    \"address\": \"{{parkingLotAddress}}\",\n    \"imageUrl\": \"{{parkingLotImageUrl}}\",\n    \"managerId\": {{managerId}},\n    \"latitude\": 32.11,\n    \"longitude\": -12.33,\n    \"spots\": [\n        {\n            \"vehicleType\": \"{{spotVehicleType}}\",\n            \"floor\": {{spotFloor}},\n            \"code\": \"{{spotCode}}\",\n            \"isAvailable\": {{spotIsAvailable}}\n        }\n    ]\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/parking-lots",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"parking-lots"
-							]
-						},
+						"url": "{{baseUrl}}/parking-lots",
 						"description": "Create a new parking lot with spots (requires authentication)"
 					},
 					"response": []
@@ -867,15 +679,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/parking-lots",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"parking-lots"
-							]
-						},
+						"url": "{{baseUrl}}/parking-lots",
 						"description": "Get all parking lots (requires authentication)"
 					},
 					"response": []
@@ -890,16 +694,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"parking-lots",
-								"{{parkingLotId}}"
-							]
-						},
+						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
 						"description": "Get parking lot by ID (requires authentication)"
 					},
 					"response": []
@@ -922,16 +717,7 @@
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"{{updatedParkingLotName}}\",\n    \"address\": \"{{updatedParkingLotAddress}}\",\n    \"imageUrl\": \"{{updatedParkingLotImageUrl}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"parking-lots",
-								"{{parkingLotId}}"
-							]
-						},
+						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
 						"description": "Update parking lot information (requires authentication)"
 					},
 					"response": []
@@ -946,16 +732,7 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": {
-							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"parking-lots",
-								"{{parkingLotId}}"
-							]
-						},
+						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
 						"description": "Delete parking lot by ID (requires authentication)"
 					},
 					"response": []
@@ -970,18 +747,42 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
+						"url": "{{baseUrl}}/parking-lots/user/{{userId}}",
+						"description": "Get all parking lots owned by a specific user ID (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reservations by Parking Lot",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
 						"url": {
-							"raw": "{{baseUrl}}/parking-lots/user/{{userId}}",
+							"raw": "{{baseUrl}}/parking-lots/1/reservations?status=CONFIRMED",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"parking-lots",
-								"user",
-								"{{userId}}"
+								"1",
+								"reservations"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "CONFIRMED"
+								}
 							]
-						},
-						"description": "Get all parking lots owned by a specific user ID (requires authentication)"
+						}
 					},
 					"response": []
 				}
@@ -993,114 +794,322 @@
 			"item": [
 				{
 					"name": "Create Spot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('201 Created', function(){ pm.response.to.have.status(201); });",
+									"if (pm.response.code === 201) {",
+									"  const spot = pm.response.json();",
+									"  pm.environment.set('spotId', spot.id);",
+									"  console.log('Spot creado con ID:', spot.id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{spotFloor}},\n  \"code\": \"{{spotCode}}\",\n  \"vehicleType\": \"{{spotVehicleType}}\"\n}"
 						},
-						"url": { "raw": "{{baseUrl}}/spots", "host": ["{{baseUrl}}"], "path": ["spots"] },
+						"url": "{{baseUrl}}/parking-lots/4/spots",
 						"description": "Crea un nuevo spot. vehicleType puede ser: bicicleta, auto, camioneta, moto"
 					},
-					"event": [
-						{
-							"listen": "test",
-							"script": { "type": "text/javascript", "exec": [
-								"pm.test('201 Created', function(){ pm.response.to.have.status(201); });",
-								"if (pm.response.code === 201) {",
-								"  const spot = pm.response.json();",
-								"  pm.environment.set('spotId', spot.id);",
-								"  console.log('Spot creado con ID:', spot.id);",
-								"}"
-							] }
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Get Spot by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
 						],
-						"url": { "raw": "{{baseUrl}}/spots/{{spotId}}", "host": ["{{baseUrl}}"], "path": ["spots", "{{spotId}}"] }
+						"url": "{{baseUrl}}/spots/{{spotId}}"
 					},
-					"event": [
-						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-							"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
-						] } }
-					]
+					"response": []
 				},
 				{
 					"name": "Update Spot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{updatedSpotFloor}},\n  \"code\": \"{{updatedSpotCode}}\",\n  \"vehicleType\": \"{{updatedSpotVehicleType}}\"\n}"
 						},
-						"url": { "raw": "{{baseUrl}}/spots/{{spotId}}", "host": ["{{baseUrl}}"], "path": ["spots", "{{spotId}}"] },
+						"url": "{{baseUrl}}/spots/{{spotId}}",
 						"description": "Actualiza datos de un spot."
 					},
-					"event": [
-						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-							"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
-						] } }
-					]
+					"response": []
 				},
 				{
 					"name": "Delete Spot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('204 No Content', function(){ pm.response.to.have.status(204); });",
+									"if (pm.response.code === 204) {",
+									"  pm.environment.unset('spotId');",
+									"  console.log('Spot eliminado y spotId borrado del entorno');",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
-							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
 						],
-						"url": { "raw": "{{baseUrl}}/spots/{{spotId}}", "host": ["{{baseUrl}}"], "path": ["spots", "{{spotId}}"] }
+						"url": "{{baseUrl}}/spots/{{spotId}}"
 					},
-					"event": [
-						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-							"pm.test('204 No Content', function(){ pm.response.to.have.status(204); });",
-							"if (pm.response.code === 204) {",
-							"  pm.environment.unset('spotId');",
-							"  console.log('Spot eliminado y spotId borrado del entorno');",
-							"}"
-						] } }
-					]
+					"response": []
 				},
 				{
 					"name": "List Spots (with filters + pagination)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
-							{ "key": "Authorization", "value": "{{tokenType}} {{accessToken}}" }
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
 						],
 						"url": {
 							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}/spots?available={{spotAvailable}}&vehicleType={{spotVehicleType}}&floor={{spotFloor}}&page={{page}}&size={{size}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["parking-lots", "{{parkingLotId}}", "spots"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}",
+								"spots"
+							],
 							"query": [
-								{ "key": "available", "value": "{{spotAvailable}}" },
-								{ "key": "vehicleType", "value": "{{spotVehicleType}}" },
-								{ "key": "floor", "value": "{{spotFloor}}" },
-								{ "key": "page", "value": "{{page}}" },
-								{ "key": "size", "value": "{{size}}" }
+								{
+									"key": "available",
+									"value": "{{spotAvailable}}"
+								},
+								{
+									"key": "vehicleType",
+									"value": "{{spotVehicleType}}"
+								},
+								{
+									"key": "floor",
+									"value": "{{spotFloor}}"
+								},
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "size",
+									"value": "{{size}}"
+								}
 							]
 						},
 						"description": "Lista spots de un parkingLot con filtros opcionales y paginación."
 					},
-					"event": [
-						{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-							"pm.test('200 OK', function(){ pm.response.to.have.status(200); });"
-						] } }
-					]
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Precios",
+			"item": [
+				{
+					"name": "Create precio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"vehicleType\" : \"auto\",\r\n    \"price\": 13.20,\r\n    \"validFrom\": \"2025-08-21 00:00:00\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/parking-lots/4/prices"
+					},
+					"response": []
+				},
+				{
+					"name": "Get prices by PerkingLot ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}/prices"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservas",
+			"item": [
+				{
+					"name": "Crear reserva",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 9,\r\n  \"spotId\": 1,\r\n  \"reservedStartTime\": \"2025-08-31 23:00:00\",\r\n  \"expectedEndTime\": \"2025-08-31 23:30:00\",\r\n  \"vehicleLicensePlate\": \"ABC234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/reservations/scheduled"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener reserva by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/scheduled?userId=9",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"scheduled"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reservation by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/reservations/scheduled/6"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel reservation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/reservations/scheduled/6/cancel"
+					},
+					"response": []
 				}
 			]
 		}
@@ -1156,278 +1165,234 @@
 					"}"
 				]
 			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:8081/api",
-			"type": "string"
+			"value": "http://localhost:8081/api"
 		},
 		{
 			"key": "email",
-			"value": "user@example.com",
-			"type": "string"
+			"value": "user@example.com"
 		},
 		{
 			"key": "password",
-			"value": "password123",
-			"type": "string"
+			"value": "password123"
 		},
 		{
 			"key": "firstName",
-			"value": "John",
-			"type": "string"
+			"value": "John"
 		},
 		{
 			"key": "lastName",
-			"value": "Doe",
-			"type": "string"
+			"value": "Doe"
 		},
 		{
 			"key": "managerFirstName",
-			"value": "Manager",
-			"type": "string"
+			"value": "Manager"
 		},
 		{
 			"key": "managerLastName",
-			"value": "User",
-			"type": "string"
+			"value": "User"
 		},
 		{
 			"key": "managerEmail",
-			"value": "manager@example.com",
-			"type": "string"
+			"value": "manager@example.com"
 		},
 		{
 			"key": "managerPassword",
-			"value": "manager123",
-			"type": "string"
+			"value": "manager123"
 		},
 		{
 			"key": "adminFirstName",
-			"value": "Admin",
-			"type": "string"
+			"value": "Admin"
 		},
 		{
 			"key": "adminLastName",
-			"value": "User",
-			"type": "string"
+			"value": "User"
 		},
 		{
 			"key": "adminEmail",
-			"value": "admin@example.com",
-			"type": "string"
+			"value": "admin@example.com"
 		},
 		{
 			"key": "adminPassword",
-			"value": "admin123",
-			"type": "string"
+			"value": "admin123"
 		},
 		{
 			"key": "newUserEmail",
-			"value": "newuser@example.com",
-			"type": "string"
+			"value": "newuser@example.com"
 		},
 		{
 			"key": "newUserPassword",
-			"value": "newuser123",
-			"type": "string"
+			"value": "newuser123"
 		},
 		{
 			"key": "newUserFirstName",
-			"value": "New",
-			"type": "string"
+			"value": "New"
 		},
 		{
 			"key": "newUserLastName",
-			"value": "User",
-			"type": "string"
+			"value": "User"
 		},
 		{
 			"key": "newUserImageUrl",
-			"value": "https://example.com/avatar.jpg",
-			"type": "string"
+			"value": "https://example.com/avatar.jpg"
 		},
 		{
 			"key": "userId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "updatedFirstName",
-			"value": "Updated",
-			"type": "string"
+			"value": "Updated"
 		},
 		{
 			"key": "updatedLastName",
-			"value": "Name",
-			"type": "string"
+			"value": "Name"
 		},
 		{
 			"key": "updatedImageUrl",
-			"value": "https://example.com/updated-avatar.jpg",
-			"type": "string"
+			"value": "https://example.com/updated-avatar.jpg"
 		},
 		{
 			"key": "updatedPhone",
-			"value": "+1234567890",
-			"type": "string"
+			"value": "+1234567890"
 		},
 		{
 			"key": "updatedAddress",
-			"value": "123 Updated Street, City, Country",
-			"type": "string"
+			"value": "123 Updated Street, City, Country"
 		},
 		{
 			"key": "searchQuery",
-			"value": "john",
-			"type": "string"
+			"value": "john"
 		},
 		{
 			"key": "parkingLotName",
-			"value": "Central Parking",
-			"type": "string"
+			"value": "Central Parking"
 		},
 		{
 			"key": "parkingLotAddress",
-			"value": "123 Main Street, Downtown",
-			"type": "string"
+			"value": "123 Main Street, Downtown"
 		},
 		{
 			"key": "parkingLotImageUrl",
-			"value": "https://example.com/parking-lot.jpg",
-			"type": "string"
+			"value": "https://example.com/parking-lot.jpg"
 		},
 		{
 			"key": "managerId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "spotVehicleType",
-			"value": "CAR",
-			"type": "string"
+			"value": "auto"
 		},
 		{
 			"key": "spotFloor",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "spotCode",
-			"value": "A1",
-			"type": "string"
+			"value": "A1"
 		},
 		{
 			"key": "spotIsAvailable",
-			"value": "true",
-			"type": "string"
+			"value": "true"
 		},
 		{
 			"key": "parkingLotId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "updatedParkingLotName",
-			"value": "Updated Central Parking",
-			"type": "string"
+			"value": "Updated Central Parking"
 		},
 		{
 			"key": "updatedParkingLotAddress",
-			"value": "456 Updated Street, Downtown",
-			"type": "string"
+			"value": "456 Updated Street, Downtown"
 		},
 		{
 			"key": "updatedParkingLotImageUrl",
-			"value": "https://example.com/updated-parking-lot.jpg",
-			"type": "string"
+			"value": "https://example.com/updated-parking-lot.jpg"
 		},
 		{
 			"key": "accessToken",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "refreshToken",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "tokenType",
-			"value": "Bearer",
-			"type": "string"
+			"value": "Bearer"
 		},
 		{
 			"key": "recoveryEmail",
-			"value": "user@example.com",
-			"type": "string"
+			"value": "user@example.com"
 		},
 		{
 			"key": "recoveryToken",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "newPassword",
-			"value": "newSecurePassword123",
-			"type": "string"
+			"value": "newSecurePassword123"
 		},
 		{
 			"key": "currentUser",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "vehicleLicensePlate",
-			"value": "ABC123",
-			"type": "string"
+			"value": "ABC123"
 		},
 		{
 			"key": "vehicleType",
-			"value": "CAR",
-			"type": "string"
+			"value": "auto"
 		},
 		{
 			"key": "vehicleBrand",
-			"value": "Toyota",
-			"type": "string"
+			"value": "Toyota"
 		},
 		{
 			"key": "vehicleModel",
-			"value": "Camry",
-			"type": "string"
+			"value": "Camry"
 		},
 		{
 			"key": "vehicleColor",
-			"value": "Blue",
-			"type": "string"
+			"value": "Blue"
 		},
 		{
 			"key": "updatedVehicleLicensePlate",
-			"value": "XYZ789",
-			"type": "string"
+			"value": "XYZ789"
 		},
 		{
 			"key": "updatedVehicleType",
-			"value": "SUV",
-			"type": "string"
+			"value": "SUV"
 		},
 		{
 			"key": "updatedVehicleBrand",
-			"value": "Honda",
-			"type": "string"
+			"value": "Honda"
 		},
 		{
 			"key": "updatedVehicleModel",
-			"value": "CR-V",
-			"type": "string"
+			"value": "CR-V"
 		},
 		{
 			"key": "updatedVehicleColor",
-			"value": "Red",
-			"type": "string"
+			"value": "Red"
 		}
 	]
 }

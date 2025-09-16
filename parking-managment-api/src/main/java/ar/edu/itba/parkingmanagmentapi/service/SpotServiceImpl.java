@@ -105,10 +105,8 @@ public class SpotServiceImpl implements SpotService {
 
     @Override
     public Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Pageable pageable) {
-        return spotRepository.findAll(
-                SpotSpecifications.withFilters(parkingLotId, available, vehicleType, floor),
-                pageable
-        ).map(ParkingLotMapper::toSpotResponse);
+        return spotRepository.findAll(SpotSpecifications.withFilters(parkingLotId, available, vehicleType, floor), pageable)
+                .map(ParkingLotMapper::toSpotResponse);
     }
 
 }

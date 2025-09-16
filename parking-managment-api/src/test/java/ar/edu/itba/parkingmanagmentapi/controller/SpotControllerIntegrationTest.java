@@ -1,7 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
-import ar.edu.itba.parkingmanagmentapi.dto.*;
+import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.PageResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
+import ar.edu.itba.parkingmanagmentapi.dto.SpotResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import org.junit.jupiter.api.Test;
@@ -36,7 +40,7 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals("A", body.getCode());
         assertEquals("auto", body.getVehicleType());
 
-        Optional<Spot> savedSpot = spotRepository.findAll().stream().findFirst();
+        Optional<Spot> savedSpot = spotRepository.findById(body.getId());
         assertTrue(savedSpot.isPresent(), "El spot debería estar en la base de datos");
         assertEquals("A", savedSpot.get().getCode());
         assertEquals(VehicleType.CAR.getName(), savedSpot.get().getVehicleType());

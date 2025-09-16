@@ -3,10 +3,8 @@ package ar.edu.itba.parkingmanagmentapi;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
-import ar.edu.itba.parkingmanagmentapi.model.Admin;
-import ar.edu.itba.parkingmanagmentapi.model.Manager;
-import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
-import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
+import ar.edu.itba.parkingmanagmentapi.model.*;
 import ar.edu.itba.parkingmanagmentapi.repository.*;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 public abstract class BaseIntegrationTest {
-
     @Autowired
     protected TestRestTemplate restTemplate;
     @Autowired
@@ -50,15 +51,24 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected ParkingPriceRepository parkingPriceRepository;
     @Autowired
+    protected ScheduledReservationRepository reservationRepository;
+    @Autowired
     protected PasswordEncoder passwordEncoder;
 
     @Autowired
     protected ObjectMapper objectMapper;
 
+    // Test objects
     protected TestUser normalUser;
+    protected TestUser otherUser;
     protected TestUser adminUser;
     protected TestUser managerUser;
     protected ParkingLot existingParkingLot;
+    protected Spot existingSpot;
+    protected Spot otherSpot;
+    protected Vehicle existingVehicle;
+    protected ParkingPrice existingParkingPrice;
+    protected ScheduledReservation existingReservation;
 
     @BeforeEach
     void clean() {
@@ -69,6 +79,8 @@ public abstract class BaseIntegrationTest {
         spotRepository.deleteAll();
         vehicleRepository.deleteAll();
         userVehicleAssignmentRepository.deleteAll();
+        parkingPriceRepository.deleteAll();
+        reservationRepository.deleteAll();
         setupTestUsers();
     }
 
@@ -94,6 +106,12 @@ public abstract class BaseIntegrationTest {
         String managerUserToken = authenticateUser("manager@test.com", "password123");
         managerUser = new TestUser(managerUserEntity, managerUserToken);
 
+        // Create another normal user
+        User otherUserEntity = createTestUser("other@test.com", "password123");
+        String otherUserToken = authenticateUser("other@test.com", "password123");
+        otherUser = new TestUser(otherUserEntity, otherUserToken);
+
+        // Create parking lot for manager
         ParkingLot parkingLotEntity = new ParkingLot();
         parkingLotEntity.setName("Parking Test");
         parkingLotEntity.setAddress("calle test 123");
@@ -101,8 +119,51 @@ public abstract class BaseIntegrationTest {
         parkingLotEntity.setLatitude(-34.6037);
         parkingLotEntity.setLongitude(-58.3816);
         parkingLotEntity.setManager(manager);
-
         existingParkingLot = parkingLotRepository.save(parkingLotEntity);
+
+        // Create spot in parking lot
+        Spot spotEntity = new Spot();
+        spotEntity.setCode("SPOT1");
+        spotEntity.setFloor(1);
+        spotEntity.setIsAvailable(true);
+        spotEntity.setVehicleType(VehicleType.CAR.getName());
+        spotEntity.setParkingLot(existingParkingLot);
+        existingSpot = spotRepository.save(spotEntity);
+
+        Spot spotEntity2 = new Spot();
+        spotEntity2.setCode("SPOT2");
+        spotEntity2.setFloor(1);
+        spotEntity2.setIsAvailable(true);
+        spotEntity2.setVehicleType(VehicleType.CAR.getName());
+        spotEntity2.setParkingLot(existingParkingLot);
+        otherSpot = spotRepository.save(spotEntity2);
+
+        // Create vehicle for normal user
+        Vehicle vehicleEntity = new Vehicle();
+        vehicleEntity.setLicensePlate("XYZ123");
+        vehicleEntity.setType(VehicleType.CAR.getName());
+        vehicleEntity.setBrand("Toyota");
+        vehicleEntity.setModel("Corolla");
+        vehicleEntity.setUserAssignments(List.of(new UserVehicleAssignment(normalUserEntity, vehicleEntity)));
+        existingVehicle = vehicleRepository.save(vehicleEntity);
+
+        // Create parking price for parking lot
+        ParkingPrice parkingPrice = new ParkingPrice();
+        parkingPrice.setParkingLot(existingParkingLot);
+        parkingPrice.setVehicleType(VehicleType.CAR.getName());
+        parkingPrice.setPrice(BigDecimal.valueOf(10));
+        parkingPrice.setValidFrom(java.time.LocalDateTime.now().minusDays(10));
+        parkingPrice.setValidTo(java.time.LocalDateTime.now().plusDays(10));
+        existingParkingPrice = parkingPriceRepository.save(parkingPrice);
+
+        // Create a scheduled reservation
+        ScheduledReservation reservation = new ScheduledReservation();
+        reservation.setReservedStartTime(LocalDateTime.of(2025, 9, 1, 10, 0));
+        reservation.setExpectedEndTime(LocalDateTime.of(2025, 9, 1, 11, 0));
+        reservation.setSpot(existingSpot);
+        reservation.setUserVehicleAssignment(new UserVehicleAssignment(normalUser.getUser(), existingVehicle));
+        reservation.setEstimatedPrice(new BigDecimal("20.00"));
+        existingReservation = reservationRepository.save(reservation);
     }
 
     /**

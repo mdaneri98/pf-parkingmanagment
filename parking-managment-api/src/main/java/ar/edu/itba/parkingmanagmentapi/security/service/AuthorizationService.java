@@ -1,6 +1,7 @@
 package ar.edu.itba.parkingmanagmentapi.security.service;
 
 import ar.edu.itba.parkingmanagmentapi.repository.AdminRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.service.ManagerService;
 import ar.edu.itba.parkingmanagmentapi.service.ParkingLotService;
@@ -26,6 +27,8 @@ public class AuthorizationService {
     private final UserRepository userRepository;
 
     private final VehicleService vehicleService;
+
+    private final ScheduledReservationRepository scheduledReservationRepository;
 
     public boolean isCurrentUserAdmin() {
         return securityService.getCurrentUser()
@@ -72,6 +75,13 @@ public class AuthorizationService {
     public boolean isCurrentUserOwnerOfVehicle(String licensePlate) {
         return securityService.getCurrentUser()
                 .map(user -> vehicleService.isUserOwnerOfVehicle(user.getId(), licensePlate))
+                .orElse(false);
+    }
+
+    public boolean isCurrentUserOwnerOfReservation(Long reservationId) {
+        return securityService.getCurrentUser()
+                .flatMap(user -> scheduledReservationRepository.findOwnerByReservationId(reservationId)
+                        .map(owner -> owner.getId().equals(user.getId())))
                 .orElse(false);
     }
 }
