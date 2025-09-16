@@ -2,8 +2,6 @@ package ar.edu.itba.parkingmanagmentapi.model;
 
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,11 +18,9 @@ public class ScheduledReservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "La fecha de inicio de la reserva es obligatoria")
     @Column(name = "reserved_start_time", nullable = false)
     private LocalDateTime reservedStartTime;
 
-    @NotNull(message = "La fecha de fin esperada es obligatoria")
     @Column(name = "expected_end_time", nullable = false)
     private LocalDateTime expectedEndTime;
 
@@ -32,8 +28,6 @@ public class ScheduledReservation {
     @Column(nullable = false)
     private ReservationStatus status = ReservationStatus.PENDING;
 
-    @NotNull(message = "El precio estimado es obligatorio")
-    @DecimalMin(value = "0.0", inclusive = false, message = "El precio estimado debe ser mayor a 0")
     @Column(name = "estimated_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal estimatedPrice;
 
