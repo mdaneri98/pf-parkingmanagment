@@ -64,16 +64,14 @@ public class SpotServiceImpl implements SpotService {
     @Override
     @Transactional
     public SpotResponse updateSpot(Long parkingLotId, Long id, SpotRequest request) {
-        spotRequestValidator.validate(request);
-        ParkingLot parkingLot = parkingLotService.findEntityById(parkingLotId);
-
-        if (spotRepository.existsByParkingLotAndFloorAndCode(parkingLot, request.getFloor(), request.getCode())) {
-            throw new BadRequestException("Spot with code " + request.getCode() + " and floor " + request.getFloor() + " already exists in this parking lot");
-        }
 
         Spot spot = spotRepository.findById(id)
                 .filter(s -> s.getParkingLot().getId().equals(parkingLotId))
                 .orElseThrow(() -> new NotFoundException("Spot not found in this parking lot with id: " + id));
+
+        if (spotRepository.existsByParkingLotAndFloorAndCodeAndIdNot(parkingLotService.findEntityById(parkingLotId), request.getFloor(), request.getCode(), id)) {
+            throw new BadRequestException("Spot with code " + request.getCode() + " and floor " + request.getFloor() + " already exists in this parking lot");
+        }
 
         spot.setVehicleType(request.getVehicleType());
         spot.setCode(request.getCode());

@@ -2,7 +2,7 @@ package ar.edu.itba.parkingmanagmentapi.validators;
 
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
-import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithCommaFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.BlankFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.LengthRangeFieldInfoValidator;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Objects;
 public class UpdateParkingLotRequestValidator {
     private final BlankFieldValidator blankFieldValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator;
-    private final AlphanumericWithDashFieldValidator alphanumericValidator;
+    private final AlphanumericWithCommaFieldValidator alphanumericValidator;
 
     public void validate(UpdateParkingLotRequest parkingLotRequest) {
         if (parkingLotRequest == null) {

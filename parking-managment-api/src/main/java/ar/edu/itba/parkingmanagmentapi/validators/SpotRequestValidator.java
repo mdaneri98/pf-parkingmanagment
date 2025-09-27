@@ -3,24 +3,23 @@ package ar.edu.itba.parkingmanagmentapi.validators;
 import ar.edu.itba.parkingmanagmentapi.dto.SpotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
-import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithCommaFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.BlankFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.MandatoryFieldValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 @Component
 public class SpotRequestValidator {
 
     private final MandatoryFieldValidator mandatoryFieldValidator;
     private final BlankFieldValidator blankFieldValidator;
-    private final AlphanumericWithDashFieldValidator alphanumericValidator;
+    private final AlphanumericWithCommaFieldValidator alphanumericValidator;
 
     public SpotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator,
                                 BlankFieldValidator blankFieldValidator,
-                                AlphanumericWithDashFieldValidator alphanumericValidator) {
+                                AlphanumericWithCommaFieldValidator alphanumericValidator) {
         this.mandatoryFieldValidator = mandatoryFieldValidator;
         this.blankFieldValidator = blankFieldValidator;
         this.alphanumericValidator = alphanumericValidator;
@@ -34,8 +33,9 @@ public class SpotRequestValidator {
             throw new BadRequestException("Invalid vehicleType");
         }
 
-        if (Objects.nonNull(spotRequest.getFloor())) {
-            blankFieldValidator.validate(spotRequest.getCode(), "code");
+        mandatoryFieldValidator.validate(spotRequest.getFloor(), "floor");
+        if (spotRequest.getFloor() < 0) {
+            throw new BadRequestException("Floor must be a non-negative integer");
         }
 
         mandatoryFieldValidator.validate(spotRequest.getCode(), "code");

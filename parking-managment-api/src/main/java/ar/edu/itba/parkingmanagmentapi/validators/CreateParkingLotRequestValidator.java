@@ -2,7 +2,7 @@ package ar.edu.itba.parkingmanagmentapi.validators;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
-import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithCommaFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.BlankFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.LengthRangeFieldInfoValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.MandatoryFieldValidator;
@@ -15,10 +15,10 @@ public class CreateParkingLotRequestValidator {
     private final MandatoryFieldValidator mandatoryFieldValidator;
     private final BlankFieldValidator blankFieldValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator;
-    private final AlphanumericWithDashFieldValidator alphanumericValidator;
+    private final AlphanumericWithCommaFieldValidator alphanumericValidator;
     private final SpotRequestValidator spotRequestValidator;
 
-    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithDashFieldValidator alphanumericValidator, SpotRequestValidator spotRequestValidator) {
+    public CreateParkingLotRequestValidator(MandatoryFieldValidator mandatoryFieldValidator, BlankFieldValidator blankFieldValidator, LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator, AlphanumericWithCommaFieldValidator alphanumericValidator, SpotRequestValidator spotRequestValidator) {
         this.mandatoryFieldValidator = mandatoryFieldValidator;
         this.blankFieldValidator = blankFieldValidator;
         this.lengthRangeFieldInfoValidator = lengthRangeFieldInfoValidator;
@@ -50,7 +50,7 @@ public class CreateParkingLotRequestValidator {
         mandatoryFieldValidator.validate(parkingLotRequest.getLongitude(), "longitude");
 
         if (Objects.nonNull(parkingLotRequest.getSpots())) {
-            parkingLotRequest.getSpots().forEach(spot -> spotRequestValidator.validate(spot));
+            parkingLotRequest.getSpots().forEach(spotRequestValidator::validate);
         }
 
     }

@@ -3,7 +3,7 @@ package ar.edu.itba.parkingmanagmentapi.validators;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericFieldValidator;
-import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithDashFieldValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.common.AlphanumericWithCommaFieldValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.common.LengthRangeFieldInfoValidator;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +13,9 @@ import java.util.Objects;
 public class UpdatedUserRequestedValidator {
     private final AlphanumericFieldValidator alphanumericValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldValidator;
-    private final AlphanumericWithDashFieldValidator alphanumericWithDashValidator;
+    private final AlphanumericWithCommaFieldValidator alphanumericWithDashValidator;
 
-    public UpdatedUserRequestedValidator(AlphanumericFieldValidator alphanumericValidator, LengthRangeFieldInfoValidator lengthRangeFieldValidator, AlphanumericWithDashFieldValidator alphanumericWithDashValidator) {
+    public UpdatedUserRequestedValidator(AlphanumericFieldValidator alphanumericValidator, LengthRangeFieldInfoValidator lengthRangeFieldValidator, AlphanumericWithCommaFieldValidator alphanumericWithDashValidator) {
         this.alphanumericValidator = alphanumericValidator;
         this.lengthRangeFieldValidator = lengthRangeFieldValidator;
         this.alphanumericWithDashValidator = alphanumericWithDashValidator;
