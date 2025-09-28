@@ -52,10 +52,14 @@ public class ScheduledReservationController {
         return ApiResponse.ok(PageResponse.of(responses));
     }
 
-    @PostMapping("/{id}/cancel")
-    @PreAuthorize("@authorizationService.isCurrentUserOwnerOfReservation(#id)")
-    public ResponseEntity<?> cancelReservation(@PathVariable Long id) {
-        ScheduledReservationResponse response = reservationService.cancelReservation(id);
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("@authorizationService.canCurrentUserUpdateReservation(#id)")
+    public ResponseEntity<?> updateReservationStatus(
+            @PathVariable Long id,
+            @RequestParam ReservationStatus status
+    ) {
+        ScheduledReservationResponse response = reservationService.updateReservationStatus(id, status);
         return ApiResponse.ok(response);
     }
+
 }

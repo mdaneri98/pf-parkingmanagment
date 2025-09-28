@@ -17,7 +17,7 @@ public interface ScheduledReservationService {
 
     Page<ScheduledReservationResponse> getReservationsByUser(Long userId, ReservationStatus status, String vehiclePlate, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    ScheduledReservationResponse cancelReservation(Long id);
+    ScheduledReservationResponse updateReservationStatus(Long id, ReservationStatus status);
 
     Page<ScheduledReservationResponse> getScheduledReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable);
 }

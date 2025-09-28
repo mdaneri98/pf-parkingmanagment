@@ -117,8 +117,8 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
         ScheduledReservation reservation = existingReservation;
 
         ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
-                "/reservations/scheduled/" + reservation.getId() + "/cancel",
-                HttpMethod.POST,
+                "/reservations/scheduled/" + reservation.getId() + "/status?status=CANCELLED",
+                HttpMethod.PATCH,
                 new HttpEntity<>(createAuthHeaders(normalUser)),
                 new ParameterizedTypeReference<>() {
                 }
@@ -133,12 +133,32 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
     }
 
     @Test
+    void testCancelReservation_shouldReturn200_whenCurrentUserIsManager_updateStatus() {
+        ScheduledReservation reservation = existingReservation;
+
+        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+                "/reservations/scheduled/" + reservation.getId() + "/status?status=CONFIRMED",
+                HttpMethod.PATCH,
+                new HttpEntity<>(createAuthHeaders(managerUser)),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ScheduledReservationResponse cancelled = response.getBody().getData();
+        assertEquals(ReservationStatus.CONFIRMED, cancelled.getStatus());
+
+        ScheduledReservation saved = reservationRepository.findById(reservation.getId()).orElseThrow();
+        assertEquals(ReservationStatus.CONFIRMED, saved.getStatus());
+    }
+
+    @Test
     void testCancelReservation_shouldReturn403_ifNotOwner() {
         ScheduledReservation reservation = existingReservation;
 
         ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
-                "/reservations/scheduled/" + reservation.getId() + "/cancel",
-                HttpMethod.POST,
+                "/reservations/scheduled/" + reservation.getId() + "/status?status=CANCELLED",
+                HttpMethod.PATCH,
                 new HttpEntity<>(createAuthHeaders(otherUser)),
                 new ParameterizedTypeReference<>() {
                 }

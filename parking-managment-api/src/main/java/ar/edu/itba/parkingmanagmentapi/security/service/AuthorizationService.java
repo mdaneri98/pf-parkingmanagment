@@ -78,10 +78,17 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    public boolean isCurrentUserOwnerOfReservation(Long reservationId) {
+    public boolean canCurrentUserUpdateReservation(Long reservationId) {
         return securityService.getCurrentUser()
-                .flatMap(user -> scheduledReservationRepository.findOwnerByReservationId(reservationId)
-                        .map(owner -> owner.getId().equals(user.getId())))
+                .map(currentUser -> {
+                    boolean isOwner = scheduledReservationRepository.findOwnerByReservationId(reservationId)
+                            .map(owner -> owner.getId().equals(currentUser.getId()))
+                            .orElse(false);
+                    boolean isManager = scheduledReservationRepository.findManagerByReservationId(reservationId)
+                            .map(manager -> manager.getId().equals(currentUser.getId()))
+                            .orElse(false);
+                    return isOwner || isManager;
+                })
                 .orElse(false);
     }
 }

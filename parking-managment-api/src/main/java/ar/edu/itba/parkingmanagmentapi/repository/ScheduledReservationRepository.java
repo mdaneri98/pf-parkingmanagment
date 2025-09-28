@@ -1,6 +1,5 @@
 package ar.edu.itba.parkingmanagmentapi.repository;
 
-
 import ar.edu.itba.parkingmanagmentapi.model.ScheduledReservation;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.model.User;
@@ -28,4 +27,12 @@ public interface ScheduledReservationRepository extends JpaRepository<ScheduledR
 
     @Query("SELECT r.userVehicleAssignment.user FROM ScheduledReservation r WHERE r.id = :reservationId")
     Optional<User> findOwnerByReservationId(@Param("reservationId") Long reservationId);
+
+    @Query("""
+            SELECT r.spot.parkingLot.manager.user
+            FROM ScheduledReservation r
+            WHERE r.id = :reservationId
+            """)
+    Optional<User> findManagerByReservationId(@Param("reservationId") Long reservationId);
+
 }
