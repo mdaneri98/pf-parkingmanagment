@@ -1,12 +1,12 @@
 import { fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { config } from '../config/env';
-import { logger } from '../utils/logger';
-import { authService } from '@services/authService';
+import { config } from '@shared/config/env';
+import { logger } from '@shared/utils/logger';
+import { authInitializationService } from '@auth/services/authInitializationService';
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: config.apiBaseUrl,
   prepareHeaders: async (headers) => {
-    const token = await authService.getValidAccessToken();
+    const token = await authInitializationService.getValidAccessToken();
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
       logger.debug('Authorization header set with valid token');

@@ -14,8 +14,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^1.16.10",
     "@reduxjs/toolkit": "^2.2.0",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.544.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.52.0",
@@ -24,6 +26,7 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@typescript-eslint/eslint-plugin": "^8.0.0",

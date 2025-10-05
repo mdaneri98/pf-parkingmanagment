@@ -1,13 +1,18 @@
 export type UserRole = 'user' | 'manager' | 'admin';
 
-// Base user interface - unified across the application
+
+export interface UserDetails {
+  phone: string;
+  address: string;
+}
+
 export interface User {
   id: number;
   email: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
   imageUrl?: string;
+  userDetail: UserDetails;
 }
 
 export type AuthUser = User;

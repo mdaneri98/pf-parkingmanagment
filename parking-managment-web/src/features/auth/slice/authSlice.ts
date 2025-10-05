@@ -1,53 +1,21 @@
-import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import type { AuthState, AuthUser } from '@shared/types';
-import { validateStoredTokens, extractUserRoles } from '@shared/utils/jwt';
-import { appStorage } from '@shared/utils/storage';
-import { logger } from '@shared/utils/logger';
 
-// Async thunk to initialize auth from stored tokens
-export const initializeAuthFromStorage = createAsyncThunk(
-  'auth/initializeFromStorage',
-  async (_, { dispatch }) => {
-    logger.debug('Starting auth initialization from stored tokens');
-    const validation = validateStoredTokens();
-    logger.debug('Token validation result', validation);
+interface AuthSliceState extends AuthState {
+  isInitialized: boolean;
+}
 
-    if (validation.accessToken && validation.refreshToken) {
-      logger.info('Found stored tokens, initializing authentication state');
-
-      // Set credentials in state (even if expired - we let refresh logic handle it)
-      dispatch(setCredentials({
-        accessToken: validation.accessToken,
-        refreshToken: validation.refreshToken
-      }));
-
-      logger.info('Authentication initialization successful', {
-        hasAccessToken: !!validation.accessToken,
-        hasRefreshToken: !!validation.refreshToken
-      });
-      return {
-        success: true,
-        accessToken: validation.accessToken,
-        refreshToken: validation.refreshToken
-      };
-    }
-
-    logger.debug('No stored tokens found, skipping authentication initialization');
-    return { success: false };
-  }
-);
-
-const initialState: AuthState & { isInitialized: boolean } = {
+const initialState: AuthSliceState = {
   user: null,
   accessToken: null,
   refreshToken: null,
   isAuthenticated: false,
   isLoading: false,
   isInitialized: false,
-  error: null
+  error: null,
 };
 
-const slice = createSlice({
+const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
@@ -56,23 +24,21 @@ const slice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       state.isAuthenticated = true;
       state.error = null;
-
-      // Persist tokens to storage
-      const userRoles = extractUserRoles(action.payload.accessToken);
-      const selectedRole = userRoles.find(r => r.toLowerCase() === 'manager') || userRoles[0];
-      appStorage.setAuth(action.payload.accessToken, action.payload.refreshToken, selectedRole);
     },
     setUser(state, action: PayloadAction<AuthUser | null>) {
       state.user = action.payload;
     },
-    setError(state, action: PayloadAction<string>) {
+    setAuthLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
+    setAuthError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
-      state.isAuthenticated = false;
-      state.accessToken = null;
-      state.refreshToken = null;
-      state.user = null;
-
-      appStorage.clearAuth();
+      if (action.payload) {
+        state.isAuthenticated = false;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.user = null;
+      }
     },
     clearSession(state) {
       state.user = null;
@@ -80,43 +46,22 @@ const slice = createSlice({
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.error = null;
-
-      appStorage.clearAuth();
     },
     setInitialized(state, action: PayloadAction<boolean>) {
       state.isInitialized = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(initializeAuthFromStorage.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(initializeAuthFromStorage.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isInitialized = true;
-        if (action.payload.success && action.payload.accessToken && action.payload.refreshToken) {
-          state.isAuthenticated = true;
-          state.accessToken = action.payload.accessToken;
-          state.refreshToken = action.payload.refreshToken;
-        }
-      })
-      .addCase(initializeAuthFromStorage.rejected, (state) => {
-        state.isLoading = false;
-        state.isInitialized = true;
-        state.isAuthenticated = false;
-      });
   },
 });
 
 export const {
   setCredentials,
   setUser,
-  setError,
+  setAuthLoading,
+  setAuthError,
   clearSession,
-  setInitialized
-} = slice.actions;
+  setInitialized,
+} = authSlice.actions;
 
-export const authReducer = slice.reducer;
+export const authReducer = authSlice.reducer;
 
 

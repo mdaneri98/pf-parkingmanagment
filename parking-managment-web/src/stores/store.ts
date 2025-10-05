@@ -1,24 +1,40 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authReducer } from '../features/auth/slice/authSlice';
-import { authApi } from '../features/auth/api/authApi';
-import { usersApi } from '../features/users/api/usersApi';
-import { parkingApi } from '../features/parking/api/parkingApi';
-import { parkingReducer } from '../features/parking/slice/parkingSlice';
+import { appReducer } from '@slices/appSlice';
+import { authReducer } from '@auth/slice/authSlice';
+import { authApi } from '@auth/api/authApi';
+import { usersApi } from '@users/api/usersApi';
+import { parkingApi } from '@parking/api/parkingApi';
+import { parkingReducer } from '@parking/slice/parkingSlice';
+import { pricesApi } from '@prices/api/pricesApi';
+import { pricesReducer } from '@prices/slice/pricesSlice';
 
 
 export const store = configureStore({
   reducer: {
+    // App
+    app: appReducer,
+
+    // Auth
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
-    [usersApi.reducerPath]: usersApi.reducer,
-    [parkingApi.reducerPath]: parkingApi.reducer,
+
+    // Parking
     parking: parkingReducer,
+    [parkingApi.reducerPath]: parkingApi.reducer,
+
+    // Prices
+    prices: pricesReducer,
+    [pricesApi.reducerPath]: pricesApi.reducer,
+
+    // Users
+    [usersApi.reducerPath]: usersApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(usersApi.middleware)
-      .concat(parkingApi.middleware),
+      .concat(parkingApi.middleware)
+      .concat(pricesApi.middleware),
 });
 
 

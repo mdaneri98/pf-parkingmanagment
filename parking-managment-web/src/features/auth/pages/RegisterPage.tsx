@@ -1,26 +1,39 @@
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useRegisterMutation } from '../api/authApi';
+import { useAppDispatch } from '@hooks/useAppDispatch';
+import { useAppSelector } from '@hooks/useAppSelector';
+import { setAuthError, setAuthLoading } from '../slice/authSlice';
+import { selectAuthError, selectAuthLoading } from '../selectors';
 import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
 
 type FormValues = { firstName: string; lastName: string; email: string; password: string };
 
 export function RegisterPage() {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>();
-  const [doRegister, { isLoading, error, isSuccess }] = useRegisterMutation();
+  const [doRegister, { isLoading: isApiLoading }] = useRegisterMutation();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onSubmit = async (values: FormValues) => {
-    await doRegister(values).unwrap();
-  };
+  const authError = useAppSelector(selectAuthError);
+  const authLoading = useAppSelector(selectAuthLoading);
 
-  useEffect(() => {
-    if (isSuccess) {
+  const onSubmit = async (values: FormValues) => {
+    try {
+      dispatch(setAuthError(null));
+      dispatch(setAuthLoading(true));
+      
+      await doRegister(values).unwrap();
+      
       navigate("/login", { replace: true });
+    } catch (error) {
+      dispatch(setAuthError('Registration failed. Please check your information and try again.'));
+    } finally {
+      dispatch(setAuthLoading(false));
     }
-  }, [isSuccess]);
+  };
 
   return (
     <AuthCard title="Create account">
@@ -73,18 +86,10 @@ export function RegisterPage() {
           }
         />
 
-        {error && (
+        {authError && (
           <Alert variant="error">
             <AlertDescription>
-              Registration failed. Please check your information and try again.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {isSuccess && (
-          <Alert variant="success">
-            <AlertDescription>
-              Registration successful!
+              {authError}
             </AlertDescription>
           </Alert>
         )}
@@ -93,7 +98,7 @@ export function RegisterPage() {
           type="submit" 
           className="w-full" 
           size="lg"
-          loading={isSubmitting || isLoading}
+          loading={isSubmitting || authLoading || isApiLoading}
         >
           Create account
         </Button>

@@ -1,15 +1,15 @@
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
-import { useLoginMutation } from '../api/authApi';
+import { useLoginMutation, authApi } from '@auth/api/authApi';
 import { useAppDispatch } from '@hooks/useAppDispatch';
-import { setError, setInitialized } from '../slice/authSlice';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { selectAuth } from '../selectors';
+import { setAuthError, setInitialized, setCredentials, setUser } from '@auth/slice/authSlice';
 import { useErrorHandler, ErrorCodes } from '@shared/utils/errorHandling';
 import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
-import { initializeUserSession } from '@shared/utils/sessionInitializer';
-
+import { authInitializationService } from '@auth/services/authInitializationService';
 
 type FormValues = { email: string; password: string };
 
@@ -22,39 +22,55 @@ export function LoginPage() {
   const { error: authError } = useAppSelector(selectAuth);
   const { handleError, getUserFriendlyMessage } = useErrorHandler();
 
+  useEffect(() => {
+    dispatch(setAuthError(null));
+  }, [dispatch]);
+
   const onSubmit = async (values: FormValues) => {
     try {
       // 1. Call login API
       const res = await login(values).unwrap();
 
-      // 2. Initialize complete user session (tokens + user data + role validation)
-      const result = await initializeUserSession(
+      // 2. Persist credentials in storage
+      authInitializationService.persistCredentials(
         res.data.token,
-        res.data.refreshToken,
-        res.data.email
+        res.data.refreshToken
       );
 
-      if (!result.success) {
-        const error = handleError(result.error || 'Authentication failed', {
-          component: 'LoginPage',
-          action: 'session_initialization',
-          code: ErrorCodes.AUTH_ACCESS_DENIED,
-        });
-        dispatch(setError(getUserFriendlyMessage("Invalid credentials")));
+      // 3. Update Redux store with tokens
+      dispatch(setCredentials({
+        accessToken: res.data.token,
+        refreshToken: res.data.refreshToken,
+      }));
+
+      // 4. Fetch current user data
+      try {
+        const userResponse = await dispatch(authApi.endpoints.getCurrentUser.initiate()).unwrap();
+        if (userResponse.success && userResponse.data) {
+          dispatch(setUser(userResponse.data));
+        } else {
+          authInitializationService.clearStoredCredentials();
+          dispatch(setAuthError('Login failed: Unable to load user profile.'));
+          return;
+        }
+      } catch (userError) {
+        console.error('Failed to fetch user data after login:', userError);
+        authInitializationService.clearStoredCredentials();
+        dispatch(setAuthError('Login failed: Unable to load user profile. Please try again.'));
         return;
       }
 
-      // 3. Mark initialization as complete
+      // 5. Set initialized flag
       dispatch(setInitialized(true));
 
-      // 4. Redirect to dashboard
+      // 6. Redirect to dashboard
       navigate('/app', { replace: true });
     } catch (loginError) {
-      const error = handleError(loginError, {
+      const appError = handleError(loginError, {
         component: 'LoginPage',
         action: 'login_attempt',
       });
-      dispatch(setError(getUserFriendlyMessage("Invalid credentials")));
+      dispatch(setAuthError(getUserFriendlyMessage(appError)));
     }
   };
 

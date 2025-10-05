@@ -123,6 +123,13 @@ export default {
         '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
         'inner': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
         'none': 'none',
+        'elevation-low': 'var(--shadow-elevation-low)',
+        'elevation-medium': 'var(--shadow-elevation-medium)',
+        'elevation-high': 'var(--shadow-elevation-high)',
+        'elevation-premium': 'var(--shadow-elevation-premium)',
+        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+        'glow-success': '0 0 20px rgba(34, 197, 94, 0.15)',
+        'glow-error': '0 0 20px rgba(239, 68, 68, 0.15)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

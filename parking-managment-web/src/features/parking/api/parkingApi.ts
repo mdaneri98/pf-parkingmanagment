@@ -8,8 +8,45 @@ import type {
   UpdateParkingLotRequest,
   CreateSpotRequest,
   UpdateSpotRequest,
-} from '../types';
+} from '@parking/types';
 import { smartBaseQuery } from '@shared/api/baseQuery';
+
+interface GetSpotsByParkingLotIdParams extends SpotFilters {
+  parkingLotId: number;
+}
+
+interface CreateSpotParams {
+  parkingLotId: number;
+  body: CreateSpotRequest;
+}
+
+interface UpdateParkingLotParams {
+  id: number;
+  body: UpdateParkingLotRequest;
+}
+
+interface UpdateSpotParams {
+  spotId: number;
+  parkingLotId: number;
+  body: Omit<UpdateSpotRequest, 'parkingLotId'>;
+}
+
+interface DeleteSpotParams {
+  spotId: number;
+  parkingLotId: number;
+}
+
+const buildQueryParams = (params: Record<string, unknown>): string => {
+  const searchParams = new URLSearchParams();
+  
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.append(key, value.toString());
+    }
+  });
+  
+  return searchParams.toString();
+};
 
 export const parkingApi = createApi({
   reducerPath: 'parkingApi',
@@ -18,9 +55,10 @@ export const parkingApi = createApi({
   refetchOnReconnect: true,
   tagTypes: ['ParkingLot', 'UserParkingLots', 'Spots'],
   endpoints: (builder) => ({
-    // ========== Parking Lot Queries ==========
     getParkingLots: builder.query<ApiResponse<ParkingLotResponse[]>, void>({
-      query: () => ({ url: '/parking-lots' }),
+      query: () => ({
+        url: '/parking-lots',
+      }),
       providesTags: (result) =>
         result?.data
           ? [
@@ -31,7 +69,9 @@ export const parkingApi = createApi({
     }),
 
     getParkingLotsByUserId: builder.query<ApiResponse<ParkingLotResponse[]>, number>({
-      query: (userId) => ({ url: `/parking-lots/user/${userId}` }),
+      query: (userId) => ({
+        url: `/parking-lots/user/${userId}`,
+      }),
       providesTags: (result, _error, userId) =>
         result?.data
           ? [
@@ -42,9 +82,11 @@ export const parkingApi = createApi({
     }),
 
     getParkingLotById: builder.query<ApiResponse<ParkingLotResponse>, number>({
-      query: (id) => ({ url: `/parking-lots/${id}` }),
+      query: (id) => ({
+        url: `/parking-lots/${id}`,
+      }),
       providesTags: (result) =>
-        result
+        result?.data
           ? [
               { type: 'ParkingLot' as const, id: result.data.id },
               { type: 'ParkingLot' as const, id: 'LIST' },
@@ -52,23 +94,19 @@ export const parkingApi = createApi({
           : [{ type: 'ParkingLot' as const, id: 'LIST' }],
     }),
 
-    // ========== Parking Lot Mutations ==========
     createParkingLot: builder.mutation<ApiResponse<ParkingLotResponse>, CreateParkingLotRequest>({
       query: (body) => ({
         url: '/parking-lots',
         method: 'POST',
         body,
       }),
-      invalidatesTags: [
+      invalidatesTags: (result, error, arg, meta) => [
         { type: 'ParkingLot', id: 'LIST' },
-        { type: 'UserParkingLots', id: 'LIST' },
+        { type: 'UserParkingLots' },
       ],
     }),
 
-    updateParkingLot: builder.mutation<
-      ApiResponse<ParkingLotResponse>,
-      { id: number; body: UpdateParkingLotRequest }
-    >({
+    updateParkingLot: builder.mutation<ApiResponse<ParkingLotResponse>, UpdateParkingLotParams>({
       query: ({ id, body }) => ({
         url: `/parking-lots/${id}`,
         method: 'PUT',
@@ -88,33 +126,20 @@ export const parkingApi = createApi({
       invalidatesTags: (result, _error, id) => [
         { type: 'ParkingLot', id },
         { type: 'ParkingLot', id: 'LIST' },
-        { type: 'Spots', id: id }, // invalidate spots for this lot
+        { type: 'Spots', id },
         { type: 'Spots', id: 'LIST' },
       ],
     }),
 
-    // ========== Spot Queries ==========
-    getSpotsByParkingLotId: builder.query<
-      ApiResponse<PaginatedResponse<SpotDTO>>,
-      { parkingLotId: number } & SpotFilters
-    >({
-      query: ({ parkingLotId, available, vehicleType, floor, page, size, sort }) => {
-        const params = new URLSearchParams();
-
-        if (available !== undefined) params.append('available', available.toString());
-        if (vehicleType) params.append('vehicleType', vehicleType);
-        if (floor !== undefined) params.append('floor', floor.toString());
-        if (page !== undefined) params.append('page', page.toString());
-        if (size !== undefined) params.append('size', size.toString());
-        if (sort) params.append('sort', sort);
-
-        const queryString = params.toString();
+    getSpotsByParkingLotId: builder.query<ApiResponse<PaginatedResponse<SpotDTO>>, GetSpotsByParkingLotIdParams>({
+      query: ({ parkingLotId, ...filters }) => {
+        const queryString = buildQueryParams(filters);
         return {
           url: `/parking-lots/${parkingLotId}/spots${queryString ? `?${queryString}` : ''}`,
         };
       },
       providesTags: (result, _error, { parkingLotId }) =>
-        result
+        result?.data
           ? [
               { type: 'Spots' as const, id: 'LIST' },
               { type: 'Spots' as const, id: parkingLotId },
@@ -123,9 +148,11 @@ export const parkingApi = createApi({
     }),
 
     getSpotById: builder.query<ApiResponse<SpotDTO>, number>({
-      query: (id) => ({ url: `/spots/${id}` }),
+      query: (id) => ({
+        url: `/spots/${id}`,
+      }),
       providesTags: (result) =>
-        result
+        result?.data
           ? [
               { type: 'Spots' as const, id: result.data.id },
               { type: 'Spots' as const, id: 'LIST' },
@@ -133,51 +160,41 @@ export const parkingApi = createApi({
           : [{ type: 'Spots' as const, id: 'LIST' }],
     }),
 
-    // ========== Spot Mutations ==========
-    createSpot: builder.mutation<ApiResponse<SpotDTO>, CreateSpotRequest>({
-      query: (body) => ({
-        url: '/spots',
+    createSpot: builder.mutation<ApiResponse<SpotDTO>, CreateSpotParams>({
+      query: ({ parkingLotId, body }) => ({
+        url: `/parking-lots/${parkingLotId}/spots`,
         method: 'POST',
         body,
       }),
       invalidatesTags: (result, _error, { parkingLotId }) => [
+        { type: 'Spots', id: parkingLotId },
+        { type: 'Spots', id: 'LIST' },
+      ],
+    }),
+
+    updateSpot: builder.mutation<ApiResponse<SpotDTO>, UpdateSpotParams>({
+      query: ({ spotId, parkingLotId, body }) => ({
+        url: `/parking-lots/${parkingLotId}/spots/${spotId}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: (result, _error, { spotId, parkingLotId }) => [
+        { type: 'Spots', id: spotId },
         { type: 'Spots', id: 'LIST' },
         { type: 'Spots', id: parkingLotId },
       ],
     }),
 
-    updateSpot: builder.mutation<
-      ApiResponse<SpotDTO>,
-      { id: number; body: UpdateSpotRequest }
-    >({
-      query: ({ id, body }) => ({
-        url: `/spots/${id}`,
-        method: 'PUT',
-        body,
-      }),
-      invalidatesTags: (result, _error, { id, body }) => {
-        const tags = [
-          { type: 'Spots' as const, id },
-          { type: 'Spots' as const, id: 'LIST' },
-        ];
-        if (body.parkingLotId) tags.push({ type: 'Spots' as const, id: body.parkingLotId });
-        return tags;
-      },
-    }),
-
-    deleteSpot: builder.mutation<ApiResponse<void>, { id: number; parkingLotId?: number }>({
-      query: ({ id }) => ({
-        url: `/spots/${id}`,
+    deleteSpot: builder.mutation<ApiResponse<void>, DeleteSpotParams>({
+      query: ({ spotId, parkingLotId }) => ({
+        url: `/parking-lots/${parkingLotId}/spots/${spotId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, _error, { id, parkingLotId }) => {
-        const tags = [
-          { type: 'Spots' as const, id },
-          { type: 'Spots' as const, id: 'LIST' },
-        ];
-        if (parkingLotId) tags.push({ type: 'Spots' as const, id: parkingLotId });
-        return tags;
-      },
+      invalidatesTags: (result, _error, { spotId, parkingLotId }) => [
+        { type: 'Spots', id: spotId },
+        { type: 'Spots', id: 'LIST' },
+        { type: 'Spots', id: parkingLotId },
+      ],
     }),
   }),
 });

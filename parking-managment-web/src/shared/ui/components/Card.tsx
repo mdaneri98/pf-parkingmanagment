@@ -10,10 +10,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        'card',
-        {
-          'shadow-md': variant === 'elevated',
-        },
+        variant === 'elevated' ? 'card-elevated' : 'card',
         className
       )}
       {...props}
@@ -51,7 +48,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingEleme
   ({ className, ...props }, ref) => (
     <h3
       ref={ref}
-      className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100', className)}
+      className={cn('text-xl font-bold text-neutral-900 dark:text-neutral-100 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-neutral-100 dark:to-neutral-300 bg-clip-text', className)}
       {...props}
     />
   )
@@ -63,7 +60,7 @@ const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLPara
   ({ className, ...props }, ref) => (
     <p
       ref={ref}
-      className={cn('text-sm text-neutral-600 dark:text-neutral-400', className)}
+      className={cn('text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed', className)}
       {...props}
     />
   )

@@ -1,9 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import './shared/ui/styles.css';
-import { store } from './stores/store';
-import { ErrorBoundary } from './shared/components/ErrorBoundary';
+import '@shared/ui/styles.css';
+import { store } from '@stores/store';
+import { ErrorBoundary } from '@shared/components/ErrorBoundary';
 import App from './App';
 
 
@@ -14,10 +14,10 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <Provider store={store}>
+    <Provider store={store}>
+      <ErrorBoundary>
         <App />
-      </Provider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </Provider>
   </React.StrictMode>
 );

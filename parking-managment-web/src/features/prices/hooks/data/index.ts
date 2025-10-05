@@ -1,0 +1,1 @@
+export { usePricesData } from './usePricesData';

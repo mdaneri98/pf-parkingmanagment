@@ -1,17 +1,38 @@
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useResetPasswordMutation } from '../api/authApi';
+import { useAppDispatch } from '@hooks/useAppDispatch';
+import { useAppSelector } from '@hooks/useAppSelector';
+import { setAuthError, setAuthLoading } from '../slice/authSlice';
+import { selectAuthError, selectAuthLoading } from '../selectors';
 import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
 
 type FormValues = { token: string; newPassword: string };
 
 export function ResetPasswordPage() {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>();
-  const [resetPassword, { isLoading, isSuccess, error }] = useResetPasswordMutation();
+  const [resetPassword, { isLoading: isApiLoading }] = useResetPasswordMutation();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const authError = useAppSelector(selectAuthError);
+  const authLoading = useAppSelector(selectAuthLoading);
 
   const onSubmit = async (values: FormValues) => {
-    await resetPassword(values).unwrap();
+    try {
+      dispatch(setAuthError(null));
+      dispatch(setAuthLoading(true));
+      setIsSuccess(false);
+      
+      await resetPassword(values).unwrap();
+      setIsSuccess(true);
+    } catch (error) {
+      dispatch(setAuthError('Password reset failed. Please check your token and try again.'));
+    } finally {
+      dispatch(setAuthLoading(false));
+    }
   };
 
   return (
@@ -48,10 +69,10 @@ export function ResetPasswordPage() {
             }
           />
 
-          {error && (
+          {authError && (
             <Alert variant="error">
               <AlertDescription>
-                Password reset failed. Please check your token and try again.
+                {authError}
               </AlertDescription>
             </Alert>
           )}
@@ -68,7 +89,7 @@ export function ResetPasswordPage() {
             type="submit" 
             className="w-full" 
             size="lg"
-            loading={isSubmitting || isLoading}
+            loading={isSubmitting || authLoading || isApiLoading}
           >
             Reset password
           </Button>
