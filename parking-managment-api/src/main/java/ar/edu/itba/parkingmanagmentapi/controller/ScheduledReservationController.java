@@ -2,8 +2,8 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.PageResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.service.ScheduledReservationService;
 import jakarta.validation.Valid;
@@ -21,21 +21,21 @@ import java.time.LocalDateTime;
 @CrossOrigin(origins = "*")
 public class ScheduledReservationController {
 
-    private final ScheduledReservationService reservationService;
+    private final ScheduledReservationService scheduledReservationService;
 
     public ScheduledReservationController(ScheduledReservationService reservationService) {
-        this.reservationService = reservationService;
+        this.scheduledReservationService = reservationService;
     }
 
     @PostMapping
     public ResponseEntity<?> createReservation(@Valid @RequestBody ScheduledReservationRequest request) {
-        ScheduledReservationResponse response = reservationService.createReservation(request);
+        ReservationResponse response = scheduledReservationService.createReservation(request);
         return ApiResponse.created(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getReservation(@PathVariable Long id) {
-        ScheduledReservationResponse response = reservationService.getReservation(id);
+        ReservationResponse response = scheduledReservationService.getReservation(id);
         return ApiResponse.ok(response);
     }
 
@@ -48,17 +48,17 @@ public class ScheduledReservationController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime to,
             Pageable pageable) {
-        Page<ScheduledReservationResponse> responses = reservationService.getReservationsByUser(userId, status, vehiclePlate, from, to, pageable);
+        Page<ReservationResponse> responses = scheduledReservationService.getReservationsByUser(userId, status, vehiclePlate, from, to, pageable);
         return ApiResponse.ok(PageResponse.of(responses));
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("@authorizationService.canCurrentUserUpdateReservation(#id)")
+    @PreAuthorize("@authorizationService.canCurrentUserUpdateScheduledReservation(#id)")
     public ResponseEntity<?> updateReservationStatus(
             @PathVariable Long id,
             @RequestParam ReservationStatus status
     ) {
-        ScheduledReservationResponse response = reservationService.updateReservationStatus(id, status);
+        ReservationResponse response = scheduledReservationService.updateReservationStatus(id, status);
         return ApiResponse.ok(response);
     }
 

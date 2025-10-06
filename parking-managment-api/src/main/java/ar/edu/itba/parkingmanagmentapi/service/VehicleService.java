@@ -11,7 +11,7 @@ public interface VehicleService {
 
     VehicleResponse findByLicensePlate(String licensePlate);
 
-    List<VehicleResponse> findAll();
+    List<VehicleResponse> findAllVehiclesByUser(Long id);
 
     VehicleResponse update(String licensePlate, VehicleRequest request);
 

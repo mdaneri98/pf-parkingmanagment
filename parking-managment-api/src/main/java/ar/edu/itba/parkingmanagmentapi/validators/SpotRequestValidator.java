@@ -34,9 +34,6 @@ public class SpotRequestValidator {
         }
 
         mandatoryFieldValidator.validate(spotRequest.getFloor(), "floor");
-        if (spotRequest.getFloor() < 0) {
-            throw new BadRequestException("Floor must be a non-negative integer");
-        }
 
         mandatoryFieldValidator.validate(spotRequest.getCode(), "code");
         blankFieldValidator.validate(spotRequest.getCode(), "code");

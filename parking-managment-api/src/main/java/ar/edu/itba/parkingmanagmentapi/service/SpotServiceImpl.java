@@ -8,8 +8,10 @@ import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.SpotRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.SpotSpecifications;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 import ar.edu.itba.parkingmanagmentapi.util.ParkingLotMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.SpotRequestValidator;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -27,10 +30,15 @@ public class SpotServiceImpl implements SpotService {
     private final ParkingLotService parkingLotService;
     private final SpotRequestValidator spotRequestValidator;
 
-    public SpotServiceImpl(SpotRepository spotRepository, ParkingLotService parkingLotService, SpotRequestValidator spotRequestValidator) {
+    private final ScheduledReservationRepository scheduledReservationRepository;
+    private final WalkInStayRepository walkInStayRepository;
+
+    public SpotServiceImpl(SpotRepository spotRepository, ParkingLotService parkingLotService, SpotRequestValidator spotRequestValidator, ScheduledReservationRepository scheduledReservationRepository, WalkInStayRepository walkInStayRepository) {
         this.spotRepository = spotRepository;
         this.parkingLotService = parkingLotService;
         this.spotRequestValidator = spotRequestValidator;
+        this.scheduledReservationRepository = scheduledReservationRepository;
+        this.walkInStayRepository = walkInStayRepository;
     }
 
     @Override
@@ -49,6 +57,7 @@ public class SpotServiceImpl implements SpotService {
         spot.setCode(request.getCode());
         spot.setIsAvailable(true);
         spot.setParkingLot(parkingLot);
+        spot.setReservationPriority(request.getReservationPriority());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
@@ -77,15 +86,29 @@ public class SpotServiceImpl implements SpotService {
         spot.setCode(request.getCode());
         spot.setFloor(request.getFloor());
         spot.setIsAvailable(request.getIsAvailable());
+        spot.setReservationPriority(request.getReservationPriority());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
 
+    @Transactional
     @Override
     public void deleteSpot(Long parkingLotId, Long id) {
         Spot spot = spotRepository.findById(id)
-                .filter(s -> s.getParkingLot().getId().equals(parkingLotId))
-                .orElseThrow(() -> new NotFoundException("Spot not found in this parking lot with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Spot not found"));
+
+        boolean hasFutureScheduledReservations = scheduledReservationRepository.existsBySpotIdAndReservedStartTimeAfter(spot.getId(), LocalDateTime.now());
+        if (hasFutureScheduledReservations || !spot.getIsAvailable()) {
+            throw new IllegalStateException("Cannot delete spot: it has future scheduled reservations or is currently occupied");
+        }
+        // Actualizar los snapshots de las reservas antes de eliminarlo
+        scheduledReservationRepository.updateSpotSnapshot(
+                spot.getId(), spot.getCode(), spot.getFloor(), spot.getVehicleType()
+        );
+        walkInStayRepository.updateSpotSnapshot(
+                spot.getId(), spot.getCode(), spot.getFloor(), spot.getVehicleType()
+        );
+
         spotRepository.delete(spot);
     }
 

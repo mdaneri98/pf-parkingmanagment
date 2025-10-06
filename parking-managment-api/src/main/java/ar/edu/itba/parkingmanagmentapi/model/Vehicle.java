@@ -37,11 +37,6 @@ public class Vehicle {
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserVehicleAssignment> userAssignments = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final List<WalkInStay> walkInStays = new ArrayList<>();
-
-
     // Constructores
     public Vehicle() {
     }

@@ -28,6 +28,9 @@ public class Spot {
     @Column(name = "is_available", nullable = false)
     private Boolean isAvailable = true;
 
+    @Column(name = "reservation_priority", nullable = false)
+    private Boolean reservationPriority = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -40,10 +43,10 @@ public class Spot {
     @JoinColumn(name = "parking_lot_id", nullable = false)
     private ParkingLot parkingLot;
 
-    @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "spot", fetch = FetchType.LAZY)
     private final List<ScheduledReservation> scheduledReservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "spot", fetch = FetchType.LAZY)
     private final List<WalkInStay> walkInStays = new ArrayList<>();
 
     // Constructores
@@ -121,6 +124,14 @@ public class Spot {
 
     public void setParkingLot(ParkingLot parkingLot) {
         this.parkingLot = parkingLot;
+    }
+
+    public Boolean getReservationPriority() {
+        return reservationPriority;
+    }
+
+    public void setReservationPriority(Boolean reservationPriority) {
+        this.reservationPriority = reservationPriority;
     }
 
 } 

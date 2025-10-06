@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateReservationRequestValidator {
+public class ScheduledReservationRequestValidator {
     private final MandatoryFieldValidator mandatoryFieldValidator;
     private final BlankFieldValidator blankFieldValidator;
     private final LengthRangeFieldInfoValidator lengthRangeFieldInfoValidator;

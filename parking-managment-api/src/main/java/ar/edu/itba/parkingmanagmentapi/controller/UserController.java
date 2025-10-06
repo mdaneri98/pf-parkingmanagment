@@ -1,12 +1,10 @@
 package ar.edu.itba.parkingmanagmentapi.controller;
 
-import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.exceptions.AuthenticationFailedException;
 import ar.edu.itba.parkingmanagmentapi.security.service.SecurityService;
 import ar.edu.itba.parkingmanagmentapi.service.UserService;
+import ar.edu.itba.parkingmanagmentapi.service.VehicleService;
 import ar.edu.itba.parkingmanagmentapi.util.UserMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +21,13 @@ public class UserController {
     private final UserService userService;
     private final SecurityService securityService;
 
-    public UserController(UserService userService, SecurityService securityService) {
+    private final VehicleService vehicleService;
+
+
+    public UserController(UserService userService, SecurityService securityService, VehicleService vehicleService) {
         this.userService = userService;
         this.securityService = securityService;
+        this.vehicleService = vehicleService;
     }
 
     /**
@@ -67,6 +69,12 @@ public class UserController {
     }
 
     // -------------------------- EXTENSIONS --------------------------
+
+    @GetMapping("/{id}/vehicles")
+    public ResponseEntity<?> getAllVehicles(@PathVariable Long id) {
+        List<VehicleResponse> response = vehicleService.findAllVehiclesByUser(id);
+        return ApiResponse.ok(response);
+    }
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")

@@ -1,9 +1,9 @@
 {
 	"info": {
 		"_postman_id": "ec16ff0c-a73e-44e8-bfac-f86536acabda",
-		"name": "Parking Management API Copy",
+		"name": "Parking Management API",
 		"description": "Complete API collection for Parking Management System with authentication scripts and all endpoints",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25082324"
 	},
 	"item": [
@@ -151,7 +151,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/login",
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
 						"description": "Login with regular user credentials to get access token and refresh token"
 					},
 					"response": []
@@ -192,7 +201,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"email\": \"{{managerEmail}}\",\n    \"password\": \"{{managerPassword}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/login",
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
 						"description": "Login with manager credentials to get access token and refresh token"
 					},
 					"response": []
@@ -233,7 +251,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"email\": \"{{adminEmail}}\",\n    \"password\": \"{{adminPassword}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/login",
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
 						"description": "Login with admin credentials to get access token and refresh token"
 					},
 					"response": []
@@ -272,7 +299,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/refresh",
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
 						"description": "Refresh access token using refresh token"
 					},
 					"response": []
@@ -306,7 +342,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/logout",
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
 						"description": "Logout and invalidate refresh token"
 					},
 					"response": []
@@ -342,7 +387,17 @@
 							"mode": "raw",
 							"raw": "{\n    \"email\": \"{{recoveryEmail}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/password-recovery/request",
+						"url": {
+							"raw": "{{baseUrl}}/auth/password-recovery/request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"request"
+							]
+						},
 						"description": "Request password recovery for an email address"
 					},
 					"response": []
@@ -361,7 +416,17 @@
 							"mode": "raw",
 							"raw": "{\n    \"token\": \"{{recoveryToken}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/password-recovery/verify",
+						"url": {
+							"raw": "{{baseUrl}}/auth/password-recovery/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"verify"
+							]
+						},
 						"description": "Verify if a recovery token is valid"
 					},
 					"response": []
@@ -380,7 +445,17 @@
 							"mode": "raw",
 							"raw": "{\n    \"token\": \"{{recoveryToken}}\",\n    \"newPassword\": \"{{newPassword}}\"\n}"
 						},
-						"url": "{{baseUrl}}/auth/password-recovery/reset",
+						"url": {
+							"raw": "{{baseUrl}}/auth/password-recovery/reset",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"reset"
+							]
+						},
 						"description": "Reset password using recovery token"
 					},
 					"response": []
@@ -409,7 +484,15 @@
 							"mode": "raw",
 							"raw": "{\n    \"email\": \"{{newUserEmail}}\",\n    \"password\": \"{{newUserPassword}}\",\n    \"firstName\": \"{{newUserFirstName}}\",\n    \"lastName\": \"{{newUserLastName}}\",\n    \"imageUrl\": \"{{newUserImageUrl}}\"\n}"
 						},
-						"url": "{{baseUrl}}/users",
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
 						"description": "Create a new user (requires authentication)"
 					},
 					"response": []
@@ -424,7 +507,15 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/users",
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
 						"description": "Get all users (requires authentication)"
 					},
 					"response": []
@@ -439,7 +530,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/users/{{userId}}",
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
 						"description": "Get user by ID (requires authentication)"
 					},
 					"response": []
@@ -462,7 +562,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\",\n    \"imageUrl\": \"{{updatedImageUrl}}\",\n    \"userDetail\": {\n        \"phone\": \"{{updatedPhone}}\",\n        \"address\": \"{{updatedAddress}}\"\n    }\n}"
 						},
-						"url": "{{baseUrl}}/users/{{userId}}",
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
 						"description": "Update user information (requires authentication)"
 					},
 					"response": []
@@ -477,7 +586,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/users/{{userId}}",
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
 						"description": "Delete user by ID (requires authentication)"
 					},
 					"response": []
@@ -523,7 +641,17 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/users/email/{{email}}",
+						"url": {
+							"raw": "{{baseUrl}}/users/email/{{email}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"email",
+								"{{email}}"
+							]
+						},
 						"description": "Get user by email (requires authentication)"
 					},
 					"response": []
@@ -538,7 +666,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/users/me",
+						"url": {
+							"raw": "{{baseUrl}}/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						},
 						"description": "Get current authenticated user information (requires authentication)"
 					},
 					"response": []
@@ -567,7 +704,15 @@
 							"mode": "raw",
 							"raw": "{\n    \"licensePlate\": \"ABC234\",\n    \"type\": \"{{vehicleType}}\",\n    \"brand\": \"{{vehicleBrand}}\",\n    \"model\": \"{{vehicleModel}}\",\n    \"color\": \"{{vehicleColor}}\",\n    \"userId\": 9\n}"
 						},
-						"url": "{{baseUrl}}/vehicles",
+						"url": {
+							"raw": "{{baseUrl}}/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						},
 						"description": "Create a new vehicle (requires authentication)"
 					},
 					"response": []
@@ -582,7 +727,15 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/vehicles",
+						"url": {
+							"raw": "{{baseUrl}}/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						},
 						"description": "Get all vehicles (requires authentication)"
 					},
 					"response": []
@@ -597,7 +750,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"{{vehicleLicensePlate}}"
+							]
+						},
 						"description": "Get vehicle by license plate (requires authentication and ownership)"
 					},
 					"response": []
@@ -620,7 +782,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"licensePlate\": \"{{updatedVehicleLicensePlate}}\",\n    \"vehicleType\": \"{{updatedVehicleType}}\",\n    \"brand\": \"{{updatedVehicleBrand}}\",\n    \"model\": \"{{updatedVehicleModel}}\",\n    \"color\": \"{{updatedVehicleColor}}\"\n}"
 						},
-						"url": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"{{vehicleLicensePlate}}"
+							]
+						},
 						"description": "Update vehicle information (requires authentication and ownership)"
 					},
 					"response": []
@@ -635,7 +806,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/{{vehicleLicensePlate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"{{vehicleLicensePlate}}"
+							]
+						},
 						"description": "Delete vehicle by license plate (requires authentication and ownership)"
 					},
 					"response": []
@@ -664,7 +844,15 @@
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"{{parkingLotName}}\",\n    \"address\": \"{{parkingLotAddress}}\",\n    \"imageUrl\": \"{{parkingLotImageUrl}}\",\n    \"managerId\": {{managerId}},\n    \"latitude\": 32.11,\n    \"longitude\": -12.33,\n    \"spots\": [\n        {\n            \"vehicleType\": \"{{spotVehicleType}}\",\n            \"floor\": {{spotFloor}},\n            \"code\": \"{{spotCode}}\",\n            \"isAvailable\": {{spotIsAvailable}}\n        }\n    ]\n}"
 						},
-						"url": "{{baseUrl}}/parking-lots",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots"
+							]
+						},
 						"description": "Create a new parking lot with spots (requires authentication)"
 					},
 					"response": []
@@ -679,7 +867,15 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/parking-lots",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots"
+							]
+						},
 						"description": "Get all parking lots (requires authentication)"
 					},
 					"response": []
@@ -694,7 +890,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}"
+							]
+						},
 						"description": "Get parking lot by ID (requires authentication)"
 					},
 					"response": []
@@ -717,7 +922,16 @@
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"{{updatedParkingLotName}}\",\n    \"address\": \"{{updatedParkingLotAddress}}\",\n    \"imageUrl\": \"{{updatedParkingLotImageUrl}}\"\n}"
 						},
-						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}"
+							]
+						},
 						"description": "Update parking lot information (requires authentication)"
 					},
 					"response": []
@@ -732,7 +946,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}"
+							]
+						},
 						"description": "Delete parking lot by ID (requires authentication)"
 					},
 					"response": []
@@ -747,8 +970,59 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/parking-lots/user/{{userId}}",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/user/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"user",
+								"{{userId}}"
+							]
+						},
 						"description": "Get all parking lots owned by a specific user ID (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get reservations walk in",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/1/reservations/walk-in",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"1",
+								"reservations",
+								"walk-in"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "{{reservationFrom}}",
+									"disabled": true
+								},
+								{
+									"key": "to",
+									"value": "{{reservationTo}}",
+									"disabled": true
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -767,7 +1041,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/parking-lots/1/reservations?status=CONFIRMED",
+							"raw": "{{baseUrl}}/parking-lots/1/reservations?status=PENDING&page=0&size=5",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -779,7 +1053,25 @@
 							"query": [
 								{
 									"key": "status",
-									"value": "CONFIRMED"
+									"value": "PENDING"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "from",
+									"value": "{{reservationFrom}}",
+									"disabled": true
+								},
+								{
+									"key": "to",
+									"value": "{{reservationTo}}",
+									"disabled": true
 								}
 							]
 						}
@@ -807,7 +1099,8 @@
 									"}"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -825,9 +1118,19 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{spotFloor}},\n  \"code\": \"{{spotCode}}\",\n  \"vehicleType\": \"{{spotVehicleType}}\"\n}"
+							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{spotFloor}},\n  \"code\": \"{{spotCode}}\",\n  \"vehicleType\": \"{{spotVehicleType}}\",\n  \"reservationPriority\": false\n}"
 						},
-						"url": "{{baseUrl}}/parking-lots/4/spots",
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/4/spots",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"4",
+								"spots"
+							]
+						},
 						"description": "Crea un nuevo spot. vehicleType puede ser: bicicleta, auto, camioneta, moto"
 					},
 					"response": []
@@ -853,7 +1156,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/spots/{{spotId}}"
+						"url": {
+							"raw": "{{baseUrl}}/spots/{{spotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"spots",
+								"{{spotId}}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -886,7 +1198,16 @@
 							"mode": "raw",
 							"raw": "{\n  \"parkingLotId\": {{parkingLotId}},\n  \"floor\": {{updatedSpotFloor}},\n  \"code\": \"{{updatedSpotCode}}\",\n  \"vehicleType\": \"{{updatedSpotVehicleType}}\"\n}"
 						},
-						"url": "{{baseUrl}}/spots/{{spotId}}",
+						"url": {
+							"raw": "{{baseUrl}}/spots/{{spotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"spots",
+								"{{spotId}}"
+							]
+						},
 						"description": "Actualiza datos de un spot."
 					},
 					"response": []
@@ -916,7 +1237,16 @@
 								"value": "{{tokenType}} {{accessToken}}"
 							}
 						],
-						"url": "{{baseUrl}}/spots/{{spotId}}"
+						"url": {
+							"raw": "{{baseUrl}}/spots/{{spotId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"spots",
+								"{{spotId}}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -981,10 +1311,10 @@
 			]
 		},
 		{
-			"name": "Precios",
+			"name": "Prices",
 			"item": [
 				{
-					"name": "Create precio",
+					"name": "Create price",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1003,7 +1333,17 @@
 								}
 							}
 						},
-						"url": "{{baseUrl}}/parking-lots/4/prices"
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/4/prices",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"4",
+								"prices"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1018,17 +1358,101 @@
 								"type": "text"
 							}
 						],
-						"url": "{{baseUrl}}/parking-lots/{{parkingLotId}}/prices"
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}/prices?min=10&max=300&vehicleType=auto",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}",
+								"prices"
+							],
+							"query": [
+								{
+									"key": "min",
+									"value": "10"
+								},
+								{
+									"key": "max",
+									"value": "300"
+								},
+								{
+									"key": "vehicleType",
+									"value": "auto"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update price by PerkingLot ID",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"vehicleType\" : \"auto\",\r\n    \"price\": 13.20,\r\n    \"validFrom\": \"2025-10-21 00:00:00\",\r\n    \"validTo\": \"2025-10-31 00:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}/prices",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}",
+								"prices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete price",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parking-lots/{{parkingLotId}}/prices/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parking-lots",
+								"{{parkingLotId}}",
+								"prices",
+								"1"
+							]
+						}
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "Reservas",
+			"name": "Scheduled Reservations",
 			"item": [
 				{
-					"name": "Crear reserva",
+					"name": "Create scheduled",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1047,12 +1471,21 @@
 								}
 							}
 						},
-						"url": "{{baseUrl}}/reservations/scheduled"
+						"url": {
+							"raw": "{{baseUrl}}/reservations/scheduled",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"scheduled"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "Obtener reserva by User ID",
+					"name": "Get reservations by User ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1092,12 +1525,53 @@
 								"type": "text"
 							}
 						],
-						"url": "{{baseUrl}}/reservations/scheduled/6"
+						"url": {
+							"raw": "{{baseUrl}}/reservations/scheduled/6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"scheduled",
+								"6"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "Cancel reservation",
+					"name": "Update status reservation",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/scheduled/6/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"scheduled",
+								"6",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Walk in Stays",
+			"item": [
+				{
+					"name": "Create walk in stay",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1107,7 +1581,182 @@
 								"type": "text"
 							}
 						],
-						"url": "{{baseUrl}}/reservations/scheduled/6/cancel"
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"spotId\": 1,\r\n    \"vehicleLicensePlate\": \"ABC123\",\r\n    \"expectedDurationHours\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservations/walk-in",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"walk-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get reservations by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/walk-in?userId=1&vehiclePlate=ABC123",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"walk-in"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "vehiclePlate",
+									"value": "ABC123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get reservation by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/walk-in/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"walk-in",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get remaining-time",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/walk-in/1/remaining-time",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"walk-in",
+								"1",
+								"remaining-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/walk-in/1/status?status=COMPLETED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"walk-in",
+								"1",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "COMPLETED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update extend time",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{tokenType}} {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/reservations/walk-in/1/extend?extraHours=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reservations",
+								"walk-in",
+								"1",
+								"extend"
+							],
+							"query": [
+								{
+									"key": "extraHours",
+									"value": "2"
+								}
+							]
+						}
 					},
 					"response": []
 				}
@@ -1119,6 +1768,7 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
 					"// Auto-refresh token if expired",
 					"const accessToken = pm.environment.get('accessToken');",
@@ -1171,6 +1821,7 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -1212,7 +1863,7 @@
 		},
 		{
 			"key": "managerPassword",
-			"value": "manager123"
+			"value": "password123"
 		},
 		{
 			"key": "adminFirstName",
@@ -1393,6 +2044,18 @@
 		{
 			"key": "updatedVehicleColor",
 			"value": "Red"
+		},
+		{
+			"key": "status",
+			"value": "CONFIRMED"
+		},
+		{
+			"key": "reservationFrom",
+			"value": ""
+		},
+		{
+			"key": "reservationTo",
+			"value": ""
 		}
 	]
 }

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS spot (
     floor INTEGER NOT NULL,
     code VARCHAR(20) NOT NULL,
     is_available BOOLEAN NOT NULL DEFAULT TRUE,
+    reservation_priority BOOLEAN DEFAULT FALSE,
     parking_lot_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -101,6 +102,8 @@ CREATE TABLE IF NOT EXISTS user_vehicle_assignment (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, vehicle_license_plate),
+    spot_code_snapshot VARCHAR(20),
+    spot_floor_snapshot INT,
     CONSTRAINT fk_user_vehicle_user FOREIGN KEY (user_id) REFERENCES common_user(id),
     CONSTRAINT fk_user_vehicle_vehicle FOREIGN KEY (vehicle_license_plate) REFERENCES vehicle(license_plate)
     );
@@ -112,12 +115,14 @@ CREATE TABLE IF NOT EXISTS scheduled_reservation (
                                                      expected_end_time TIMESTAMP NOT NULL,
                                                      status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     estimated_price DECIMAL(10,2) NOT NULL,
-    spot_id BIGINT NOT NULL,
+    spot_id BIGINT,
     user_id BIGINT NOT NULL,
     vehicle_license_plate VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_scheduled_reservation_spot FOREIGN KEY (spot_id) REFERENCES spot(id),
+    spot_code_snapshot VARCHAR(20),
+    spot_floor_snapshot INT,
+    CONSTRAINT fk_scheduled_reservation_spot FOREIGN KEY (spot_id) REFERENCES spot(id) ON DELETE SET NULL,
     CONSTRAINT fk_scheduled_reservation_assignment FOREIGN KEY (user_id, vehicle_license_plate) REFERENCES user_vehicle_assignment(user_id, vehicle_license_plate)
     );
 
@@ -127,12 +132,16 @@ CREATE TABLE IF NOT EXISTS walk_in_stay (
                                             check_in_time TIMESTAMP NOT NULL,
                                             check_out_time TIMESTAMP,
                                             total_price DECIMAL(10,2),
-    spot_id BIGINT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    spot_id BIGINT,
     user_id BIGINT NOT NULL,
     vehicle_license_plate VARCHAR(20) NOT NULL,
+    expected_end_time TIMESTAMP,
+    spot_code_snapshot VARCHAR(20),
+    spot_floor_snapshot INT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_walk_in_stay_spot FOREIGN KEY (spot_id) REFERENCES spot(id),
+    CONSTRAINT fk_walk_in_stay_spot FOREIGN KEY (spot_id) REFERENCES spot(id) ON DELETE SET NULL,
     CONSTRAINT fk_walk_in_stay_assignment FOREIGN KEY (user_id, vehicle_license_plate) REFERENCES user_vehicle_assignment(user_id, vehicle_license_plate)
     );
 

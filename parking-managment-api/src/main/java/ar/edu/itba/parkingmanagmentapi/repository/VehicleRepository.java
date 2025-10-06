@@ -16,4 +16,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, String> {
     List<Vehicle> findByUserId(@Param("userId") Long userId);
 
     Vehicle findByLicensePlate(String licensePlate);
+
+    @Query("SELECT v FROM Vehicle v " +
+            "JOIN v.userAssignments uva " +
+            "JOIN uva.user u " +
+            "WHERE u.id = :userId")
+    List<Vehicle> findAllByUserId(@Param("userId") Long userId);
 }

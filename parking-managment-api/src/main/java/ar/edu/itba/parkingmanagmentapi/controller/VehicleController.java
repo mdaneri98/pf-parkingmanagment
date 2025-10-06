@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/vehicles")
 @CrossOrigin(origins = "*")
@@ -33,12 +31,6 @@ public class VehicleController {
     @PreAuthorize("@authorizationService.isCurrentUserOwnerOfVehicle(#licensePlate)")
     public ResponseEntity<?> getVehicle(@PathVariable String licensePlate) {
         VehicleResponse response = vehicleService.findByLicensePlate(licensePlate);
-        return ApiResponse.ok(response);
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getAllVehicles() {
-        List<VehicleResponse> response = vehicleService.findAll();
         return ApiResponse.ok(response);
     }
 

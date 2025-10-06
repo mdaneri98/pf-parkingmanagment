@@ -18,4 +18,6 @@ public interface UserVehicleAssignmentRepository extends JpaRepository<UserVehic
             @Param("userId") Long userId,
             @Param("licensePlate") String licensePlate
     );
+
+    Optional<UserVehicleAssignment> findByVehicleLicensePlate(String licensePlate);
 }

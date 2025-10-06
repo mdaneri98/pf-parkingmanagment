@@ -3,6 +3,8 @@ package ar.edu.itba.parkingmanagmentapi.model;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
@@ -40,8 +42,15 @@ public class ScheduledReservation {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "spot_id", nullable = false)
+    @JoinColumn(name = "spot_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Spot spot;
+
+    @Column(name = "spot_code_snapshot")
+    private String spotCodeSnapshot;
+
+    @Column(name = "spot_floor_snapshot")
+    private Integer spotFloorSnapshot;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
@@ -140,4 +149,11 @@ public class ScheduledReservation {
         this.userVehicleAssignment = userVehicleAssignment;
     }
 
-} 
+    public Integer getSpotFloorSnapshot() {
+        return spotFloorSnapshot;
+    }
+
+    public String getSpotCodeSnapshot() {
+        return spotCodeSnapshot;
+    }
+}

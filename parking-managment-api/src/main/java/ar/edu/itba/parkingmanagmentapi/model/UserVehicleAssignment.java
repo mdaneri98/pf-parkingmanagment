@@ -36,6 +36,10 @@ public class UserVehicleAssignment {
     @OneToMany(mappedBy = "userVehicleAssignment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<ScheduledReservation> scheduledReservations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "userVehicleAssignment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<WalkInStay> walkInStays = new ArrayList<>();
+
+
     // Constructores
     public UserVehicleAssignment() {
         this.id = new UserVehicleAssignmentId();

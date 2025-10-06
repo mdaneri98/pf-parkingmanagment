@@ -3,6 +3,7 @@ package ar.edu.itba.parkingmanagmentapi;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.LoginResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.VehicleType;
 import ar.edu.itba.parkingmanagmentapi.model.*;
 import ar.edu.itba.parkingmanagmentapi.repository.*;
@@ -53,6 +54,8 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected ScheduledReservationRepository reservationRepository;
     @Autowired
+    protected WalkInStayRepository walkInStayRepository;
+    @Autowired
     protected PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -69,6 +72,7 @@ public abstract class BaseIntegrationTest {
     protected Vehicle existingVehicle;
     protected ParkingPrice existingParkingPrice;
     protected ScheduledReservation existingReservation;
+    protected WalkInStay existingWalkInStay;
 
     @BeforeEach
     void clean() {
@@ -81,6 +85,7 @@ public abstract class BaseIntegrationTest {
         userVehicleAssignmentRepository.deleteAll();
         parkingPriceRepository.deleteAll();
         reservationRepository.deleteAll();
+        walkInStayRepository.deleteAll();
         setupTestUsers();
     }
 
@@ -128,6 +133,7 @@ public abstract class BaseIntegrationTest {
         spotEntity.setIsAvailable(true);
         spotEntity.setVehicleType(VehicleType.CAR.getName());
         spotEntity.setParkingLot(existingParkingLot);
+        spotEntity.setReservationPriority(false);
         existingSpot = spotRepository.save(spotEntity);
 
         Spot spotEntity2 = new Spot();
@@ -164,6 +170,16 @@ public abstract class BaseIntegrationTest {
         reservation.setUserVehicleAssignment(new UserVehicleAssignment(normalUser.getUser(), existingVehicle));
         reservation.setEstimatedPrice(new BigDecimal("20.00"));
         existingReservation = reservationRepository.save(reservation);
+
+        // Create a walk-in stay
+        WalkInStay walkInStay = new WalkInStay();
+        walkInStay.setCheckInTime(LocalDateTime.of(2025, 9, 2, 12, 0));
+        walkInStay.setExpectedEndTime(LocalDateTime.of(2025, 9, 2, 14, 0));
+        walkInStay.setCheckOutTime(LocalDateTime.of(2025, 9, 2, 16, 0));
+        walkInStay.setSpot(existingSpot);
+        walkInStay.setUserVehicleAssignment(new UserVehicleAssignment(normalUser.getUser(), existingVehicle));
+        walkInStay.setStatus(ReservationStatus.ACTIVE);
+        existingWalkInStay = walkInStayRepository.save(walkInStay);
     }
 
     /**

@@ -3,6 +3,7 @@ package ar.edu.itba.parkingmanagmentapi.security.service;
 import ar.edu.itba.parkingmanagmentapi.repository.AdminRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 import ar.edu.itba.parkingmanagmentapi.service.ManagerService;
 import ar.edu.itba.parkingmanagmentapi.service.ParkingLotService;
 import ar.edu.itba.parkingmanagmentapi.service.SpotService;
@@ -29,6 +30,8 @@ public class AuthorizationService {
     private final VehicleService vehicleService;
 
     private final ScheduledReservationRepository scheduledReservationRepository;
+
+    private final WalkInStayRepository walkInStayRepository;
 
     public boolean isCurrentUserAdmin() {
         return securityService.getCurrentUser()
@@ -78,7 +81,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    public boolean canCurrentUserUpdateReservation(Long reservationId) {
+    public boolean canCurrentUserUpdateScheduledReservation(Long reservationId) {
         return securityService.getCurrentUser()
                 .map(currentUser -> {
                     boolean isOwner = scheduledReservationRepository.findOwnerByReservationId(reservationId)
@@ -89,6 +92,28 @@ public class AuthorizationService {
                             .orElse(false);
                     return isOwner || isManager;
                 })
+                .orElse(false);
+    }
+
+    public boolean canCurrentUserUpdateWalkInStayReservation(Long reservationId) {
+        return securityService.getCurrentUser()
+                .map(currentUser -> {
+                    boolean isOwner = walkInStayRepository.findOwnerByReservationId(reservationId)
+                            .map(owner -> owner.getId().equals(currentUser.getId()))
+                            .orElse(false);
+                    boolean isManager = walkInStayRepository.findManagerByReservationId(reservationId)
+                            .map(manager -> manager.getId().equals(currentUser.getId()))
+                            .orElse(false);
+                    return isOwner || isManager;
+                })
+                .orElse(false);
+    }
+
+    public boolean isCurrentUserManagerOfReservation(Long reservationId) {
+        return securityService.getCurrentUser()
+                .map(currentUser -> walkInStayRepository.findManagerByReservationId(reservationId)
+                        .map(manager -> manager.getId().equals(currentUser.getId()))
+                        .orElse(false))
                 .orElse(false);
     }
 }

@@ -51,6 +51,7 @@ public class ParkingLotMapper {
         dto.setFloor(spot.getFloor());
         dto.setCode(spot.getCode());
         dto.setIsAvailable(spot.getIsAvailable());
+        dto.setReservationPriority(spot.getReservationPriority());
         return dto;
     }
 }

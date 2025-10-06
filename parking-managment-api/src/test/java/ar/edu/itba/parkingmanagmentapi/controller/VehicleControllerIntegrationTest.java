@@ -115,8 +115,15 @@ class VehicleControllerIntegrationTest extends BaseIntegrationTest {
         assignment2.setVehicle(v2);
         userVehicleAssignmentRepository.save(assignment2);
 
+        UserVehicleAssignment assignment3 = new UserVehicleAssignment();
+        assignment3.setId(new UserVehicleAssignmentId(otherUser.getId(), v2.getLicensePlate()));
+        assignment3.setUser(otherUser.getUser());
+        assignment3.setVehicle(v2);
+        userVehicleAssignmentRepository.save(assignment3);
+
+
         ResponseEntity<ApiResponse<List<VehicleResponse>>> response = restTemplate.exchange(
-                "/vehicles",
+                "/users/" + normalUser.getId() + "/vehicles",
                 HttpMethod.GET,
                 new HttpEntity<>(createAuthHeaders(normalUser)),
                 new ParameterizedTypeReference<>() {

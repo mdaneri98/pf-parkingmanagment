@@ -78,7 +78,7 @@ public class ParkingLotController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime to,
             Pageable pageable) {
-        Page<ScheduledReservationResponse> reservations = reservationService.getScheduledReservationsByParkingLot(parkingLotId, status, from, to, pageable);
+        Page<ReservationResponse> reservations = reservationService.getScheduledReservationsByParkingLot(parkingLotId, status, from, to, pageable);
         return ApiResponse.ok(PageResponse.of(reservations));
     }
 

@@ -10,7 +10,6 @@ import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserVehicleAssignmentRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.VehicleRepository;
-import ar.edu.itba.parkingmanagmentapi.security.service.SecurityService;
 import ar.edu.itba.parkingmanagmentapi.util.VehicleMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.CreateVehicleValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.UpdateVehicleValidator;
@@ -25,8 +24,6 @@ public class VehicleServiceImpl implements VehicleService {
 
     private final VehicleRepository vehicleRepository;
 
-    private final SecurityService securityService;
-
     private final UserVehicleAssignmentRepository userVehicleAssignmentRepository;
 
     private final UserRepository userRepository;
@@ -35,9 +32,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     private final UpdateVehicleValidator updateVehicleValidator;
 
-    public VehicleServiceImpl(VehicleRepository vehicleRepository, SecurityService securityService, UserVehicleAssignmentRepository userVehicleAssignmentRepository, UserRepository userRepository, CreateVehicleValidator createVehicleValidator, UpdateVehicleValidator updateVehicleValidator) {
+    public VehicleServiceImpl(VehicleRepository vehicleRepository, UserVehicleAssignmentRepository userVehicleAssignmentRepository, UserRepository userRepository, CreateVehicleValidator createVehicleValidator, UpdateVehicleValidator updateVehicleValidator) {
         this.vehicleRepository = vehicleRepository;
-        this.securityService = securityService;
         this.userVehicleAssignmentRepository = userVehicleAssignmentRepository;
         this.userRepository = userRepository;
         this.createVehicleValidator = createVehicleValidator;
@@ -47,10 +43,6 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleResponse create(VehicleRequest request) {
         createVehicleValidator.validate(request);
-        if (vehicleRepository.existsById(request.getLicensePlate())) {
-            throw new BadRequestException("Already exists a vehicle with license plate " + request.getLicensePlate());
-        }
-
         Vehicle vehicle = VehicleMapper.toEntity(request);
 
         Optional<UserVehicleAssignment> uva = userVehicleAssignmentRepository.findByUserIdAndVehicleLicensePlate(request.getUserId(), request.getLicensePlate());
@@ -62,7 +54,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         UserVehicleAssignment assignment = new UserVehicleAssignment(user, vehicle);
         vehicle.getUserAssignments().add(assignment);
-        
+
         return VehicleMapper.toResponse(vehicleRepository.save(vehicle));
     }
 
@@ -75,13 +67,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<VehicleResponse> findAll() {
-        return securityService.getCurrentUser()
-                .map(user -> vehicleRepository.findByUserId(user.getId())
-                        .stream()
-                        .map(VehicleMapper::toResponse)
-                        .toList())
-                .orElse(List.of());
+    public List<VehicleResponse> findAllVehiclesByUser(Long id) {
+        List<Vehicle> vehicles = vehicleRepository.findAllByUserId(id);
+        return vehicles.stream()
+                .map(VehicleMapper::toResponse)
+                .toList();
     }
 
     @Override

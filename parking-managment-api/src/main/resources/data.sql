@@ -74,17 +74,17 @@ VALUES ('AUTO', 0, 'PB-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('CAMIONETA', 0, 'PB-C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 2 (Santa Fe) - 10 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
-VALUES ('AUTO', -1, 'S1-A01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'S1-A02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'S1-A03', false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'S1-A04', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'S1-A05', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'S1-A06', false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', -1, 'S1-M01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', -1, 'S1-M02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', -1, 'S1-C01', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', -1, 'S1-C02', true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
+VALUES ('AUTO', -1, 'S1-A01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A03', false, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A04', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A05', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', -1, 'S1-A06', false, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', -1, 'S1-M01', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MOTO', -1, 'S1-M02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', -1, 'S1-C01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('CAMIONETA', -1, 'S1-C02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 3 (Cabildo) - 8 espacios
 INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
@@ -135,34 +135,39 @@ VALUES (1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
 -- Reservas programadas
 INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, status, estimated_price, spot_id,
-                                   user_id, vehicle_license_plate, created_at, updated_at)
+                                   user_id, vehicle_license_plate, spot_code_snapshot, spot_floor_snapshot,
+                                   created_at, updated_at)
 VALUES
 -- Reserva completada (ayer)
-('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', CURRENT_TIMESTAMP,
- CURRENT_TIMESTAMP),
+('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', null, null,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva confirmada (hoy)
-('2024-12-19 08:00:00', '2024-12-19 17:00:00', 'CONFIRMED', 8000.00, 6, 2, 'DEF456', CURRENT_TIMESTAMP,
- CURRENT_TIMESTAMP),
+('2024-12-19 08:00:00', '2024-12-19 17:00:00', 'CONFIRMED', 8000.00, 6, 2, 'DEF456', null, null,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva futura
-('2024-12-20 10:00:00', '2024-12-20 14:00:00', 'CONFIRMED', 3200.00, 1, 3, 'JKL012', CURRENT_TIMESTAMP,
- CURRENT_TIMESTAMP),
+('2024-12-20 10:00:00', '2024-12-20 14:00:00', 'CONFIRMED', 3200.00, 1, 3, 'JKL012', null, null,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva en progreso
-('2024-12-19 14:00:00', '2024-12-19 20:00:00', 'IN_PROGRESS', 2100.00, 10, 4, 'PQR678', CURRENT_TIMESTAMP,
- CURRENT_TIMESTAMP),
+('2024-12-19 14:00:00', '2024-12-19 20:00:00', 'IN_PROGRESS', 2100.00, 10, 4, 'PQR678', null, null,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva cancelada
-('2024-12-18 12:00:00', '2024-12-18 16:00:00', 'CANCELLED', 2800.00, 15, 2, 'GHI789', CURRENT_TIMESTAMP,
- CURRENT_TIMESTAMP);
+('2024-12-18 12:00:00', '2024-12-18 16:00:00', 'CANCELLED', 2800.00, 15, 2, 'GHI789', null, null,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estancias walk-in
-INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, spot_id, user_id, vehicle_license_plate,
-                          created_at, updated_at)
+INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, status, spot_id, user_id, vehicle_license_plate,
+                          expected_end_time, spot_code_snapshot, spot_floor_snapshot, created_at, updated_at)
 VALUES
 -- Estancia completada
-('2024-12-17 15:30:00', '2024-12-17 18:45:00', 2600.00, 3, 1, 'ABC123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('2024-12-17 15:30:00', '2024-12-17 18:45:00', 2600.00, 'ACTIVE', 1, 1, 'ABC123', '2024-12-17 22:45:00', null,
+ null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia completada
-('2024-12-18 11:15:00', '2024-12-18 13:30:00', 2250.00, 8, 2, 'GHI789', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('2024-12-18 11:15:00', '2024-12-18 13:30:00', 2250.00, 'ACTIVE', 2, 2, 'DEF456', '2024-12-18 18:45:00', null,
+ null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia en curso (sin check-out)
-('2024-12-19 16:00:00', NULL, NULL, 24, 4, 'MNO345', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('2025-10-04 10:00:00', NULL, NULL, 'ACTIVE', 4, 2, 'DEF456', '2025-10-04 12:35:00', null, null,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
 
 -- Reseñas
 INSERT INTO review (rating, comment, user_id, parking_lot_id, created_at, updated_at)

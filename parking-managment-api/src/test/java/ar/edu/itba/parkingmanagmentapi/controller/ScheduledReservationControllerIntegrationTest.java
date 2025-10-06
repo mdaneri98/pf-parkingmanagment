@@ -3,8 +3,8 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.PageResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.model.ScheduledReservation;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
 
         HttpEntity<ScheduledReservationRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(normalUser));
 
-        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/scheduled",
                 HttpMethod.POST,
                 requestEntity,
@@ -42,7 +42,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        ScheduledReservationResponse data = response.getBody().getData();
+        ReservationResponse data = response.getBody().getData();
         assertEquals(request.getSpotId(), data.getSpotId());
         assertEquals(request.getVehicleLicensePlate(), data.getVehicleLicensePlate());
 
@@ -61,7 +61,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
 
         HttpEntity<ScheduledReservationRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(normalUser));
 
-        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/scheduled",
                 HttpMethod.POST,
                 requestEntity,
@@ -78,7 +78,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
     void testGetReservation_shouldReturn200_andReservation() {
         ScheduledReservation reservation = existingReservation;
 
-        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/scheduled/" + reservation.getId(),
                 HttpMethod.GET,
                 new HttpEntity<>(createAuthHeaders(normalUser)),
@@ -95,7 +95,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
     void testGetReservationsByUser_shouldReturnOnlyUserReservations() {
         ScheduledReservation r1 = existingReservation;
 
-        ResponseEntity<ApiResponse<PageResponse<ScheduledReservationResponse>>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<PageResponse<ReservationResponse>>> response = restTemplate.exchange(
                 "/reservations/scheduled?userId=" + normalUser.getId(),
                 HttpMethod.GET,
                 new HttpEntity<>(createAuthHeaders(normalUser)),
@@ -106,7 +106,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        PageResponse<ScheduledReservationResponse> page = response.getBody().getData();
+        PageResponse<ReservationResponse> page = response.getBody().getData();
         assertEquals(1, page.getTotalElements());
         assertEquals(1, page.getContent().size());
         assertEquals(r1.getId(), page.getContent().get(0).getId());
@@ -116,7 +116,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
     void testCancelReservation_shouldReturn200_andUpdateStatus() {
         ScheduledReservation reservation = existingReservation;
 
-        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/scheduled/" + reservation.getId() + "/status?status=CANCELLED",
                 HttpMethod.PATCH,
                 new HttpEntity<>(createAuthHeaders(normalUser)),
@@ -125,7 +125,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        ScheduledReservationResponse cancelled = response.getBody().getData();
+        ReservationResponse cancelled = response.getBody().getData();
         assertEquals(ReservationStatus.CANCELLED, cancelled.getStatus());
 
         ScheduledReservation saved = reservationRepository.findById(reservation.getId()).orElseThrow();
@@ -136,7 +136,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
     void testCancelReservation_shouldReturn200_whenCurrentUserIsManager_updateStatus() {
         ScheduledReservation reservation = existingReservation;
 
-        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/scheduled/" + reservation.getId() + "/status?status=CONFIRMED",
                 HttpMethod.PATCH,
                 new HttpEntity<>(createAuthHeaders(managerUser)),
@@ -145,7 +145,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        ScheduledReservationResponse cancelled = response.getBody().getData();
+        ReservationResponse cancelled = response.getBody().getData();
         assertEquals(ReservationStatus.CONFIRMED, cancelled.getStatus());
 
         ScheduledReservation saved = reservationRepository.findById(reservation.getId()).orElseThrow();
@@ -156,7 +156,7 @@ class ScheduledReservationControllerIntegrationTest extends BaseIntegrationTest 
     void testCancelReservation_shouldReturn403_ifNotOwner() {
         ScheduledReservation reservation = existingReservation;
 
-        ResponseEntity<ApiResponse<ScheduledReservationResponse>> response = restTemplate.exchange(
+        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/scheduled/" + reservation.getId() + "/status?status=CANCELLED",
                 HttpMethod.PATCH,
                 new HttpEntity<>(createAuthHeaders(otherUser)),
