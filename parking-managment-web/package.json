@@ -16,9 +16,13 @@
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.10",
     "@reduxjs/toolkit": "^2.2.0",
+    "@types/date-fns": "^2.6.3",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "react": "^19.0.0",
+    "react-day-picker": "^9.11.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.52.0",
     "react-redux": "^9.1.2",

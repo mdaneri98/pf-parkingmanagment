@@ -22,6 +22,7 @@
       "@auth/*": ["src/features/auth/*"],
       "@users/*": ["src/features/users/*"],
       "@prices/*": ["src/features/prices/*"],
+      "@reservations/*": ["src/features/reservations/*"],
       "@pages/*": ["src/pages/*"],
       "@stores/*": ["src/stores/*"],
       "@hooks/*": ["src/hooks/*"],

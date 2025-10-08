@@ -42,7 +42,7 @@ public interface ScheduledReservationRepository extends JpaRepository<ScheduledR
                     r.spotFloorSnapshot = :floor
                 WHERE r.spot.id = :spotId
             """)
-    void updateSpotSnapshot(Long spotId, String code, Integer floor, String type);
+    void updateSpotSnapshot(Long spotId, String code, Integer floor);
 
     boolean existsBySpotIdAndReservedStartTimeAfter(Long spotId, LocalDateTime time);
 

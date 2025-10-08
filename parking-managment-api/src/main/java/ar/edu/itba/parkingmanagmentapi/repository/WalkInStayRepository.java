@@ -44,7 +44,7 @@ public interface WalkInStayRepository extends JpaRepository<WalkInStay, Long>, J
                     r.spotFloorSnapshot = :floor
                 WHERE r.spot.id = :spotId
             """)
-    void updateSpotSnapshot(Long spotId, String code, Integer floor, String type);
+    void updateSpotSnapshot(Long spotId, String code, Integer floor);
 
 
 }

@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
       '@shared': path.resolve(__dirname, './src/shared'),
       '@features': path.resolve(__dirname, './src/features'),
       '@parking': path.resolve(__dirname, './src/features/parking'),
+      '@reservations': path.resolve(__dirname, './src/features/reservations'),
       '@prices': path.resolve(__dirname, './src/features/prices'),
       '@users': path.resolve(__dirname, './src/features/users'),
       '@auth': path.resolve(__dirname, './src/features/auth'),

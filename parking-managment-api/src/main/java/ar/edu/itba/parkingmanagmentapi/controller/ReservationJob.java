@@ -6,7 +6,6 @@ import ar.edu.itba.parkingmanagmentapi.service.WalkInStayService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -30,9 +29,9 @@ public class ReservationJob {
         });
     }
 
-    @Scheduled(fixedRate = 60000) // cada 1 minuto
+    /*@Scheduled(fixedRate = 60000) // cada 1 minuto
     public void activateReservations() {
         LocalDateTime now = LocalDateTime.now();
         List<ReservationResponse> toActivate = scheduledReservationService.checkInReservation(now);
-    }
+    }*/
 }

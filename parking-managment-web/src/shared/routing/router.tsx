@@ -8,6 +8,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { AppLayout } from '@shared/layout';
 import { DashboardPage, SettingsPage, WelcomePage } from '@parking/pages';
 import { PricesPage } from '@prices/pages/PricesPage';
+import { ReservationsPage } from '../../features/reservations/pages/ReservationsPage';
 
 export const router = createBrowserRouter([
   // Root redirect to app for authenticated users, login for others
@@ -48,30 +49,31 @@ export const router = createBrowserRouter([
               <p className="text-sm">Choose a parking lot from the sidebar to view its dashboard.</p>
             </div> 
           },
-          { 
-            path: 'welcome', 
-            element: <WelcomePage /> 
+          {
+            path: 'welcome',
+            element: <WelcomePage />
           },
           // Lot-specific routes
           { path: 'dashboard/:lotId', element: <DashboardPage /> },
           { path: 'prices/:lotId', element: <PricesPage /> },
           { path: 'settings/:lotId', element: <SettingsPage /> },
-          
+          { path: 'reservations/:lotId', element: <ReservationsPage />,},
+
           // Global routes (don't require lot selection)
           { path: 'settings', element: <SettingsPage /> },
-          { 
-            path: 'analytics', 
+          {
+            path: 'analytics',
             element: <div className="p-4 text-center text-gray-600">
               <h2 className="text-lg font-semibold mb-2">Analytics</h2>
               <p className="text-sm">Analytics feature coming soon...</p>
-            </div> 
+            </div>
           },
-          { 
-            path: 'analytics/:lotId', 
+          {
+            path: 'analytics/:lotId',
             element: <div className="p-4 text-center text-gray-600">
               <h2 className="text-lg font-semibold mb-2">Analytics</h2>
               <p className="text-sm">Analytics feature coming soon...</p>
-            </div> 
+            </div>
           },
         ],
       },

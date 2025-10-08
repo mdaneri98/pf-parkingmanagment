@@ -30,13 +30,10 @@ public class ReservationResponse {
     private String vehicleLicensePlate;
     private Long userId;
 
-    private Integer floor;
-    private String spotCode;
-
+    private String spotName;
     private String userName;
     private String userLastName;
-    private String brand;
-    private String model;
+    private String vehicleInfo;
     private String type;
 
     public static ReservationResponse fromScheduledReservation(ScheduledReservation entity) {
@@ -75,20 +72,16 @@ public class ReservationResponse {
         response.setPrice(entity.getEstimatedPrice());
         if (Objects.nonNull(entity.getSpot())) {
             response.setSpotId(entity.getSpot().getId());
-            response.setFloor(entity.getSpot().getFloor());
-            response.setSpotCode(entity.getSpot().getCode());
+            response.setSpotName("Floor " + entity.getSpot().getFloor() + "-" + entity.getSpot().getCode());
         } else {
-            response.setFloor(entity.getSpotFloorSnapshot());
-            response.setSpotCode(entity.getSpotCodeSnapshot());
+            response.setSpotName("Floor " + entity.getSpotFloorSnapshot() + "-" + entity.getSpotCodeSnapshot());
         }
         response.setVehicleLicensePlate(entity.getUserVehicleAssignment().getVehicle().getLicensePlate());
         response.setUserId(entity.getUserVehicleAssignment().getUser().getId());
         response.setUserName(entity.getUserVehicleAssignment().getUser().getFirstName());
         response.setUserLastName(entity.getUserVehicleAssignment().getUser().getLastName());
-        response.setBrand(entity.getUserVehicleAssignment().getVehicle().getBrand());
-        response.setModel(entity.getUserVehicleAssignment().getVehicle().getModel());
+        response.setVehicleInfo(entity.getUserVehicleAssignment().getVehicle().getBrand() + " - " + entity.getUserVehicleAssignment().getVehicle().getModel());
         response.setType(entity.getUserVehicleAssignment().getVehicle().getType());
         return response;
     }
-
 }

@@ -74,7 +74,7 @@ public class ParkingLotController {
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
     public ResponseEntity<?> getScheduledReservationsByParkingLot(
             @PathVariable Long parkingLotId,
-            @RequestParam(required = false, defaultValue = "PENDING") ReservationStatus status,
+            @RequestParam(required = false) ReservationStatus status,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime to,
             Pageable pageable) {

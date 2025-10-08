@@ -7,14 +7,14 @@ import {
   toggleSidebar,
   selectIsSidebarOpen
 } from '@slices/appSlice';
-import { 
+import {
   setSelectedParkingLotId,
   setParkingLots,
   setParkingLotsLoading,
   setParkingLotsError,
   clearParkingLotsError
 } from '@parking/slice/parkingSlice';
-import { 
+import {
   selectSelectedParkingLotId,
   selectParkingLots,
   selectParkingLotsLoading,
@@ -46,8 +46,8 @@ function AppContent() {
 
   const { 
     data: managerLotsData, 
-    isLoading: apiLoading, 
-    isError: apiError, 
+    isLoading: apiLoading,
+    isError: apiError,
     error: apiErrorMessage,
     refetch 
   } = useGetParkingLotsByUserIdQuery(auth.user?.id ?? 0, {
@@ -58,11 +58,11 @@ function AppContent() {
   const lotsChanged = useMemo(() => {
     if (!managerLotsData?.data || !Array.isArray(managerLotsData.data)) return false;
     if (managerLots.length !== managerLotsData.data.length) return true;
-    
+
     // Shallow comparison by IDs and key properties
     return managerLots.some((currentLot: ParkingLotResponse, index: number) => {
       const newLot = managerLotsData.data[index];
-      return !newLot || 
+      return !newLot ||
              currentLot.id !== newLot.id ||
              currentLot.name !== newLot.name ||
              currentLot.address !== newLot.address ||
