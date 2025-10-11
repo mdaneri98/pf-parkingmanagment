@@ -3,13 +3,11 @@ package ar.edu.itba.parkingmanagmentapi.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 public class CorsConfig {
@@ -17,7 +15,7 @@ public class CorsConfig {
     @Value("${cors.allowed-origins:*}")
     private String allowedOrigins;
 
-    @Value("${cors.allowed-methods:GET,POST,PUT,DELETE,OPTIONS}")
+    @Value("${cors.allowed-methods:GET,POST,PUT,DELETE,OPTIONS,PATCH}")
     private String allowedMethods;
 
     @Value("${cors.allowed-headers:*}")

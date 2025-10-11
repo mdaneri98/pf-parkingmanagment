@@ -68,7 +68,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
     public ReservationResponse getReservation(Long id) {
         ScheduledReservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " not found"));
-        return ReservationResponse.fromScheduledReservation(reservation);
+        return ReservationResponse.fromEntityToGet(reservation);
     }
 
     @Override
@@ -79,19 +79,19 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
         reservation.setStatus(status);
         reservationRepository.save(reservation);
 
-        return ReservationResponse.fromScheduledReservation(reservation);
+        return ReservationResponse.fromEntityToGet(reservation);
     }
 
     @Override
     public Page<ReservationResponse> getReservationsByUser(Long userId, ReservationStatus status, String vehiclePlate, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return reservationRepository.findAll(ScheduledReservationSpecifications.withFilters(userId, null, status, vehiclePlate, from, to), pageable)
-                .map(ReservationResponse::fromScheduledReservation);
+                .map(ReservationResponse::fromEntityToGet);
     }
 
     @Override
     public Page<ReservationResponse> getScheduledReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return reservationRepository.findAll(ScheduledReservationSpecifications.withFilters(null, parkingLotId, status, null, from, to), pageable)
-                .map(ReservationResponse::fromScheduledReservation);
+                .map(ReservationResponse::fromEntityToGet);
     }
 
     @Override

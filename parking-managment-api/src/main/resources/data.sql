@@ -86,22 +86,11 @@ VALUES ('AUTO', -1, 'S1-A01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTA
        ('CAMIONETA', -1, 'S1-C01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('CAMIONETA', -1, 'S1-C02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Estacionamiento 3 (Cabildo) - 8 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
-VALUES ('AUTO', 0, 'CB-A01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'CB-A02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'CB-A03', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'CB-A04', false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'CB-M01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'CB-M02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', 0, 'CB-C01', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', 0, 'CB-C02', true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-
 -- Precios de estacionamiento (por hora)
 INSERT INTO parking_price (vehicle_type, price, valid_from, valid_to, parking_lot_id, created_at, updated_at)
 VALUES
 -- Estacionamiento 1 (Corrientes) - Precios actuales
-('AUTO', 800.00, '2024-01-01 00:00:00', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AUTO', 800.00, '2024-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('MOTO', 400.00, '2024-01-01 00:00:00', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('CAMIONETA', 1200.00, '2024-01-01 00:00:00', NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estacionamiento 2 (Santa Fe) - Precios actuales
@@ -139,13 +128,13 @@ INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, statu
                                    created_at, updated_at)
 VALUES
 -- Reserva completada (ayer)
-('2024-12-18 09:00:00', '2024-12-18 18:00:00', 'COMPLETED', 7200.00, 2, 1, 'ABC123', null, null,
+('2024-12-18 09:00:00', '2024-12-25 18:00:00', 'PENDING', 7200.00, 2, 1, 'ABC123', null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva confirmada (hoy)
 ('2024-12-19 08:00:00', '2024-12-19 17:00:00', 'CONFIRMED', 8000.00, 6, 2, 'DEF456', null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva futura
-('2024-12-20 10:00:00', '2024-12-20 14:00:00', 'CONFIRMED', 3200.00, 1, 3, 'JKL012', null, null,
+('2024-12-20 10:00:00', '2024-12-20 14:00:00', 'PENDING', 3200.00, 1, 3, 'JKL012', null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva en progreso
 ('2024-12-19 14:00:00', '2024-12-19 20:00:00', 'IN_PROGRESS', 2100.00, 10, 4, 'PQR678', null, null,

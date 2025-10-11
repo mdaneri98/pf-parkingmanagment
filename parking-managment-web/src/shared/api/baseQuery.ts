@@ -18,23 +18,52 @@ export const baseQuery = fetchBaseQuery({
 });
 
 export const smartBaseQuery: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
+    string | FetchArgs,
+    unknown,
+    FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   const requestId = Math.random().toString(36).substring(7);
 
-  // Extract URL and method for logging
-  const url = typeof args === 'string' ? args : args.url;
-  const method = typeof args === 'string' ? 'GET' : (args.method || 'GET');
+  try {
+    // Extract URL and method for logging
+    const url = typeof args === 'string' ? args : args.url;
+    const method = typeof args === 'string' ? 'GET' : (args.method || 'GET');
+    const params = typeof args === 'object' && 'params' in args ? args.params : undefined;
 
-  logger.apiRequest(method, url, {
-    requestId,
-    hasExtraOptions: !!extraOptions,
-    timestamp: new Date().toISOString(),
-  });
+    logger.apiRequest(method, url, {
+      requestId,
+      params,
+      hasExtraOptions: !!extraOptions,
+      timestamp: new Date().toISOString(),
+    });
 
-  const result = await baseQuery(args, api, extraOptions);
+    console.log(`[${requestId}] Making API request to:`, { url, method, params });
 
-  return result;
+    const result = await baseQuery(args, api, extraOptions);
+
+    console.log(`[${requestId}] API response:`, {
+      status: result.meta?.response?.status,
+      data: result.data,
+      error: result.error
+    });
+
+    if (result.error) {
+      console.error(`[${requestId}] API Error:`, {
+        status: result.error.status,
+        data: result.error.data,
+        originalStatus: result.error.originalStatus
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error in smartBaseQuery:', error);
+    return {
+      error: {
+        status: 'CUSTOM_ERROR',
+        error: 'An unexpected error occurred',
+        data: error instanceof Error ? error.message : 'Unknown error'
+      }
+    };
+  }
 };

@@ -7,6 +7,9 @@ import { parkingApi } from '@parking/api/parkingApi';
 import { parkingReducer } from '@parking/slice/parkingSlice';
 import { pricesApi } from '@prices/api/pricesApi';
 import { pricesReducer } from '@prices/slice/pricesSlice';
+import { reservationApi } from '@reservations/api/reservationApi';
+import { reservationsReducer } from '@reservations/slice/reservationsSlice';
+
 
 
 export const store = configureStore({
@@ -27,14 +30,18 @@ export const store = configureStore({
     [pricesApi.reducerPath]: pricesApi.reducer,
 
     // Users
-    [usersApi.reducerPath]: usersApi.reducer
+    [usersApi.reducerPath]: usersApi.reducer,
+    // Reservations
+    reservations: reservationsReducer,
+    [reservationApi.reducerPath]: reservationApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(usersApi.middleware)
       .concat(parkingApi.middleware)
-      .concat(pricesApi.middleware),
+      .concat(pricesApi.middleware)
+      .concat(reservationApi.middleware),
 });
 
 

@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers(HttpMethod.PATCH, "/parking-lots/**").hasAnyRole("ADMIN", "MANAGER")
 
                         .requestMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole("ADMIN", "USER")
@@ -57,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                         .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers(HttpMethod.PATCH, "/reservations/**").hasAnyRole("ADMIN", "MANAGER", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                         .requestMatchers(HttpMethod.PUT, "/reviews/**").hasAnyRole("ADMIN", "MANAGER", "USER")

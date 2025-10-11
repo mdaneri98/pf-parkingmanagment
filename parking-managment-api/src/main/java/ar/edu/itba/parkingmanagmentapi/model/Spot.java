@@ -28,7 +28,7 @@ public class Spot {
     @Column(name = "is_available", nullable = false)
     private Boolean isAvailable = true;
 
-    @Column(name = "reservation_priority", nullable = false)
+    @Column(name = "reservation_priority")
     private Boolean reservationPriority = false;
 
     @CreationTimestamp

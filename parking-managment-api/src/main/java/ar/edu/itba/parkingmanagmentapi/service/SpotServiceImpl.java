@@ -103,10 +103,10 @@ public class SpotServiceImpl implements SpotService {
         }
         // Actualizar los snapshots de las reservas antes de eliminarlo
         scheduledReservationRepository.updateSpotSnapshot(
-                spot.getId(), spot.getCode(), spot.getFloor(), spot.getVehicleType()
+                spot.getId(), spot.getCode(), spot.getFloor()
         );
         walkInStayRepository.updateSpotSnapshot(
-                spot.getId(), spot.getCode(), spot.getFloor(), spot.getVehicleType()
+                spot.getId(), spot.getCode(), spot.getFloor()
         );
 
         spotRepository.delete(spot);
