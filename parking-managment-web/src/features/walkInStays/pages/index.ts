@@ -1,0 +1,1 @@
+export { WalkInStaysPage } from './WalkInStaysPage';
