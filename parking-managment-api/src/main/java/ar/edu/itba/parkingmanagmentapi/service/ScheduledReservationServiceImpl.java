@@ -1,14 +1,15 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
-import ar.edu.itba.parkingmanagmentapi.model.ScheduledReservation;
-import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.model.*;
 import ar.edu.itba.parkingmanagmentapi.repository.*;
 import ar.edu.itba.parkingmanagmentapi.validators.ScheduledReservationRequestValidator;
+import ar.edu.itba.parkingmanagmentapi.validators.WalkInStayRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,18 +26,28 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
     protected ScheduledReservationServiceImpl(
             SpotRepository spotRepository,
             ParkingPriceRepository parkingPriceRepository,
-            UserVehicleAssignmentRepository userVehicleAssignmentRepository,
-            ScheduledReservationRepository scheduledReservationRepository,
+            ScheduledReservationRepository reservationRepository,
+            UserRepository userRepository,
+            VehicleRepository vehicleRepository,
+            WalkInStayRepository walkInStayRepository,
             ScheduledReservationRequestValidator scheduledReservationRequestValidator,
-            WalkInStayRepository walkInStayRepository) {
-        super(spotRepository, parkingPriceRepository, userVehicleAssignmentRepository, walkInStayRepository, scheduledReservationRepository);
+            UserVehicleAssignmentRepository userVehicleAssignmentRepository) {
+        super(spotRepository, parkingPriceRepository, userRepository, vehicleRepository, walkInStayRepository, reservationRepository, userVehicleAssignmentRepository);
         this.scheduledReservationRequestValidator = scheduledReservationRequestValidator;
     }
 
     @Override
     public ReservationResponse createReservation(ScheduledReservationRequest request) {
         scheduledReservationRequestValidator.validate(request);
-        Spot spot = getSpotById(request.getSpotId());
+
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        Vehicle vehicle = vehicleRepository.findById(request.getVehicleLicensePlate())
+                .orElseThrow(() -> new NotFoundException("Vehicle not found"));
+
+        Spot spot = spotRepository.findById(request.getSpotId())
+                .orElseThrow(() -> new NotFoundException("Spot not found"));
 
         boolean hasActiveWalkIn = walkInStayRepository.existsBySpotAndCheckOutTimeIsNull(spot);
         if (hasActiveWalkIn) {
@@ -52,13 +63,21 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
 
         BigDecimal estimatedPrice = calculateEstimatedPrice(spot, request.getReservedStartTime(), request.getExpectedEndTime());
 
+        UserVehicleAssignmentId assignmentId = new UserVehicleAssignmentId(user.getId(), vehicle.getLicensePlate());
+        UserVehicleAssignment assignment = userVehicleAssignmentRepository.findById(assignmentId)
+                .orElseGet(() -> {
+                    UserVehicleAssignment newAssignment = new UserVehicleAssignment(user, vehicle);
+                    return userVehicleAssignmentRepository.save(newAssignment);
+                });
+
         ScheduledReservation reservation = new ScheduledReservation();
         reservation.setReservedStartTime(request.getReservedStartTime());
         reservation.setExpectedEndTime(request.getExpectedEndTime());
         reservation.setEstimatedPrice(estimatedPrice);
         reservation.setStatus(ReservationStatus.PENDING);
         reservation.setSpot(spot);
-        reservation.setUserVehicleAssignment(verifyUserVehicleAssignment(request.getUserId(), request.getVehicleLicensePlate()));
+        reservation.setUserVehicleAssignment(assignment);
+
 
         reservationRepository.save(reservation);
         return ReservationResponse.fromScheduledReservation(reservation);

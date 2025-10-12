@@ -56,7 +56,7 @@ public class WalkInStayController {
         return ApiResponse.ok(PageResponse.of(responses));
     }
 
-    @GetMapping("/parkingLot/{parkingLotId}")
+    @GetMapping("/parking-lot/{parkingLotId}")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
     public ResponseEntity<?> getWalkInStaysByParkingLot(@PathVariable Long parkingLotId) {
         List<ReservationResponse> response = walkInStayService.getWalkInStaysByParkingLot(parkingLotId);

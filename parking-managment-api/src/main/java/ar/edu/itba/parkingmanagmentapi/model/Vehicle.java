@@ -16,13 +16,13 @@ public class Vehicle {
     @Column(name = "license_plate", nullable = false, unique = true)
     private String licensePlate;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String brand;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String model;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String type;
 
     @CreationTimestamp

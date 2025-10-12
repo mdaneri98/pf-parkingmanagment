@@ -1,11 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.WalkInStayRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
-import ar.edu.itba.parkingmanagmentapi.model.Spot;
-import ar.edu.itba.parkingmanagmentapi.model.WalkInStay;
+import ar.edu.itba.parkingmanagmentapi.model.*;
 import ar.edu.itba.parkingmanagmentapi.repository.*;
 import ar.edu.itba.parkingmanagmentapi.validators.WalkInStayRequestValidator;
 import org.springframework.data.domain.Page;
@@ -28,21 +28,41 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
             SpotRepository spotRepository,
             ParkingPriceRepository parkingPriceRepository,
             ScheduledReservationRepository reservationRepository,
-            UserVehicleAssignmentRepository userVehicleAssignmentRepository,
+            UserRepository userRepository,
+            VehicleRepository vehicleRepository,
             WalkInStayRepository walkInStayRepository,
-            WalkInStayRequestValidator walkInStayRequestValidator) {
-        super(spotRepository, parkingPriceRepository, userVehicleAssignmentRepository, walkInStayRepository, reservationRepository);
+            WalkInStayRequestValidator walkInStayRequestValidator,
+            UserVehicleAssignmentRepository userVehicleAssignmentRepository) {
+        super(spotRepository, parkingPriceRepository, userRepository, vehicleRepository, walkInStayRepository, reservationRepository, userVehicleAssignmentRepository);
         this.walkInStayRequestValidator = walkInStayRequestValidator;
     }
 
     @Override
     public ReservationResponse createReservation(WalkInStayRequest request) {
         walkInStayRequestValidator.validate(request);
-        Spot spot = getSpotById(request.getSpotId());
+
+        User defaultUser = userRepository.findById(AppConstants.DEFAULT_USER_ID)
+                .orElseThrow(() -> new NotFoundException("There is no default user"));;
+
+        Spot spot = spotRepository.findById(request.getSpotId())
+                .orElseThrow(() -> new NotFoundException("Spot not found"));
+
+        Vehicle vehicle = vehicleRepository.findById(request.getVehicleLicensePlate())
+                .orElseGet(() -> {
+                    Vehicle newlyVehicle = new Vehicle(request.getVehicleLicensePlate(), null, null, null);
+                    return vehicleRepository.save(newlyVehicle);
+                });
 
         if (!spot.getIsAvailable()) {
             throw new NotFoundException("The spot with id " + spot.getId() + " is not available for walk-in stays");
         }
+
+        UserVehicleAssignmentId assignmentId = new UserVehicleAssignmentId(defaultUser.getId(), vehicle.getLicensePlate());
+        UserVehicleAssignment assignment = userVehicleAssignmentRepository.findById(assignmentId)
+                .orElseGet(() -> {
+                    UserVehicleAssignment newAssignment = new UserVehicleAssignment(defaultUser, vehicle);
+                    return userVehicleAssignmentRepository.save(newAssignment);
+                });
 
         spot.setIsAvailable(false);
         spotRepository.save(spot);
@@ -53,7 +73,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         stay.setExpectedEndTime(stay.getCheckInTime().plusHours(request.getExpectedDurationHours()));
         stay.setSpot(spot);
         stay.setCheckOutTime(LocalDateTime.now().plusDays(1)); // Default value, will be updated on check-out
-        stay.setUserVehicleAssignment(getUserVehicleAssignmentByVehicleLicensePlate(request.getVehicleLicensePlate()));
+        stay.setUserVehicleAssignment(assignment);
 
         walkInStayRepository.save(stay);
         return ReservationResponse.fromWalkInStay(stay);
