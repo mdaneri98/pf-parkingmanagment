@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequest> implements WalkInStayService {
@@ -127,5 +128,14 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
     public List<ReservationResponse> getExpiringReservations() {
         List<WalkInStay> stayList = walkInStayRepository.findExpiringSoon(LocalDateTime.now().plusMinutes(30));
         return stayList.stream().map(ReservationResponse::fromWalkInStay).toList();
+    }
+
+    @Override
+    public List<ReservationResponse> getWalkInStaysByParkingLot(Long parkingLotId) {
+        //TODO: Not performant. Needs improve.
+        return walkInStayRepository.findAll().stream()
+                .filter(wis -> wis.getSpot().getParkingLot().getId().equals(parkingLotId))
+                .map(ReservationResponse::fromWalkInStay)
+                .collect(Collectors.toList());
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/reservations/walk-in")
@@ -53,6 +54,13 @@ public class WalkInStayController {
         Page<ReservationResponse> responses =
                 walkInStayService.getReservationsByUser(userId, status, vehiclePlate, from, to, pageable);
         return ApiResponse.ok(PageResponse.of(responses));
+    }
+
+    @GetMapping("/parkingLot/{parkingLotId}")
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
+    public ResponseEntity<?> getWalkInStaysByParkingLot(@PathVariable Long parkingLotId) {
+        List<ReservationResponse> response = walkInStayService.getWalkInStaysByParkingLot(parkingLotId);
+        return ApiResponse.ok(response);
     }
 
     @PatchMapping("/{id}/status")
