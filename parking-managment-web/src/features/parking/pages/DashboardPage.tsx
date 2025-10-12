@@ -119,6 +119,7 @@ export function DashboardPage() {
             setSelectedSpot(spots[0]);
           }
         }}
+        onRefetchSpots={refetchSpots}
       />
     </div>
   );

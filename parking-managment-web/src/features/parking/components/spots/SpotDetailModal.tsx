@@ -1,26 +1,54 @@
+import { useState, useMemo } from 'react';
 import type { SpotDTO } from '@parking/types';
 import { ParkingService } from '@parking/services/parkingService';
+import { 
+  useWalkInStayMutations, 
+  useActiveWalkInStayForSpot, 
+  useGetRemainingTime,
+  useWalkInStayModalState,
+  WalkInStayForm, 
+  ExtendTimeForm, 
+  WalkInStayDetails,
+  WALK_IN_STAY_CONSTANTS,
+  UI_LABELS,
+  formatDateTime,
+  ReservationStatus,
+} from '@walkinstays';
+import type { WalkInStayFormData } from '@walkinstays/types';
 
 interface Props {
   spot?: SpotDTO;
+  lotId: number;
   isOpen: boolean;
   onClose: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   onToggleAvailability?: (spotId: number, newStatus: boolean) => void;
   isToggling?: boolean;
+  onRefetchSpot?: () => void;
 }
 
 export function SpotDetailModal({ 
   spot, 
+  lotId,
   isOpen, 
   onClose, 
   onEdit, 
   onDelete, 
   onToggleAvailability, 
-  isToggling = false 
+  isToggling = false,
+  onRefetchSpot
 }: Props) {
   if (!isOpen || !spot) return null;
+
+  // Walk-in stay hooks
+  const { mutations, loadingStates } = useWalkInStayMutations();
+  const { data: activeWalkInStay } = useActiveWalkInStayForSpot(spot.id, lotId);
+  const { remainingMinutes } = useGetRemainingTime(activeWalkInStay?.id, {
+    skip: !activeWalkInStay,
+    pollingInterval: WALK_IN_STAY_CONSTANTS.POLLING.REMAINING_TIME_INTERVAL,
+  });
+  const { modalState, openModal, closeModal } = useWalkInStayModalState();
 
   const getVehicleTypeIcon = (vehicleType: string) => {
     return ParkingService.getVehicleIcon(vehicleType as any);
@@ -28,6 +56,39 @@ export function SpotDetailModal({
 
   const formatVehicleType = (type: string) => {
     return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
+  const handleCreateWalkInStay = async (formData: WalkInStayFormData) => {
+    try {
+      await mutations.createWalkInStay({
+        spotId: spot.id,
+        vehicleLicensePlate: formData.licensePlate,
+        expectedDurationHours: formData.expectedHours,
+      }, () => {
+        closeModal('createForm');
+        onRefetchSpot?.();
+        onClose();
+      }, lotId);
+    } catch (error) {
+      // Error handling is done in the mutation hook
+    }
+  };
+
+  const handleExtendWalkInStay = async (extraHours: number) => {
+    if (!activeWalkInStay) return;
+
+    await mutations.extendWalkInStay(activeWalkInStay.id, extraHours, () => {
+      closeModal('extendForm');
+      onRefetchSpot?.();
+    });
+  };
+
+  const handleCompleteWalkInStay = async () => {
+    if (!activeWalkInStay) return;
+
+    await mutations.updateWalkInStayStatus(activeWalkInStay.id, ReservationStatus.COMPLETED, () => {
+      onRefetchSpot?.();
+    });
   };
 
   return (
@@ -90,6 +151,56 @@ export function SpotDetailModal({
               </button>
             )}
           </div>
+
+          {/* Walk-in Stay Section */}
+          {spot.isAvailable && !modalState.createForm && !activeWalkInStay && (
+            <div className="space-y-3">
+              <button
+                onClick={() => openModal('createForm')}
+                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium"
+              >
+                {UI_LABELS.CREATE_WALK_IN_STAY}
+              </button>
+            </div>
+          )}
+
+          {/* Walk-in Stay Form */}
+          {modalState.createForm && (
+            <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
+              <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">{UI_LABELS.CREATE_WALK_IN_STAY}</h3>
+              <WalkInStayForm
+                onSubmit={handleCreateWalkInStay}
+                onCancel={() => closeModal('createForm')}
+                isLoading={loadingStates.createWalkInStay}
+              />
+            </div>
+          )}
+
+          {/* Active Walk-in Stay Details */}
+          {activeWalkInStay && (
+            <div className="space-y-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
+              {!modalState.extendForm ? (
+                <WalkInStayDetails
+                  walkInStay={activeWalkInStay}
+                  remainingMinutes={remainingMinutes}
+                  onExtend={() => openModal('extendForm')}
+                  onComplete={handleCompleteWalkInStay}
+                  isExtending={loadingStates.extend}
+                  isCompleting={loadingStates.updateStatus}
+                />
+              ) : (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-green-900 dark:text-green-100">{UI_LABELS.EXTEND_TIME}</h3>
+                  <ExtendTimeForm
+                    onSubmit={handleExtendWalkInStay}
+                    onCancel={() => closeModal('extendForm')}
+                    isLoading={loadingStates.extend}
+                    currentExpiry={formatDateTime(activeWalkInStay.expectedEndTime)}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Actions */}
           {(onEdit || onDelete) && (

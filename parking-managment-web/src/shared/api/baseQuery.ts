@@ -28,7 +28,26 @@ export const smartBaseQuery: BaseQueryFn<
     // Extract URL and method for logging
     const url = typeof args === 'string' ? args : args.url;
     const method = typeof args === 'string' ? 'GET' : (args.method || 'GET');
+    const body = typeof args === 'object' && 'body' in args ? args.body : undefined;
     const params = typeof args === 'object' && 'params' in args ? args.params : undefined;
+
+    // HTTP Request Logging (only when enabled)
+    if (config.enableHttpLogging) {
+      console.group(`🌐 [${requestId}] HTTP ${method} ${url}`);
+      console.log('📤 Request:', {
+        method,
+        url,
+        body: body ? JSON.stringify(body, null, 2) : undefined,
+        params,
+        timestamp: new Date().toISOString(),
+      });
+      
+      // Log headers if available
+      const headers = typeof args === 'object' && 'headers' in args ? args.headers : undefined;
+      if (headers) {
+        console.log('📋 Headers:', headers);
+      }
+    }
 
     logger.apiRequest(method, url, {
       requestId,
@@ -37,27 +56,38 @@ export const smartBaseQuery: BaseQueryFn<
       timestamp: new Date().toISOString(),
     });
 
-    console.log(`[${requestId}] Making API request to:`, { url, method, params });
-
     const result = await baseQuery(args, api, extraOptions);
 
-    console.log(`[${requestId}] API response:`, {
-      status: result.meta?.response?.status,
-      data: result.data,
-      error: result.error
-    });
-
-    if (result.error) {
-      console.error(`[${requestId}] API Error:`, {
-        status: result.error.status,
-        data: result.error.data,
-        originalStatus: result.error.originalStatus
+    // HTTP Response Logging (only when enabled)
+    if (config.enableHttpLogging) {
+      console.log('📥 Response:', {
+        status: result.meta?.response?.status,
+        statusText: result.meta?.response?.statusText,
+        data: result.data,
+        error: result.error,
+        timestamp: new Date().toISOString(),
       });
+
+      if (result.error) {
+        console.error('❌ Error Details:', {
+          status: result.error.status,
+          data: result.error.data,
+          originalStatus: 'originalStatus' in result.error ? result.error.originalStatus : undefined,
+          error: 'error' in result.error ? result.error.error : undefined,
+        });
+      } else {
+        console.log('✅ Success');
+      }
+      
+      console.groupEnd();
     }
 
     return result;
   } catch (error) {
-    console.error('Error in smartBaseQuery:', error);
+    if (config.enableHttpLogging) {
+      console.error(`❌ [${requestId}] Unexpected error in smartBaseQuery:`, error);
+    }
+    
     return {
       error: {
         status: 'CUSTOM_ERROR',

@@ -9,6 +9,8 @@ import { pricesApi } from '@prices/api/pricesApi';
 import { pricesReducer } from '@prices/slice/pricesSlice';
 import { reservationApi } from '@reservations/api/reservationApi';
 import { reservationsReducer } from '@reservations/slice/reservationsSlice';
+import { walkInStayApi } from '@walkinstays/api/walkInStayApi';
+import { walkInStayReducer } from '@walkinstays/slice/walkInStaySlice';
 
 
 
@@ -34,6 +36,9 @@ export const store = configureStore({
     // Reservations
     reservations: reservationsReducer,
     [reservationApi.reducerPath]: reservationApi.reducer,
+    // Walk-in Stays
+    walkInStay: walkInStayReducer,
+    [walkInStayApi.reducerPath]: walkInStayApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -41,7 +46,8 @@ export const store = configureStore({
       .concat(usersApi.middleware)
       .concat(parkingApi.middleware)
       .concat(pricesApi.middleware)
-      .concat(reservationApi.middleware),
+      .concat(reservationApi.middleware)
+      .concat(walkInStayApi.middleware),
 });
 
 
