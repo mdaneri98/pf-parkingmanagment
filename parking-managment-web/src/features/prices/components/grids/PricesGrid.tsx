@@ -1,6 +1,7 @@
 import { PriceCard } from '../cards/PriceCard';
 import { LoadingSpinner } from '@shared/ui/components';
 import type { PriceDisplayData } from '../../types';
+import { formatARS } from '@prices/utils/PriceUtils';
 
 interface Props {
   prices: PriceDisplayData[];
@@ -120,7 +121,7 @@ export function PricesStats({
 
       <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
         <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-          {formatPrice(minPrice)}
+          {formatARS(minPrice)}
         </div>
         <div className="text-sm text-neutral-600 dark:text-neutral-400">
           Min Price
@@ -129,7 +130,7 @@ export function PricesStats({
 
       <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
         <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-          {formatPrice(maxPrice)}
+          {formatARS(maxPrice)}
         </div>
         <div className="text-sm text-neutral-600 dark:text-neutral-400">
           Max Price

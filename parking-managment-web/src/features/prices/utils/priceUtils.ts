@@ -337,3 +337,67 @@ export const findOverlappingPrices = (
     return doPricePeriodsOverlap(price, newPrice);
   });
 };
+
+/**
+ * Convierte un valor de precio formateado (ej: "1.300,50", "1300", "$1,300") a número.
+ */
+export const parsePrice = (value: string | number | undefined): number => {
+  if (value === undefined || value === null) return 0;
+  if (typeof value === 'number') return value;
+
+  let cleaned = value.trim();
+
+  // Quitar cualquier símbolo que no sea dígito, punto o coma
+  cleaned = cleaned.replace(/[^0-9.,-]/g, '');
+
+  // Si no contiene ni punto ni coma, devolver número directo
+  if (!cleaned.includes('.') && !cleaned.includes(',')) {
+    return parseFloat(cleaned);
+  }
+
+  // Si contiene ambos (punto y coma)
+  if (cleaned.includes('.') && cleaned.includes(',')) {
+    // Si el último símbolo es coma → coma = decimal, punto = miles
+    if (cleaned.lastIndexOf(',') > cleaned.lastIndexOf('.')) {
+      return parseFloat(cleaned.replace(/\./g, '').replace(',', '.'));
+    }
+    // Si el último símbolo es punto → punto = decimal, coma = miles
+    return parseFloat(cleaned.replace(/,/g, ''));
+  }
+
+  // Si contiene solo coma
+  if (cleaned.includes(',') && !cleaned.includes('.')) {
+    const parts = cleaned.split(',');
+    // Si hay más de 3 dígitos después de la coma, no es decimal → eliminar coma
+    if (parts[1] && parts[1].length > 2) {
+      return parseFloat(cleaned.replace(/,/g, ''));
+    }
+    return parseFloat(cleaned.replace(',', '.'));
+  }
+
+  // Si contiene solo punto
+  if (cleaned.includes('.') && !cleaned.includes(',')) {
+    const parts = cleaned.split('.');
+    // Si hay más de 3 dígitos después del punto, no es decimal → eliminar punto
+    if (parts[1] && parts[1].length > 2) {
+      return parseFloat(cleaned.replace(/\./g, ''));
+    }
+    return parseFloat(cleaned);
+  }
+
+  return parseFloat(cleaned);
+};
+
+/**
+ * Devuelve un string formateado como moneda argentina (ARS)
+ * Ejemplo: 1300 → "$ 1.300,00"
+ */
+export const formatARS = (value: string | number | undefined): string => {
+  const numeric = parsePrice(value);
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: 2,
+  }).format(numeric);
+};
+
