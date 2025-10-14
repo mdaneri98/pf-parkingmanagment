@@ -7,7 +7,6 @@ import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.*;
 import ar.edu.itba.parkingmanagmentapi.repository.*;
-import ar.edu.itba.parkingmanagmentapi.util.VehicleMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.WalkInStayRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +42,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         walkInStayRequestValidator.validate(request);
 
         User defaultUser = userRepository.findById(AppConstants.DEFAULT_USER_ID)
-                .orElseThrow(() -> new NotFoundException("There is no default user"));;
+                .orElseThrow(() -> new NotFoundException("There is no default user"));
 
         Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, null));
         UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(defaultUser.getId(), vehicle.getLicensePlate());
@@ -101,7 +100,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
     }
 
     @Override
-    public Page<ReservationResponse> getScheduledReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return walkInStayRepository.findAll(
                         WalkInStaySpecifications.withFilters(null, parkingLotId, status, null, from, to),
                         pageable
@@ -134,6 +133,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         return stayList.stream().map(ReservationResponse::fromWalkInStay).toList();
     }
 
+    //esto se deberia borrar porque ya estaba getReservationsByParkingLot
     @Override
     public List<ReservationResponse> getWalkInStaysByParkingLot(Long parkingLotId) {
         //TODO: Not performant. Needs improve.

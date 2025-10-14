@@ -29,7 +29,6 @@ public class SpotServiceImpl implements SpotService {
     private final SpotRepository spotRepository;
     private final ParkingLotService parkingLotService;
     private final SpotRequestValidator spotRequestValidator;
-
     private final ScheduledReservationRepository scheduledReservationRepository;
     private final WalkInStayRepository walkInStayRepository;
 

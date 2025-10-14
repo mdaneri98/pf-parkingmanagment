@@ -3,7 +3,10 @@ package ar.edu.itba.parkingmanagmentapi.service;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingPrice;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
-import ar.edu.itba.parkingmanagmentapi.repository.*;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +16,7 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
 
     protected final SpotService spotService;
     protected final ParkingPriceRepository parkingPriceRepository;
+
     protected final UserRepository userRepository;
     protected final VehicleService vehicleService;
     protected final WalkInStayRepository walkInStayRepository;

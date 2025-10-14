@@ -46,4 +46,5 @@ public interface ScheduledReservationRepository extends JpaRepository<ScheduledR
 
     boolean existsBySpotIdAndReservedStartTimeAfter(Long spotId, LocalDateTime time);
 
+    boolean existsByParkingLotIdAndReservedStartTimeAfter(Long parkingLotId, LocalDateTime time);
 }
