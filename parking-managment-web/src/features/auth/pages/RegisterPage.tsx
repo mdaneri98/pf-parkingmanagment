@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useRegisterMutation } from '../api/authApi';
@@ -19,6 +19,8 @@ export function RegisterPage() {
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -74,7 +76,7 @@ export function RegisterPage() {
         />
         
         <Input
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           label="Password"
           placeholder="Create a strong password"
           helpText="Use at least 8 characters with a mix of letters, numbers and symbols"
@@ -85,6 +87,17 @@ export function RegisterPage() {
             </svg>
           }
         />
+          {/* Checkbox para mostrar contraseña */}
+          <label className="flex items-center mt-1 text-sm select-none">
+              <input
+                  type="checkbox"
+                  className="mr-2"
+                  checked={showPassword}
+                  onChange={() => setShowPassword(!showPassword)}
+              />
+              Show password
+          </label>
+
 
         {authError && (
           <Alert variant="error">

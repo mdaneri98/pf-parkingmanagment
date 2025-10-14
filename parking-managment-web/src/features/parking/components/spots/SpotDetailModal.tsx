@@ -127,29 +127,7 @@ export function SpotDetailModal({
                 {spot.isAvailable ? 'Available' : 'Occupied'}
               </span>
             </div>
-            {onToggleAvailability && (
-              <button
-                onClick={() => onToggleAvailability(spot.id, !spot.isAvailable)}
-                disabled={isToggling}
-                className={`
-                  relative inline-flex h-5 w-9 items-center rounded-full transition-colors
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  ${spot.isAvailable ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600'}
-                `}
-              >
-                <span
-                  className={`
-                    inline-block h-3 w-3 transform rounded-full bg-white transition-transform
-                    ${spot.isAvailable ? 'translate-x-5' : 'translate-x-1'}
-                  `}
-                >
-                  {isToggling && (
-                    <div className="h-3 w-3 rounded-full bg-neutral-200 animate-pulse" />
-                  )}
-                </span>
-              </button>
-            )}
+
           </div>
 
           {/* Walk-in Stay Section */}
@@ -203,29 +181,28 @@ export function SpotDetailModal({
           )}
 
           {/* Actions */}
-          {(onEdit || onDelete) && (
-            <div className="flex space-x-2 pt-2">
-              {onEdit && (
-                <button
-                  onClick={onEdit}
-                  className="flex-1 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
-                >
-                  Edit
-                </button>
-              )}
-              {onDelete && (
-                <button
-                  onClick={onDelete}
-                  className="flex-1 px-3 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
-                >
-                  Delete
-                </button>
-              )}
-            </div>
+          {(onEdit || onDelete) && !modalState.createForm && !activeWalkInStay && !modalState.extendForm && (
+              <div className="flex space-x-2 pt-2">
+                {onEdit && (
+                    <button
+                        onClick={onEdit}
+                        className="flex-1 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+                    >
+                      Edit
+                    </button>
+                )}
+                {onDelete && (
+                    <button
+                        onClick={onDelete}
+                        className="flex-1 px-3 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+                    >
+                      Delete
+                    </button>
+                )}
+              </div>
           )}
         </div>
       </div>
     </div>
   );
 }
-

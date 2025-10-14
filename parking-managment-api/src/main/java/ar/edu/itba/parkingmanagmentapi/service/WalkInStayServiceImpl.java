@@ -142,16 +142,4 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
                 .map(ReservationResponse::fromWalkInStay)
                 .collect(Collectors.toList());
     }
-
-    private Spot findSpotAndChangeAvailability(Long spotId, boolean makeAvailable) {
-        Spot spot = spotService.findEntityById(spotId);
-
-        if (!makeAvailable && !spot.getIsAvailable()) {
-            throw new NotFoundException("The spot with id " + spot.getId() + " is not available");
-        }
-
-        spot.setIsAvailable(makeAvailable);
-        return spotService.updateEntityById(spotId, spot);
-    }
-
 }

@@ -86,6 +86,10 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
         ScheduledReservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " not found"));
 
+        if (status == ReservationStatus.COMPLETED) {
+            findSpotAndChangeAvailability(reservation.getSpot().getId(), true);
+        }
+
         reservation.setStatus(status);
         reservationRepository.save(reservation);
 

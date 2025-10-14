@@ -33,9 +33,6 @@ export const WalkInStayDetails = ({
         <h3 className="text-sm font-medium text-green-900 dark:text-green-100">
           {UI_LABELS.ACTIVE}
         </h3>
-        <span className={`text-xs px-2 py-0.5 rounded ${thresholdConfig.bgClass} ${thresholdConfig.textClass} font-medium`}>
-          {UI_LABELS.ACTIVE}
-        </span>
       </div>
 
       {/* Vehicle Info */}

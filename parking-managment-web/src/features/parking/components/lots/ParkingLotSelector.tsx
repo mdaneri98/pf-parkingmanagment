@@ -82,12 +82,6 @@ export function ParkingLotSelector({ collapsed = false }: Props) {
               <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-3">
                 No parking lots yet.
               </p>
-              <button
-                onClick={() => navigate('/app/welcome')}
-                className="w-full px-3 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
-              >
-                Create First Lot
-              </button>
             </div>
           )}
         </div>
