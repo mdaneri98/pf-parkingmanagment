@@ -1,5 +1,5 @@
 import type { PriceDisplayData } from '../../types';
-import { formatPrice } from '../../constants/prices';
+import { formatARS } from '@prices/utils/PriceUtils';
 
 interface Props {
   isOpen: boolean;
@@ -29,6 +29,8 @@ export function PriceDetailModal({
   const handleDelete = () => {
     onDelete?.(price);
   };
+
+  const formattedARS = formatARS(price.formattedPrice);
 
   const getStatusBadge = () => {
     if (price.isActive) {
@@ -96,7 +98,7 @@ export function PriceDetailModal({
                   {price.vehicleTypeLabel}
                 </h3>
                 <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                  {price.formattedPrice}
+                  {formattedARS}
                 </p>
               </div>
             </div>

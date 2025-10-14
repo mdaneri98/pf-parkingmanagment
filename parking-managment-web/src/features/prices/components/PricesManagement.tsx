@@ -35,6 +35,7 @@ import {
 import { useGetParkingLotByIdQuery } from '@parking/api/parkingApi';
 import type { PriceDisplayData, ParkingPriceResponse } from '@prices/types';
 import { enhancePriceForDisplay } from '@prices/utils/priceUtils';
+import { useMemo } from 'react';
 
 interface Props {
   parkingLotId: number;
@@ -86,13 +87,14 @@ export function PricesManagement({
 
   const {
     prices,
-    activePrices, // Usaremos este array para la sección de activos
+    activePrices,
     expiredPrices,
-    upcomingPrices, // Usaremos este array para la sección de pendientes
+    upcomingPrices,
     statistics,
     isLoading,
     isError,
     refetch,
+    isEmpty,
   } = usePricesData({
     parkingLotId,
     filters: apiFilters,
@@ -101,6 +103,21 @@ export function PricesManagement({
 
   const isAnyPrice = activePrices.length > 0 || upcomingPrices.length > 0 || expiredPrices.length > 0;
   const isAllEmpty = prices.length === 0;
+
+  const displayPrices = useMemo(() => {
+    if (!prices) return [];
+
+    const sortDirection = apiFilters?.sort ?? uiFilters?.sort ?? 'asc';
+    const sorted = [...prices];
+
+    sorted.sort((a, b) => {
+      const pa = Number(a.price ?? 0);
+      const pb = Number(b.price ?? 0);
+      return sortDirection === 'asc' ? pa - pb : pb - pa;
+    });
+
+    return sorted;
+  }, [prices, apiFilters?.sort, uiFilters?.sort])
 
   const {
     createPrice,
@@ -275,7 +292,7 @@ export function PricesManagement({
         {isAllEmpty && !isLoading && !isError && (
             <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6">
               <PricesGrid
-                  prices={[]}
+                  prices={displayPrices}
                   isLoading={false}
                   isEmpty={true}
                   emptyMessage="No price rules found"

@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import type { 
-  ParkingPriceResponse, 
-  PriceModalState, 
+import type {
+  ParkingPriceResponse,
+  PriceModalState,
   PriceConfirmDeleteState,
-  PriceSearchFilters 
+  PriceSearchFilters
 } from '../types';
 
 export interface PriceFilterState {
@@ -16,7 +16,6 @@ export interface PriceFilterState {
   showActiveOnly: boolean;
   showExpiredOnly: boolean;
 }
-
 export interface PricesState {
   selectedPrice: ParkingPriceResponse | null;
   modalState: PriceModalState;

@@ -1,4 +1,5 @@
 import type { PriceDisplayData } from '@prices/types';
+import { formatARS } from '@prices/utils/PriceUtils';
 
 interface Props {
   price: PriceDisplayData;
@@ -63,6 +64,8 @@ export function PriceCard({
     onDelete?.(price);
   };
 
+  const formattedARS = formatARS(price.formattedPrice);
+
   if (compact) {
     return (
       <div 
@@ -74,7 +77,7 @@ export function PriceCard({
             <span className="text-lg">{price.vehicleTypeIcon}</span>
             <div>
               <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                {price.formattedPrice}
+                {formattedARS}
               </p>
               <p className="text-xs text-neutral-600 dark:text-neutral-400">
                 {price.vehicleTypeLabel}
@@ -128,7 +131,7 @@ export function PriceCard({
               {price.vehicleTypeLabel}
             </h3>
             <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {price.formattedPrice}
+              {formattedARS}
             </p>
           </div>
         </div>

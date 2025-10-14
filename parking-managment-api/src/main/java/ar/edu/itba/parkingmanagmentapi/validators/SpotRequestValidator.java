@@ -9,6 +9,7 @@ import ar.edu.itba.parkingmanagmentapi.validators.common.MandatoryFieldValidator
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 @Component
 public class SpotRequestValidator {
@@ -38,6 +39,6 @@ public class SpotRequestValidator {
         mandatoryFieldValidator.validate(spotRequest.getCode(), "code");
         blankFieldValidator.validate(spotRequest.getCode(), "code");
         alphanumericValidator.validate(spotRequest.getCode(), "code");
-
+        spotRequest.setCode(spotRequest.getCode().toUpperCase(Locale.ROOT));
     }
 }

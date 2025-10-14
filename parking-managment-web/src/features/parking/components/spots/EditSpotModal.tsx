@@ -58,7 +58,7 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
     }
   }, [spot]);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback((endDate: React.FormEvent) => {
     e.preventDefault();
     if (spot) {
       const normalized: UpdateSpotRequest = {
@@ -96,9 +96,9 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             <input
               type="text"
               value={formData.code}
-              onChange={(e) => dispatch({ type: 'SET_CODE', payload: e.target.value })}
+              onChange={(endDate) => dispatch({ type: 'SET_CODE', payload: e.target.value })}
               className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., A1, B2, C3"
+              placeholder="endDate.g., A1, B2, C3"
               required
             />
           </div>
@@ -111,7 +111,7 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             <input
               type="number"
               value={formData.floor ?? ''} 
-              onChange={(e) =>
+              onChange={(endDate) =>
                 dispatch({
                   type: 'SET_FLOOR',
                   payload: e.target.value === '' ? undefined : parseInt(e.target.value, 10),
@@ -131,7 +131,7 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             </label>
             <select
               value={formData.vehicleType}
-              onChange={(e) => dispatch({ type: 'SET_VEHICLE', payload: e.target.value as VehicleType })}
+              onChange={(endDate) => dispatch({ type: 'SET_VEHICLE', payload: e.target.value as VehicleType })}
               className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-blue-500"
               required
             >
