@@ -7,6 +7,7 @@ import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.*;
 import ar.edu.itba.parkingmanagmentapi.repository.*;
+import ar.edu.itba.parkingmanagmentapi.util.VehicleMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.WalkInStayRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,11 +30,11 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
             ParkingPriceRepository parkingPriceRepository,
             ScheduledReservationRepository reservationRepository,
             UserRepository userRepository,
-            VehicleRepository vehicleRepository,
+            VehicleService vehicleService,
             WalkInStayRepository walkInStayRepository,
             WalkInStayRequestValidator walkInStayRequestValidator,
-            UserVehicleAssignmentRepository userVehicleAssignmentRepository) {
-        super(spotRepository, parkingPriceRepository, userRepository, vehicleRepository, walkInStayRepository, reservationRepository, userVehicleAssignmentRepository);
+            UserVehicleAssignmentService userVehicleAssignmentService) {
+        super(spotRepository, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
         this.walkInStayRequestValidator = walkInStayRequestValidator;
     }
 
@@ -47,22 +48,13 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         Spot spot = spotRepository.findById(request.getSpotId())
                 .orElseThrow(() -> new NotFoundException("Spot not found"));
 
-        Vehicle vehicle = vehicleRepository.findById(request.getVehicleLicensePlate())
-                .orElseGet(() -> {
-                    Vehicle newlyVehicle = new Vehicle(request.getVehicleLicensePlate(), null, null, null);
-                    return vehicleRepository.save(newlyVehicle);
-                });
+        Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, null));
 
         if (!spot.getIsAvailable()) {
             throw new NotFoundException("The spot with id " + spot.getId() + " is not available for walk-in stays");
         }
 
-        UserVehicleAssignmentId assignmentId = new UserVehicleAssignmentId(defaultUser.getId(), vehicle.getLicensePlate());
-        UserVehicleAssignment assignment = userVehicleAssignmentRepository.findById(assignmentId)
-                .orElseGet(() -> {
-                    UserVehicleAssignment newAssignment = new UserVehicleAssignment(defaultUser, vehicle);
-                    return userVehicleAssignmentRepository.save(newAssignment);
-                });
+        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(defaultUser.getId(), vehicle.getLicensePlate());
 
         spot.setIsAvailable(false);
         spotRepository.save(spot);

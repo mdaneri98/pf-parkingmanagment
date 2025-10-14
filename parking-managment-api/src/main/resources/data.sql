@@ -6,7 +6,9 @@
 -- Usuarios comunes
 -- Contraseña "password123" hasheada con BCrypt: $2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m
 INSERT INTO common_user (first_name, last_name, email, password_hash, image_url, created_at, updated_at)
-VALUES ('John', 'Doe', 'admin@admin.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
+VALUES ('default', 'default', 'default@default.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('John', 'Doe', 'admin@admin.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('Juan', 'Pérez', 'juan.perez@gmail.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3g9uOWJL6.hhvJKM1StO9.iQyCMliWAz18m',
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -39,8 +41,8 @@ VALUES (1, '+5411-2345-6789', 'Av. Corrientes 1234, CABA', CURRENT_TIMESTAMP, CU
 
 -- Gerentes (usuarios 5 y 6 serán gerentes)
 INSERT INTO manager (user_id, created_at, updated_at)
-VALUES (7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES (8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Administradores (usuario 5 será admin)
 INSERT INTO admin (user_id, created_at, updated_at)
@@ -64,7 +66,7 @@ INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, creat
 VALUES ('AUTO', 0, 'PB-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('AUTO', 0, 'PB-A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('AUTO', 0, 'PB-A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'PB-A04', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('AUTO', 0, 'PB-A04', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('AUTO', 1, '1P-A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('AUTO', 1, '1P-A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('AUTO', 1, '1P-A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

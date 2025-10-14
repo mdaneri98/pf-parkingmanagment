@@ -103,4 +103,20 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElse(false);
     }
 
+    @Override
+    public Vehicle findEntityByLicensePlate(String licensePlate) {
+        return vehicleRepository.findById(licensePlate)
+                .orElseThrow(() -> new NotFoundException("Vehicle not found"));
+    }
+
+    @Override
+    public Vehicle findEntityByLicensePlateOrCreate(Vehicle vehicle) {
+        if (vehicle == null || vehicle.getLicensePlate() == null) {
+            throw new IllegalArgumentException("Neither vehicle nor license plate can be null");
+        }
+
+        return vehicleRepository.findById(vehicle.getLicensePlate())
+                .orElseGet(() -> vehicleRepository.save(vehicle));
+    }
+
 }
