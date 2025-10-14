@@ -26,7 +26,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
     private final WalkInStayRequestValidator walkInStayRequestValidator;
 
     protected WalkInStayServiceImpl(
-            SpotRepository spotRepository,
+            SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
             ScheduledReservationRepository reservationRepository,
             UserRepository userRepository,
@@ -34,7 +34,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
             WalkInStayRepository walkInStayRepository,
             WalkInStayRequestValidator walkInStayRequestValidator,
             UserVehicleAssignmentService userVehicleAssignmentService) {
-        super(spotRepository, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
+        super(spotService, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
         this.walkInStayRequestValidator = walkInStayRequestValidator;
     }
 
@@ -45,19 +45,10 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         User defaultUser = userRepository.findById(AppConstants.DEFAULT_USER_ID)
                 .orElseThrow(() -> new NotFoundException("There is no default user"));;
 
-        Spot spot = spotRepository.findById(request.getSpotId())
-                .orElseThrow(() -> new NotFoundException("Spot not found"));
-
         Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, null));
-
-        if (!spot.getIsAvailable()) {
-            throw new NotFoundException("The spot with id " + spot.getId() + " is not available for walk-in stays");
-        }
-
         UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(defaultUser.getId(), vehicle.getLicensePlate());
 
-        spot.setIsAvailable(false);
-        spotRepository.save(spot);
+        Spot spot = findSpotAndChangeAvailability(request.getSpotId(), false);
 
         WalkInStay stay = new WalkInStay();
         stay.setCheckInTime(LocalDateTime.now());
@@ -95,6 +86,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
             stay.setTotalPrice(totalPrice);
         }
 
+        findSpotAndChangeAvailability(stay.getSpot().getId(), true);
         walkInStayRepository.save(stay);
         return ReservationResponse.fromWalkInStay(stay);
     }
@@ -150,4 +142,16 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
                 .map(ReservationResponse::fromWalkInStay)
                 .collect(Collectors.toList());
     }
+
+    private Spot findSpotAndChangeAvailability(Long spotId, boolean makeAvailable) {
+        Spot spot = spotService.findEntityById(spotId);
+
+        if (!makeAvailable && !spot.getIsAvailable()) {
+            throw new NotFoundException("The spot with id " + spot.getId() + " is not available");
+        }
+
+        spot.setIsAvailable(makeAvailable);
+        return spotService.updateEntityById(spotId, spot);
+    }
+
 }

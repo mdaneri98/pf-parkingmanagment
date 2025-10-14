@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class ReservationServiceImpl<T> implements ReservationService<T> {
 
-    protected final SpotRepository spotRepository;
+    protected final SpotService spotService;
     protected final ParkingPriceRepository parkingPriceRepository;
     protected final UserRepository userRepository;
     protected final VehicleService vehicleService;
@@ -20,7 +20,7 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
     protected final UserVehicleAssignmentService userVehicleAssignmentService;
 
     protected ReservationServiceImpl(
-            SpotRepository spotRepository,
+            SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
             UserRepository userRepository,
             VehicleService vehicleService,
@@ -30,7 +30,7 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
     ) {
         this.userRepository = userRepository;
         this.vehicleService = vehicleService;
-        this.spotRepository = spotRepository;
+        this.spotService = spotService;
         this.parkingPriceRepository = parkingPriceRepository;
         this.walkInStayRepository = walkInStayRepository;
         this.reservationRepository = reservationRepository;

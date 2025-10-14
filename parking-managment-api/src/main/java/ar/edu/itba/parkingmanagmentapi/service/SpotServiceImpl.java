@@ -130,4 +130,17 @@ public class SpotServiceImpl implements SpotService {
                 .map(ParkingLotMapper::toSpotResponse);
     }
 
+    // -------------------------- RAW ENTITIES --------------------------
+
+
+    @Override
+    public Spot findEntityById(Long spotId) {
+        return spotRepository.findById(spotId).orElseThrow(() -> new NotFoundException("Spot not found"));
+    }
+
+    @Override
+    public Spot updateEntityById(Long spotId, Spot spot) {
+        spot.setId(spotId);
+        return spotRepository.save(spot);
+    }
 }

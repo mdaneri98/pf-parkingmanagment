@@ -22,7 +22,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
     private final ScheduledReservationRequestValidator scheduledReservationRequestValidator;
 
     protected ScheduledReservationServiceImpl(
-            SpotRepository spotRepository,
+            SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
             ScheduledReservationRepository reservationRepository,
             UserRepository userRepository,
@@ -30,7 +30,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
             WalkInStayRepository walkInStayRepository,
             ScheduledReservationRequestValidator scheduledReservationRequestValidator,
             UserVehicleAssignmentService userVehicleAssignmentService) {
-        super(spotRepository, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
+        super(spotService, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
         this.scheduledReservationRequestValidator = scheduledReservationRequestValidator;
     }
 
@@ -43,8 +43,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
 
         Vehicle vehicle = vehicleService.findEntityByLicensePlate(request.getVehicleLicensePlate());
 
-        Spot spot = spotRepository.findById(request.getSpotId())
-                .orElseThrow(() -> new NotFoundException("Spot not found"));
+        Spot spot = spotService.findEntityById(request.getSpotId());
 
         boolean hasActiveWalkIn = walkInStayRepository.existsBySpotAndCheckOutTimeIsNull(spot);
         if (hasActiveWalkIn) {
@@ -113,9 +112,9 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
         for (ScheduledReservation reservation : reservations) {
             Spot spot = reservation.getSpot();
             if (spot.getIsAvailable()) {
-                spot.setIsAvailable(false);
+                spot.setIsAvailable(false); //Esta bien esto? Y si ya estaba ocupado?
                 reservation.setStatus(ReservationStatus.ACTIVE);
-                spotRepository.save(spot);
+                spotService.updateEntityById(spot.getId(), spot);
                 reservationRepository.save(reservation);
             }
         }
