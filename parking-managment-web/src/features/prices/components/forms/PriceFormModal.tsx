@@ -23,7 +23,7 @@ interface Props {
 const getDefaultFormData = (): PriceFormData => {
   const now = new Date();
   const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setDate(tomorrow.getDate());
   
   const nextMonth = new Date(now);
   nextMonth.setMonth(nextMonth.getMonth() + 1);
