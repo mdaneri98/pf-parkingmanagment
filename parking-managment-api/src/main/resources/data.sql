@@ -60,57 +60,57 @@ VALUES ('Av. Corrientes 1500', 'Estacionamiento 1',
 -- Espacios de estacionamiento
 -- Estacionamiento 1 (Corrientes) - 12 espacios
 INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
-VALUES ('AUTO', 0, 'A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'A04', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 1, 'A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 1, 'A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 1, 'A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'M01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'M02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'M03', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', 0, 'C01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', 0, 'C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('auto', 0, 'A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A04', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M03', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'C01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 2 (Santa Fe) - 10 espacios
 INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
-VALUES ('AUTO', -1, 'A01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'A02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'A03', false, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'A04', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'A05', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', -1, 'A06', false, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', -1, 'M01', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', -1, 'M02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', -1, 'C01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', -1, 'C02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('auto', -1, 'A01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A03', false, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A04', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A05', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A06', false, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', -1, 'M01', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', -1, 'M02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', -1, 'C01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', -1, 'C02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Precios de estacionamiento (por hora)
 INSERT INTO parking_price (vehicle_type, price, valid_from, valid_to, parking_lot_id, created_at, updated_at)
 VALUES
 -- Estacionamiento 1 (Corrientes) - Precios actuales
-('AUTO', 900.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 450.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 1300.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('auto', 900.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('moto', 450.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('camioneta', 1300.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estacionamiento 2 (Santa Fe) - Precios actuales
-('AUTO', 1100.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 550.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 1600.00, '2025-01-01 00:00:00', NULL, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('auto', 1100.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('moto', 550.00, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('camioneta', 1600.00, '2025-01-01 00:00:00', NULL, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estacionamiento 3 (Cabildo) - Precios actuales
-('AUTO', 750.00, '2025-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('MOTO', 380.00, '2025-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('CAMIONETA', 1100.00, '2025-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('auto', 750.00, '2025-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('moto', 380.00, '2025-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('camioneta', 1100.00, '2025-01-01 00:00:00', NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Vehículos
 INSERT INTO vehicle (license_plate, brand, model, type, created_at, updated_at)
-VALUES ('ABC123', 'Toyota', 'Corolla', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('DEF456', 'Honda', 'Civic', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('GHI789', 'Yamaha', 'YBR 125', 'MOTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('JKL012', 'Ford', 'EcoSport', 'CAMIONETA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MNO345', 'Chevrolet', 'Onix', 'AUTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('PQR678', 'Bajaj', 'Pulsar', 'MOTO', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('STU901', 'Volkswagen', 'Amarok', 'CAMIONETA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('ABC123', 'Toyota', 'Corolla', 'auto', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('DEF456', 'Honda', 'Civic', 'auto', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('GHI789', 'Yamaha', 'YBR 125', 'moto', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('JKL012', 'Ford', 'EcoSport', 'camioneta', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('MNO345', 'Chevrolet', 'Onix', 'auto', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('PQR678', 'Bajaj', 'Pulsar', 'moto', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('STU901', 'Volkswagen', 'Amarok', 'camioneta', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Asignaciones usuario-vehículo
 INSERT INTO user_vehicle_assignment (user_id, vehicle_license_plate, created_at, updated_at)

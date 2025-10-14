@@ -35,6 +35,7 @@ import {
 import { useGetParkingLotByIdQuery } from '@parking/api/parkingApi';
 import type { PriceDisplayData, ParkingPriceResponse } from '@prices/types';
 import { enhancePriceForDisplay } from '@prices/utils/priceUtils';
+import { useMemo } from 'react';
 
 interface Props {
   parkingLotId: number;
@@ -54,7 +55,7 @@ export function PricesManagement({
   onPriceDeleted,
 }: Props) {
   const dispatch = useDispatch();
-  
+
   const {
     data: lotResponse,
   } = useGetParkingLotByIdQuery(parkingLotId, {
@@ -99,6 +100,22 @@ export function PricesManagement({
     filters: apiFilters,
     enabled: !!parkingLotId,
   });
+
+  const displayPrices = useMemo(() => {
+    if (!prices) return [];
+
+    const sortDirection = apiFilters?.sort ?? uiFilters?.sort ?? 'asc';
+    const sorted = [...prices];
+
+    // No mutamos el original — solo ordenamos la copia
+    sorted.sort((a, b) => {
+      const pa = Number(a.price ?? 0);
+      const pb = Number(b.price ?? 0);
+      return sortDirection === 'asc' ? pa - pb : pb - pa;
+    });
+
+    return sorted;
+  }, [prices, apiFilters?.sort, uiFilters?.sort])
 
   const {
     createPrice,
@@ -193,7 +210,7 @@ export function PricesManagement({
     <div className="space-y-6">
       {/* Header */}
       {lotData && (
-        <PricesHeader 
+        <PricesHeader
           lotName={lotData.name}
           lotAddress={lotData.address}
         />
@@ -255,8 +272,8 @@ export function PricesManagement({
             <p className="text-neutral-600 dark:text-neutral-400 mb-4">
               Unable to fetch pricing rules. Please check your connection and try again.
             </p>
-            <button 
-              onClick={() => refetch()} 
+            <button
+              onClick={() => refetch()}
               className="px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200"
             >
               Try Again
@@ -268,7 +285,7 @@ export function PricesManagement({
       {/* Prices Grid */}
       <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6">
         <PricesGrid
-          prices={prices}
+          prices={displayPrices}
           isLoading={isLoading}
           isEmpty={isEmpty}
           onPriceView={handlePriceView}

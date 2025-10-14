@@ -7,14 +7,13 @@ import type {
 } from '../types';
 
 export interface PriceFilterState {
-  minPrice?: number;
-  maxPrice?: number;
+  min?: number;
+  max?: number;
   vehicleType?: string;
-  startDate?: Date;
-  endDate?: Date;
+  from?: Date;
+  to?: Date;
   sort: 'asc' | 'desc';
   showActiveOnly: boolean;
-  showExpiredOnly: boolean;
 }
 
 export interface PricesState {
