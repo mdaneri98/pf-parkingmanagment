@@ -94,7 +94,6 @@ export function PricesManagement({
     isLoading,
     isError,
     refetch,
-    isEmpty,
   } = usePricesData({
     parkingLotId,
     filters: apiFilters,
@@ -105,19 +104,21 @@ export function PricesManagement({
   const isAllEmpty = prices.length === 0;
 
   const displayPrices = useMemo(() => {
-    if (!prices) return [];
-
     const sortDirection = apiFilters?.sort ?? uiFilters?.sort ?? 'asc';
-    const sorted = [...prices];
 
-    sorted.sort((a, b) => {
+    if (!Array.isArray(prices)) return [];
+    const sortedPrices = [...prices].sort((a, b) => {
       const pa = Number(a.price ?? 0);
       const pb = Number(b.price ?? 0);
       return sortDirection === 'asc' ? pa - pb : pb - pa;
     });
 
-    return sorted;
-  }, [prices, apiFilters?.sort, uiFilters?.sort])
+    return sortedPrices;
+  }, [
+    JSON.stringify(prices?.map(p => p.id + ':' + p.price)),
+    apiFilters?.sort,
+    uiFilters?.sort,
+  ]);
 
   const {
     createPrice,

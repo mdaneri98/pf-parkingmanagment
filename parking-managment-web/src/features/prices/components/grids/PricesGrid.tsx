@@ -1,5 +1,3 @@
-// fileName: PricesGrid.tsx
-
 import { PriceCard } from '../cards/PriceCard';
 import { LoadingSpinner } from '@shared/ui/components';
 import type { PriceDisplayData } from '../../types';
@@ -32,7 +30,6 @@ export function PricesGrid({
                              compact = false,
                              emptyMessage = "No price rules found",
                              emptyDescription = "Create your first price rule to get started",
-                             // 🛑 MODIFICACIÓN: Establecer 'default'
                              layoutMode = 'default',
                            }: Props) {
   if (isLoading) {
