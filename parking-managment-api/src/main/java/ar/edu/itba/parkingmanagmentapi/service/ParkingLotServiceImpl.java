@@ -105,7 +105,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         ParkingLot parkingLot = parkingLotRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Parking lot not found"));
 
-        boolean hasFutureScheduledReservations = scheduledReservationRepository.existsByParkingLotIdAndReservedStartTimeAfter(
+        boolean hasFutureScheduledReservations = scheduledReservationRepository.existsBySpotParkingLotIdAndReservedStartTimeAfter(
                 id, LocalDateTime.now());
 
         boolean hasUnavailableSpots = parkingLot.getSpots().stream().anyMatch(spot -> !spot.getIsAvailable());
