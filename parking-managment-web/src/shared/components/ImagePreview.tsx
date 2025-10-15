@@ -5,13 +5,15 @@ interface ImagePreviewProps {
   alt: string;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  clickable?: boolean;
 }
 
 export function ImagePreview({ 
   src, 
   alt, 
   className = '', 
-  size = 'md' 
+  size = 'md',
+  clickable = true
 }: ImagePreviewProps) {
   const [showImageModal, setShowImageModal] = useState(false);
   
@@ -23,7 +25,9 @@ export function ImagePreview({
     lg: 'w-32 h-32'
   };
 
-  const baseClasses = `${sizeClasses[size]} object-cover rounded-lg border border-neutral-200 dark:border-neutral-700 cursor-pointer hover:opacity-80 transition-opacity`;
+  const baseClasses = `${sizeClasses[size]} object-cover rounded-lg border border-neutral-200 dark:border-neutral-700 ${
+    clickable ? 'cursor-pointer hover:opacity-80' : 'cursor-default'
+  } transition-opacity`;
 
   return (
     <>
@@ -32,7 +36,7 @@ export function ImagePreview({
           src={src}
           alt={alt}
           className={`${baseClasses} ${className}`}
-          onClick={() => setShowImageModal(true)}
+          onClick={clickable ? () => setShowImageModal(true) : undefined}
           onLoad={() => console.log('ImagePreview: Image loaded successfully')}
           onError={(e) => {
             console.log('ImagePreview: Image failed to load', src);

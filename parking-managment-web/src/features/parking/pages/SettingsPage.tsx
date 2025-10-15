@@ -284,6 +284,7 @@ export function SettingsPage() {
                 src={lotData.imageUrl}
                 alt={lotData.name}
                 size="md"
+                clickable={false}
               />
             </div>
           </div>
