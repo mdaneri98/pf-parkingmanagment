@@ -156,12 +156,14 @@ VALUES
  CURRENT_TIMESTAMP),
 -- Cancelada (ayer)
 ('2025-10-11 12:00:00', '2025-10-11 16:00:00', 'CANCELLED', 2800.00, 3, 2, 'GHI789', null, null, CURRENT_TIMESTAMP,
- CURRENT_TIMESTAMP);
+ CURRENT_TIMESTAMP),
 -- Reserva de Laura Fernández (futura)
-(CURRENT_TIMESTAMP + INTERVAL '2' DAY + INTERVAL '9' HOUR, CURRENT_TIMESTAMP + INTERVAL '2' DAY + INTERVAL '18' HOUR, 'PENDING', 6300.00, 23, 7, 'LAU001', null, null,
+(CURRENT_TIMESTAMP + INTERVAL '2' DAY + INTERVAL '9' HOUR, CURRENT_TIMESTAMP + INTERVAL '2' DAY + INTERVAL '18' HOUR,
+ 'PENDING', 6300.00, 23, 7, 'LAU001', null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Reserva de Laura Fernández (confirmada)
-(CURRENT_TIMESTAMP + INTERVAL '3' DAY + INTERVAL '10' HOUR, CURRENT_TIMESTAMP + INTERVAL '3' DAY + INTERVAL '16' HOUR, 'CONFIRMED', 4200.00, 24, 7, 'LAU002', null, null,
+(CURRENT_TIMESTAMP + INTERVAL '3' DAY + INTERVAL '10' HOUR, CURRENT_TIMESTAMP + INTERVAL '3' DAY + INTERVAL '16' HOUR,
+ 'CONFIRMED', 4200.00, 24, 7, 'LAU002', null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estancias walk-in
@@ -169,19 +171,27 @@ INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, status, sp
                           expected_end_time, spot_code_snapshot, spot_floor_snapshot, created_at, updated_at)
 VALUES
 -- Estancia completada (hace 2 días)
-(CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '15' HOUR + INTERVAL '30' MINUTE, CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '18' HOUR + INTERVAL '45' MINUTE, 2600.00, 'COMPLETED', 1, 1, 'ABC123', CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '22' HOUR + INTERVAL '45' MINUTE, null,
+(CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '15' HOUR + INTERVAL '30' MINUTE,
+ CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '18' HOUR + INTERVAL '45' MINUTE, 2600.00, 'COMPLETED', 1, 1, 'ABC123',
+ CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '22' HOUR + INTERVAL '45' MINUTE, null,
  null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia completada (ayer)
-(CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '11' HOUR + INTERVAL '15' MINUTE, CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '13' HOUR + INTERVAL '30' MINUTE, 2250.00, 'COMPLETED', 2, 2, 'DEF456', CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '18' HOUR + INTERVAL '45' MINUTE, null,
+(CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '11' HOUR + INTERVAL '15' MINUTE,
+ CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '13' HOUR + INTERVAL '30' MINUTE, 2250.00, 'COMPLETED', 2, 2, 'DEF456',
+ CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '18' HOUR + INTERVAL '45' MINUTE, null,
  null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia en curso (hace 2 horas)
-(CURRENT_TIMESTAMP - INTERVAL '2' HOUR, NULL, NULL, 'ACTIVE', 4, 2, 'DEF456', CURRENT_TIMESTAMP + INTERVAL '2' HOUR + INTERVAL '35' MINUTE, null, null,
+(CURRENT_TIMESTAMP - INTERVAL '2' HOUR, NULL, NULL, 'ACTIVE', 4, 2, 'DEF456',
+ CURRENT_TIMESTAMP + INTERVAL '2' HOUR + INTERVAL '35' MINUTE, null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia de Laura Fernández (completada hace 3 días)
-(CURRENT_TIMESTAMP - INTERVAL '3' DAY + INTERVAL '14' HOUR, CURRENT_TIMESTAMP - INTERVAL '3' DAY + INTERVAL '17' HOUR + INTERVAL '30' MINUTE, 3150.00, 'COMPLETED', 23, 7, 'LAU001', CURRENT_TIMESTAMP - INTERVAL '3' DAY + INTERVAL '20' HOUR + INTERVAL '30' MINUTE, null,
+(CURRENT_TIMESTAMP - INTERVAL '3' DAY + INTERVAL '14' HOUR,
+ CURRENT_TIMESTAMP - INTERVAL '3' DAY + INTERVAL '17' HOUR + INTERVAL '30' MINUTE, 3150.00, 'COMPLETED', 23, 7,
+ 'LAU001', CURRENT_TIMESTAMP - INTERVAL '3' DAY + INTERVAL '20' HOUR + INTERVAL '30' MINUTE, null,
  null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia de Laura Fernández (en curso desde hace 1 hora)
-(CURRENT_TIMESTAMP - INTERVAL '1' HOUR, NULL, NULL, 'ACTIVE', 24, 7, 'LAU002', CURRENT_TIMESTAMP + INTERVAL '5' HOUR, null, null,
+(CURRENT_TIMESTAMP - INTERVAL '1' HOUR, NULL, NULL, 'ACTIVE', 24, 7, 'LAU002', CURRENT_TIMESTAMP + INTERVAL '5' HOUR,
+ null, null,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
@@ -198,7 +208,8 @@ VALUES (5, 'Excelente estacionamiento, muy seguro y bien ubicado. El personal es
        (4, 'Muy buena ubicación en Palermo, fácil acceso y salida.', 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, 'Tuve problemas con el sistema de pago, tardó mucho en resolverse.', 2, 3, CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP),
-       (5, 'Increíble servicio! Los espacios para camionetas son amplios y el personal muy profesional.', 7, 3, CURRENT_TIMESTAMP,
+       (5, 'Increíble servicio! Los espacios para camionetas son amplios y el personal muy profesional.', 7, 3,
+        CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP),
        (4, 'Buena ubicación en Cabildo, aunque un poco caro para motos.', 7, 3, CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP);
@@ -217,7 +228,8 @@ VALUES
 -- Incidente de Laura Fernández (resuelto)
 ('Problema con el sistema de pago automático', 'RESOLVED', 4, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Incidente de Laura Fernández (en progreso)
-('Daño menor en el parachoques durante el estacionamiento', 'IN_PROGRESS', 5, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('Daño menor en el parachoques durante el estacionamiento', 'IN_PROGRESS', 5, NULL, CURRENT_TIMESTAMP,
+ CURRENT_TIMESTAMP);
 
 -- =============================================
 -- SECCIÓN ESPECIAL: LAURA FERNÁNDEZ

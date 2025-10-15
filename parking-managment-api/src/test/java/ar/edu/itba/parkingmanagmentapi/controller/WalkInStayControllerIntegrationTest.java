@@ -100,7 +100,7 @@ class WalkInStayControllerIntegrationTest extends BaseIntegrationTest {
         ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/walk-in/" + stay.getId() + "/extend?extraHours=" + extraHours,
                 HttpMethod.PATCH,
-                new HttpEntity<>(createAuthHeaders(normalUser)),
+                new HttpEntity<>(createAuthHeaders(managerUser)),
                 new ParameterizedTypeReference<>() {
                 }
         );
