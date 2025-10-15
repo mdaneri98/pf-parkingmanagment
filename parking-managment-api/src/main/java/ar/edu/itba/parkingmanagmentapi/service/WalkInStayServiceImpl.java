@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequest> implements WalkInStayService {
-
     private final WalkInStayRequestValidator walkInStayRequestValidator;
 
     protected WalkInStayServiceImpl(
@@ -46,7 +45,11 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
     public ReservationResponse createReservation(WalkInStayRequest request) {
         walkInStayRequestValidator.validate(request);
 
-        Spot spot = findSpotAndChangeAvailability(request.getSpotId(), false);
+        Spot spot = spotService.findEntityById(request.getSpotId());
+
+        if (!existActivePrice(spot.getParkingLot().getId(), spot.getVehicleType())) {
+            throw new NotFoundException("There are no active prices for this type of vehicle in the parking lot");
+        }
 
         Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, spot.getVehicleType()));
         UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(AppConstants.DEFAULT_USER_ID, vehicle.getLicensePlate());
@@ -58,6 +61,10 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         stay.setSpot(spot);
         stay.setCheckOutTime(LocalDateTime.now().plusDays(1)); // Default value, will be updated on check-out
         stay.setUserVehicleAssignment(assignment);
+
+        //esto no me gusto tanto como quedo, pero habria que ver como refactorizar el updateEntityById
+        spot.setIsAvailable(false);
+        spotService.updateEntityById(spot.getId(), spot);
 
         walkInStayRepository.save(stay);
         return ReservationResponse.fromWalkInStay(stay);

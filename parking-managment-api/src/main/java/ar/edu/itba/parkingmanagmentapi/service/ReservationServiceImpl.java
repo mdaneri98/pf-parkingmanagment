@@ -36,6 +36,11 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
         this.userVehicleAssignmentService = userVehicleAssignmentService;
     }
 
+    protected boolean existActivePrice(Long parkingLotId, String vehicleType) {
+        List<ParkingPrice> prices = parkingPriceRepository.findByParkingLotIdAndVehicleType(parkingLotId, vehicleType);
+        return !prices.isEmpty();
+    }
+
     protected BigDecimal calculateEstimatedPrice(Spot spot, LocalDateTime start, LocalDateTime end) {
         List<ParkingPrice> prices = parkingPriceRepository.findByParkingLotIdAndVehicleType(
                 spot.getParkingLot().getId(),
