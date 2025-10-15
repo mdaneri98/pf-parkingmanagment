@@ -179,7 +179,7 @@ export function SettingsPage() {
           {otherLots.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
-                {selectedLot ? 'Other Parking Lots' : 'Your Parking Lots'}
+                {selectedLot ? 'Additional Parking Lots' : 'All Parking Lots'}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                 {otherLots.map((lotData) => (
