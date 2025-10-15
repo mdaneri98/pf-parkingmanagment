@@ -83,6 +83,7 @@ export interface CreateSpotRequest {
   code: string;
   vehicleType: VehicleType;
   isAvailable?: boolean;
+  isReservable?: boolean;
 }
 
 export interface UpdateSpotRequest {

@@ -56,7 +56,7 @@ public class SpotServiceImpl implements SpotService {
         spot.setCode(request.getCode());
         spot.setIsAvailable(true);
         spot.setParkingLot(parkingLot);
-        spot.setReservationPriority(request.getReservationPriority());
+        spot.setReservationPriority(request.getIsReservable());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
@@ -84,8 +84,7 @@ public class SpotServiceImpl implements SpotService {
         spot.setVehicleType(request.getVehicleType());
         spot.setCode(request.getCode());
         spot.setFloor(request.getFloor());
-        spot.setIsAvailable(request.getIsAvailable());
-        spot.setReservationPriority(request.getReservationPriority());
+        spot.setReservationPriority(request.getIsReservable());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }

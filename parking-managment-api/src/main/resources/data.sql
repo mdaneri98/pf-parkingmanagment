@@ -62,19 +62,19 @@ VALUES ('Av. Corrientes 1500', 'Estacionamiento 1',
 
 -- Espacios de estacionamiento
 -- Estacionamiento 1 (Corrientes) - 12 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, parking_lot_id, created_at, updated_at)
-VALUES ('auto', 0, 'A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A04', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 1, 'A01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 1, 'A02', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 1, 'A03', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', 0, 'M01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', 0, 'M02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', 0, 'M03', false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('camioneta', 0, 'C01', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('camioneta', 0, 'C02', true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
+VALUES ('auto', 0, 'A01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A02', false, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A04', false, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'C01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'C02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Estacionamiento 2 (Santa Fe) - 10 espacios
 INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
@@ -170,11 +170,9 @@ VALUES
 INSERT INTO walk_in_stay (check_in_time, check_out_time, total_price, status, spot_id, user_id, vehicle_license_plate,
                           expected_end_time, spot_code_snapshot, spot_floor_snapshot, created_at, updated_at)
 VALUES
--- Estancia completada (hace 2 días)
-(CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '15' HOUR + INTERVAL '30' MINUTE,
- CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '18' HOUR + INTERVAL '45' MINUTE, 2600.00, 'COMPLETED', 1, 1, 'ABC123',
- CURRENT_TIMESTAMP - INTERVAL '2' DAY + INTERVAL '22' HOUR + INTERVAL '45' MINUTE, null,
- null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+-- Estancia activa (hace 1 hora)
+(CURRENT_TIMESTAMP - INTERVAL '1' HOUR, CURRENT_TIMESTAMP + INTERVAL '2' HOUR, null, 'ACTIVE', 1, 1, 'ABC123',
+ CURRENT_TIMESTAMP, null, null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Estancia completada (ayer)
 (CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '11' HOUR + INTERVAL '15' MINUTE,
  CURRENT_TIMESTAMP - INTERVAL '1' DAY + INTERVAL '13' HOUR + INTERVAL '30' MINUTE, 2250.00, 'COMPLETED', 2, 2, 'DEF456',
@@ -192,7 +190,11 @@ VALUES
 -- Estancia de Laura Fernández (en curso desde hace 1 hora)
 (CURRENT_TIMESTAMP - INTERVAL '1' HOUR, NULL, NULL, 'ACTIVE', 24, 7, 'LAU002', CURRENT_TIMESTAMP + INTERVAL '5' HOUR,
  null, null,
- CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- Spot 10: M03 (moto) → activa hace 3 horas
+(CURRENT_TIMESTAMP - INTERVAL '3' HOUR, NULL, NULL, 'ACTIVE', 10, 4, 'MNO345',
+ CURRENT_TIMESTAMP + INTERVAL '5' HOUR, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- Reseñas

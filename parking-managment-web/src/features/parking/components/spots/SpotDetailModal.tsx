@@ -1,4 +1,4 @@
-import { useEffect } from 'react'; // 👈 Importar useEffect
+import { useState, useEffect } from 'react';
 import type { SpotDTO } from '@parking/types';
 import { ParkingService } from '@parking/services/parkingService';
 import {
@@ -14,7 +14,8 @@ import {
   formatDateTime,
   ReservationStatus,
 } from '@walkinstays';
-import type { WalkInStayFormData } from '@walkinstays/types';
+import type { WalkInStayFormData, WalkInStayResponse } from '@walkinstays/types';
+import { CompletionSummary } from '@walkinstays/components/CompletionSummary';
 
 interface Props {
   spot?: SpotDTO;
@@ -45,20 +46,22 @@ export function SpotDetailModal({
   const { mutations, loadingStates } = useWalkInStayMutations();
   const {
     data: activeWalkInStay,
-    refetch: refetchActiveWalkInStay // 👈 Desestructuración de refetch
+    refetch: refetchActiveWalkInStay
   } = useActiveWalkInStayForSpot(spot.id, lotId);
 
   const { remainingMinutes } = useGetRemainingTime(activeWalkInStay?.id, {
     skip: !activeWalkInStay,
     pollingInterval: WALK_IN_STAY_CONSTANTS.POLLING.REMAINING_TIME_INTERVAL,
   });
+
   const { modalState, openModal, closeModal } = useWalkInStayModalState();
 
-  // 👈 CORRECCIÓN: Usar el encadenamiento opcional para evitar el TypeError.
+  const [completedStaySummary, setCompletedStaySummary] = useState<WalkInStayResponse | null>(null);
+
   useEffect(() => {
     if (isOpen) {
-      // Usar ?.() garantiza que la llamada solo ocurra si refetchActiveWalkInStay es una función.
       refetchActiveWalkInStay?.();
+      setCompletedStaySummary(null);
     }
   }, [isOpen, refetchActiveWalkInStay]);
 
@@ -70,6 +73,16 @@ export function SpotDetailModal({
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
+  const handleCloseModal = () => {
+    setCompletedStaySummary(null);
+
+    closeModal('createForm');
+    closeModal('extendForm');
+    closeModal('summary');
+
+    onClose();
+  };
+
   const handleCreateWalkInStay = async (formData: WalkInStayFormData) => {
     try {
       await mutations.createWalkInStay({
@@ -79,7 +92,7 @@ export function SpotDetailModal({
       }, () => {
         closeModal('createForm');
         onRefetchSpot?.();
-        onClose();
+        handleCloseModal();
       }, lotId);
     } catch (error) {
       // Error handling is done in the mutation hook
@@ -98,9 +111,17 @@ export function SpotDetailModal({
   const handleCompleteWalkInStay = async () => {
     if (!activeWalkInStay) return;
 
-    await mutations.updateWalkInStayStatus(activeWalkInStay.id, ReservationStatus.COMPLETED, () => {
-      onRefetchSpot?.();
-    });
+    await mutations.updateWalkInStayStatus(
+        activeWalkInStay.id,
+        ReservationStatus.COMPLETED,
+        (completedStayData: WalkInStayResponse) => {
+          setCompletedStaySummary(completedStayData);
+
+          openModal('summary');
+
+          onRefetchSpot?.();
+        }
+    );
   };
 
   return (
@@ -120,7 +141,7 @@ export function SpotDetailModal({
               </div>
             </div>
             <button
-                onClick={onClose}
+                onClick={handleCloseModal}
                 className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,43 +152,17 @@ export function SpotDetailModal({
 
           {/* Content */}
           <div className="p-4 space-y-4">
-            {/* Status */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${spot.isAvailable ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                {activeWalkInStay ? 'Occupied (Walk-in)' : spot.isAvailable ? 'Available' : 'Occupied'}
-              </span>
-              </div>
 
-            </div>
-
-            {/* Walk-in Stay Section */}
-            {spot.isAvailable && !modalState.createForm && !activeWalkInStay && (
-                <div className="space-y-3">
-                  <button
-                      onClick={() => openModal('createForm')}
-                      className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium"
-                  >
-                    {UI_LABELS.CREATE_WALK_IN_STAY}
-                  </button>
-                </div>
+            {/* 1. COMPLETION SUMMARY (Prioridad 1) */}
+            {modalState.summary && completedStaySummary && (
+                <CompletionSummary
+                    stay={completedStaySummary}
+                    onClose={handleCloseModal}
+                />
             )}
 
-            {/* Walk-in Stay Form */}
-            {modalState.createForm && (
-                <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
-                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">{UI_LABELS.CREATE_WALK_IN_STAY}</h3>
-                  <WalkInStayForm
-                      onSubmit={handleCreateWalkInStay}
-                      onCancel={() => closeModal('createForm')}
-                      isLoading={loadingStates.createWalkInStay}
-                  />
-                </div>
-            )}
-
-            {/* Active Walk-in Stay Details */}
-            {activeWalkInStay && (
+            {/* 2. WALK-IN STAY DETAILS (Prioridad 2) */}
+            {!modalState.summary && activeWalkInStay && (
                 <div className="space-y-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
                   {!modalState.extendForm ? (
                       <WalkInStayDetails
@@ -192,8 +187,31 @@ export function SpotDetailModal({
                 </div>
             )}
 
-            {/* Actions */}
-            {(onEdit || onDelete) && !modalState.createForm && !activeWalkInStay && (
+            {/* 3. CREATE FORM (Prioridad 3) */}
+            {!modalState.summary && spot.isAvailable && !modalState.createForm && !activeWalkInStay && (
+                <div className="space-y-3">
+                  <button
+                      onClick={() => openModal('createForm')}
+                      className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium"
+                  >
+                    {UI_LABELS.CREATE_WALK_IN_STAY}
+                  </button>
+                </div>
+            )}
+
+            {modalState.createForm && (
+                <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
+                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">{UI_LABELS.CREATE_WALK_IN_STAY}</h3>
+                  <WalkInStayForm
+                      onSubmit={handleCreateWalkInStay}
+                      onCancel={() => closeModal('createForm')}
+                      isLoading={loadingStates.createWalkInStay}
+                  />
+                </div>
+            )}
+
+            {/* Actions (Edit/Delete) (Prioridad 4) */}
+            {(onEdit || onDelete) && !modalState.summary && !modalState.createForm && !activeWalkInStay && (
                 <div className="flex space-x-2 pt-2">
                   {onEdit && (
                       <button

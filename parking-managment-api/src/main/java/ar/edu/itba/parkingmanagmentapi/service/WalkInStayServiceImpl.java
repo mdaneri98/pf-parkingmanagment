@@ -92,9 +92,9 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
                     stay.getCheckOutTime()
             );
             stay.setTotalPrice(totalPrice);
+            findSpotAndChangeAvailability(stay.getSpot().getId(), true);
         }
 
-        findSpotAndChangeAvailability(stay.getSpot().getId(), true);
         walkInStayRepository.save(stay);
         return ReservationResponse.fromWalkInStay(stay);
     }

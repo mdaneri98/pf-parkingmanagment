@@ -172,3 +172,16 @@ export const parseRemainingTimeText = (text: string): number => {
   return match ? parseInt(match[1], 10) : 0;
 };
 
+export const formatDuration = (totalHours: number): string => {
+  const totalMinutes = Math.round(totalHours * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours > 0 && minutes > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  if (hours > 0) {
+    return `${hours}h`;
+  }
+  return `${minutes}m`;
+};

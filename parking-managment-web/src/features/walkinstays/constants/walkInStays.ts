@@ -40,6 +40,10 @@ export const UI_LABELS = {
   ACTIVE: 'Active',
   TIME_WARNING: 'Time running out!',
   TIME_CRITICAL: 'Time almost up!',
+  CHECKOUT_COMPLETE: 'Checkout Complete',
+  TOTAL_DURATION: 'Total Duration',
+  TOTAL_PRICE: 'Total Price',
+  CLOSE: 'Close',
 } as const;
 
 // ====== Success Messages ======

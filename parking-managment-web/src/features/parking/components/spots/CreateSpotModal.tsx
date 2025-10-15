@@ -11,6 +11,8 @@ interface FormData {
   endNumber: number | '';
   vehicleType: VehicleType;
   isSingleSpot: boolean;
+  isReservable: boolean;
+  isAccessible: boolean;
 }
 
 interface Props {
@@ -28,7 +30,9 @@ const getInitialFormData = (parkingLotId: number): FormData => ({
   startNumber: '' as number | '',
   endNumber: '' as number | '',
   vehicleType: VEHICLE_TYPES.CAR,
-  isSingleSpot: true, // Por defecto, empieza en modo Single Spot
+  isSingleSpot: true,
+  isReservable: false,
+  isAccessible: false,
 });
 
 export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoading }: Props) {
@@ -41,12 +45,18 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
   const handleSubmit = useCallback(
       (e: React.FormEvent) => {
         e.preventDefault();
-        const { prefix, startNumber, endNumber, floor, isSingleSpot, ...rest } = formData;
+        const { prefix, startNumber, endNumber, floor, isSingleSpot, isReservable, isAccessible, ...rest } = formData;
 
         const spots: CreateSpotRequest[] = [];
         const floorValue = floor === '' ? 1 : floor;
         const start = Number(startNumber);
 
+        const baseSpotData = {
+          ...rest,
+          isReservable,
+          isAccessible,
+          floor: floorValue,
+        };
         if (isSingleSpot) {
 
           spots.push({
@@ -242,6 +252,44 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                     </option>
                 ))}
               </select>
+            </div>
+
+            <div className="space-y-3 pt-2 border-neutral-200 dark:border-neutral-700">
+
+              {/* 1. isReservable */}
+              <div className="flex items-center justify-between">
+                <label htmlFor="isReservable" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer">
+                  Consider for Online Reservations
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                    If enabled, this spot can be booked by users.
+                  </p>
+                </label>
+                <input
+                    type="checkbox"
+                    id="isReservable"
+                    checked={formData.isReservable}
+                    onChange={(e) => updateFormField('isReservable', e.target.checked)}
+                    className="w-5 h-5 text-blue-600 border-neutral-300 dark:border-neutral-600 rounded focus:ring-blue-500"
+                />
+              </div>
+
+              {/* 2. isAccessible (¿Acepta Discapacitados?) */}
+              <div className="flex items-center justify-between">
+                <label htmlFor="isAccessible" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer">
+                  Accessible Spot (PCD)
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                    Designated for users with reduced mobility or special needs.
+                  </p>
+                </label>
+                <input
+                    type="checkbox"
+                    id="isAccessible"
+                    checked={formData.isAccessible}
+                    onChange={(e) => updateFormField('isAccessible', e.target.checked)}
+                    className="w-5 h-5 text-blue-600 border-neutral-400 dark:border-neutral-500 rounded focus:ring-blue-500"
+                />
+              </div>
+
             </div>
 
             {/* Actions */}
