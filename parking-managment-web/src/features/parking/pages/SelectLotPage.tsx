@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@shared/ui/components';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { 
   selectParkingLots,
@@ -9,6 +8,7 @@ import {
 import { useAppDispatch } from '@hooks/useAppDispatch';
 import { clearParkingLotsError } from '@parking/slice/parkingSlice';
 import { parkingApi } from '@parking/api/parkingApi';
+import { ImagePreview } from '@shared/components/ImagePreview';
 import type { ParkingLotResponse } from '@parking/types';
 
 export function SelectLotPage() {
@@ -28,9 +28,6 @@ export function SelectLotPage() {
     navigate(`/app/dashboard/${lotId}`);
   };
 
-  const handleCreateLot = () => {
-    navigate('/app/welcome');
-  };
 
   if (isLoading) {
     return (
@@ -82,19 +79,8 @@ export function SelectLotPage() {
             No Parking Lots Yet
           </h1>
           <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed">
-            Get started by creating your first parking lot. You'll be able to manage spots, track occupancy, and handle pricing all in one place.
+            You don't have any parking lots yet. Please contact your administrator to get access to parking lots.
           </p>
-          <Button
-            onClick={handleCreateLot}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-            leftIcon={
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            }
-          >
-            Create Your First Parking Lot
-          </Button>
         </div>
       </div>
     );
@@ -108,7 +94,7 @@ export function SelectLotPage() {
           Select a Parking Lot
         </h1>
         <p className="text-lg text-neutral-600 dark:text-neutral-400">
-          Choose a parking lot to manage or create a new one.
+          Choose a parking lot to manage.
         </p>
       </div>
 
@@ -120,11 +106,19 @@ export function SelectLotPage() {
             onClick={() => handleLotSelect(lot.id)}
             className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 cursor-pointer hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 group"
           >
-            {/* Lot Icon */}
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200">
-              <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+            {/* Lot Image or Icon */}
+            <div className="w-full h-32 mb-4 rounded-lg overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/20 flex items-center justify-center">
+              {lot.imageUrl ? (
+                <ImagePreview
+                  src={lot.imageUrl}
+                  alt={`${lot.name} parking lot`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              ) : (
+                <svg className="w-8 h-8 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              )}
             </div>
 
             {/* Lot Details */}
@@ -135,9 +129,8 @@ export function SelectLotPage() {
               {lot.address}
             </p>
 
-            {/* Quick Stats */}
-            <div className="flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
-              <span>ID: {lot.id}</span>
+            {/* Action Indicator */}
+            <div className="flex items-center justify-end text-sm">
               <span className="text-primary-600 dark:text-primary-400 font-medium">
                 Click to manage →
               </span>
@@ -146,21 +139,6 @@ export function SelectLotPage() {
         ))}
       </div>
 
-      {/* Create New Lot Button */}
-      <div className="text-center">
-        <Button
-          onClick={handleCreateLot}
-          variant="outline"
-          className="border-primary-300 dark:border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 px-6 py-3"
-          leftIcon={
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-          }
-        >
-          Create New Parking Lot
-        </Button>
-      </div>
     </div>
   );
 }
