@@ -73,6 +73,7 @@ public abstract class BaseIntegrationTest {
     protected ParkingPrice existingParkingPrice;
     protected ScheduledReservation existingReservation;
     protected WalkInStay existingWalkInStay;
+    protected TestUser userDefault;
 
     @BeforeEach
     void clean() {
@@ -94,6 +95,11 @@ public abstract class BaseIntegrationTest {
      */
     protected void setupTestUsers() {
         // Create normal user
+        User userDefaultEntity = createTestUser("default@default.com", "password123");
+        String defaultUserToken = authenticateUser("default@default.com", "password123");
+        userDefault = new TestUser(userDefaultEntity, defaultUserToken);
+        userRepository.save(userDefaultEntity);
+
         User normalUserEntity = createTestUser("normal@test.com", "password123");
         String normalUserToken = authenticateUser("normal@test.com", "password123");
         normalUser = new TestUser(normalUserEntity, normalUserToken);

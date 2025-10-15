@@ -5,7 +5,6 @@ import ar.edu.itba.parkingmanagmentapi.model.ParkingPrice;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
-import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 
 import java.math.BigDecimal;
@@ -16,8 +15,6 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
 
     protected final SpotService spotService;
     protected final ParkingPriceRepository parkingPriceRepository;
-
-    protected final UserRepository userRepository;
     protected final VehicleService vehicleService;
     protected final WalkInStayRepository walkInStayRepository;
     protected final ScheduledReservationRepository reservationRepository;
@@ -26,13 +23,11 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
     protected ReservationServiceImpl(
             SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
-            UserRepository userRepository,
             VehicleService vehicleService,
             WalkInStayRepository walkInStayRepository,
             ScheduledReservationRepository reservationRepository,
             UserVehicleAssignmentService userVehicleAssignmentService
     ) {
-        this.userRepository = userRepository;
         this.vehicleService = vehicleService;
         this.spotService = spotService;
         this.parkingPriceRepository = parkingPriceRepository;

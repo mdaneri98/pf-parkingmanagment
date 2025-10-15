@@ -5,8 +5,14 @@ import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.WalkInStayRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
-import ar.edu.itba.parkingmanagmentapi.model.*;
-import ar.edu.itba.parkingmanagmentapi.repository.*;
+import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
+import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
+import ar.edu.itba.parkingmanagmentapi.model.WalkInStay;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStaySpecifications;
 import ar.edu.itba.parkingmanagmentapi.validators.WalkInStayRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +34,11 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
             SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
             ScheduledReservationRepository reservationRepository,
-            UserRepository userRepository,
             VehicleService vehicleService,
             WalkInStayRepository walkInStayRepository,
             WalkInStayRequestValidator walkInStayRequestValidator,
             UserVehicleAssignmentService userVehicleAssignmentService) {
-        super(spotService, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
+        super(spotService, parkingPriceRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
         this.walkInStayRequestValidator = walkInStayRequestValidator;
     }
 
@@ -41,13 +46,10 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
     public ReservationResponse createReservation(WalkInStayRequest request) {
         walkInStayRequestValidator.validate(request);
 
-        User defaultUser = userRepository.findById(AppConstants.DEFAULT_USER_ID)
-                .orElseThrow(() -> new NotFoundException("There is no default user"));
-
-        Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, null));
-        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(defaultUser.getId(), vehicle.getLicensePlate());
-
         Spot spot = findSpotAndChangeAvailability(request.getSpotId(), false);
+
+        Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, spot.getVehicleType()));
+        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(AppConstants.DEFAULT_USER_ID, vehicle.getLicensePlate());
 
         WalkInStay stay = new WalkInStay();
         stay.setCheckInTime(LocalDateTime.now());

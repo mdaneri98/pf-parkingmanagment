@@ -5,8 +5,13 @@ import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
-import ar.edu.itba.parkingmanagmentapi.model.*;
-import ar.edu.itba.parkingmanagmentapi.repository.*;
+import ar.edu.itba.parkingmanagmentapi.model.ScheduledReservation;
+import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationSpecifications;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 import ar.edu.itba.parkingmanagmentapi.validators.ScheduledReservationRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,23 +30,17 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
             SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
             ScheduledReservationRepository reservationRepository,
-            UserRepository userRepository,
             VehicleService vehicleService,
             WalkInStayRepository walkInStayRepository,
             ScheduledReservationRequestValidator scheduledReservationRequestValidator,
             UserVehicleAssignmentService userVehicleAssignmentService) {
-        super(spotService, parkingPriceRepository, userRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
+        super(spotService, parkingPriceRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
         this.scheduledReservationRequestValidator = scheduledReservationRequestValidator;
     }
 
     @Override
     public ReservationResponse createReservation(ScheduledReservationRequest request) {
         scheduledReservationRequestValidator.validate(request);
-
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
-        Vehicle vehicle = vehicleService.findEntityByLicensePlate(request.getVehicleLicensePlate());
 
         Spot spot = spotService.findEntityById(request.getSpotId());
 
@@ -59,7 +58,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
 
         BigDecimal estimatedPrice = calculateEstimatedPrice(spot, request.getReservedStartTime(), request.getExpectedEndTime());
 
-        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlate(user.getId(), vehicle.getLicensePlate());
+        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlate(request.getUserId(), request.getVehicleLicensePlate());
 
         ScheduledReservation reservation = new ScheduledReservation();
         reservation.setReservedStartTime(request.getReservedStartTime());
