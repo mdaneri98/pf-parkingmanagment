@@ -64,7 +64,7 @@ VALUES ('Av. Corrientes 1500', 'Estacionamiento 1',
 -- Estacionamiento 1 (Corrientes) - 12 espacios
 INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
 VALUES ('auto', 0, 'A01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A02', false, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('auto', 0, 'A03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('auto', 0, 'A04', false, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('auto', 1, 'A01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

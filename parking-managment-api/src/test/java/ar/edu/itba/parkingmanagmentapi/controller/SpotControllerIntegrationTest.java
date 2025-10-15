@@ -28,7 +28,7 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         request.setVehicleType(VehicleType.CAR.getName());
         request.setCode("A");
         request.setFloor(1);
-        request.setReservationPriority(false);
+        request.setIsReservable(false);
 
         HttpEntity<SpotRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(managerUser));
         ResponseEntity<ApiResponse<SpotResponse>> response = restTemplate.exchange(
@@ -76,7 +76,7 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         updateRequest.setVehicleType(VehicleType.MOTORCYCLE.getName());
         updateRequest.setFloor(3);
         updateRequest.setIsAvailable(false);
-        updateRequest.setReservationPriority(true);
+        updateRequest.setIsReservable(true);
 
         HttpEntity<SpotRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(managerUser));
         ResponseEntity<ApiResponse<SpotResponse>> response = restTemplate.exchange(
