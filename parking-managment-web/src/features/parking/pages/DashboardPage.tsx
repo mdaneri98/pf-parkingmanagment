@@ -5,25 +5,18 @@ import { SpotsSection } from '@parking/components/dashboard/SpotsSection';
 import { DashboardModals } from '@parking/components/dashboard/DashboardModals';
 import { LoadingState, ErrorState, EmptyState } from '@parking/components/common';
 import { useAppSelector } from '@hooks/useAppSelector';
-import { useAppDispatch } from '@hooks/useAppDispatch';
 import { selectSelectedParkingLotId } from '@parking/selectors/parkingLotSelectors';
-import { setSelectedParkingLotId } from '@parking/slice/parkingSlice';
 import { useGetParkingLotByIdQuery } from '@parking/api/parkingApi';
 import { useDashboardState } from '@parking/hooks';
 import { PARKING_CONSTANTS } from '@parking/constants/parking';
 
 export function DashboardPage() {
   const params = useParams();
-  const dispatch = useAppDispatch();
   const selectedLotId = useAppSelector(selectSelectedParkingLotId);
   
   const lotId = params.lotId ? Number(params.lotId) : null;
   const isValidLot = lotId && !isNaN(lotId);
 
-  // Sync URL with Redux store
-  if (isValidLot && selectedLotId !== lotId) {
-    dispatch(setSelectedParkingLotId(lotId));
-  }
 
   const { 
     data: lotData, 

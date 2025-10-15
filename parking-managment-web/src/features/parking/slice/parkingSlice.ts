@@ -22,6 +22,9 @@ const parkingSlice = createSlice({
   initialState,
   reducers: {
     setSelectedParkingLotId(state, action: PayloadAction<number | null>) {
+      if (state.selectedParkingLotId === action.payload) {
+        return; 
+      }
       state.selectedParkingLotId = action.payload;
     },
     setParkingLots(state, action: PayloadAction<ParkingLotResponse[]>) {

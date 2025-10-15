@@ -30,10 +30,6 @@ export function SettingsPage() {
   const lotId = params.lotId ? Number(params.lotId) : selectedLotId;
   const isValidLot = Boolean(lotId && !isNaN(lotId));
 
-  // Sync URL with Redux store
-  if (isValidLot && selectedLotId !== lotId) {
-    dispatch(setSelectedParkingLotId(lotId));
-  }
 
   const { 
     data: parkingLotsResponse, 
@@ -50,15 +46,6 @@ export function SettingsPage() {
   const selectedLot = parkingLots.find(lot => lot.id === selectedLotId);
   const otherLots = parkingLots.filter(lot => lot.id !== selectedLotId);
   
-  console.log('SettingsPage Debug:', {
-    userId: user?.id,
-    parkingLots,
-    selectedLot,
-    otherLots,
-    isLoading,
-    isError
-  });
-
   const modalState = useSettingsModalState();
   const { mutations, loadingStates } = useParkingLotMutations();
   
