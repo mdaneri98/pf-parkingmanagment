@@ -13,6 +13,4 @@ public interface WalkInStayService extends ReservationService<WalkInStayRequest>
 
     List<ReservationResponse> getExpiringReservations();
 
-    List<ReservationResponse> getWalkInStaysByParkingLot(Long parkingLotId);
-
 }

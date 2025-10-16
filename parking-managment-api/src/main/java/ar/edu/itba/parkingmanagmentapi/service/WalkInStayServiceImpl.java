@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequest> implements WalkInStayService {
@@ -51,8 +50,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
             throw new NotFoundException("There are no active prices for this type of vehicle in the parking lot");
         }
 
-        Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(new Vehicle(request.getVehicleLicensePlate(), null, null, spot.getVehicleType()));
-        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(AppConstants.DEFAULT_USER_ID, vehicle.getLicensePlate());
+        UserVehicleAssignment assignment = findOrCreateVehicleAssignment(request.getVehicleLicensePlate(), spot.getVehicleType());
 
         WalkInStay stay = new WalkInStay();
         stay.setCheckInTime(LocalDateTime.now());
@@ -62,9 +60,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         stay.setCheckOutTime(null);
         stay.setUserVehicleAssignment(assignment);
 
-        //esto no me gusto tanto como quedo, pero habria que ver como refactorizar el updateEntityById
-        spot.setIsAvailable(false);
-        spotService.updateEntityById(spot.getId(), spot);
+        findSpotAndChangeAvailability(spot.getId(), false);
 
         walkInStayRepository.save(stay);
         return ReservationResponse.fromWalkInStay(stay);
@@ -138,17 +134,8 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
 
     @Override
     public List<ReservationResponse> getExpiringReservations() {
-        List<WalkInStay> stayList = walkInStayRepository.findExpiringSoon(LocalDateTime.now().plusMinutes(30));
+        List<WalkInStay> stayList = walkInStayRepository.findExpiringSoon(LocalDateTime.now().plusMinutes(AppConstants.EXPIRING_RESERVATION_THRESHOLD_MINUTES));
         return stayList.stream().map(ReservationResponse::fromWalkInStay).toList();
     }
 
-    //esto se deberia borrar porque ya estaba getReservationsByParkingLot
-    @Override
-    public List<ReservationResponse> getWalkInStaysByParkingLot(Long parkingLotId) {
-        //TODO: Not performant. Needs improve.
-        return walkInStayRepository.findAll().stream()
-                .filter(wis -> wis.getSpot().getParkingLot().getId().equals(parkingLotId))
-                .map(ReservationResponse::fromWalkInStay)
-                .collect(Collectors.toList());
-    }
 }

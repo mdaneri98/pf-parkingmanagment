@@ -1,8 +1,11 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingPrice;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
+import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
+import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
@@ -53,7 +56,7 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
 
         ParkingPrice price = prices.get(0);
         long hours = java.time.Duration.between(start, end).toHours();
-        if (hours == 0) hours = 1;
+        if (hours == 0) hours = AppConstants.MINIMUM_BILLING_HOURS;
 
         return price.getPrice().multiply(BigDecimal.valueOf(hours));
     }
@@ -67,6 +70,15 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
 
         spot.setIsAvailable(makeAvailable);
         return spotService.updateEntityById(spotId, spot);
+    }
+
+    protected UserVehicleAssignment findOrCreateVehicleAssignment(String licensePlate, String vehicleType) {
+        Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(
+                new Vehicle(licensePlate, null, null, vehicleType)
+        );
+        return userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(
+                AppConstants.DEFAULT_USER_ID, vehicle.getLicensePlate()
+        );
     }
 
 }

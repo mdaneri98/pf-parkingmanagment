@@ -1,5 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
@@ -8,6 +9,7 @@ import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.ScheduledReservation;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
+import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationSpecifications;
@@ -58,10 +60,13 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
 
         BigDecimal estimatedPrice = calculateEstimatedPrice(spot, request.getReservedStartTime(), request.getExpectedEndTime());
 
-        UserVehicleAssignment assignment = userVehicleAssignmentService.findByUserIdAndLicensePlate(request.getUserId(), request.getVehicleLicensePlate());
+        UserVehicleAssignment assignment = findOrCreateVehicleAssignment(request.getVehicleLicensePlate(), spot.getVehicleType());
 
+        LocalDateTime now = LocalDateTime.now();
         ScheduledReservation reservation = new ScheduledReservation();
         reservation.setReservedStartTime(request.getReservedStartTime());
+        reservation.setCreatedAt(now);
+        reservation.setUpdatedAt(now);
         reservation.setExpectedEndTime(request.getExpectedEndTime());
         reservation.setEstimatedPrice(estimatedPrice);
         reservation.setStatus(ReservationStatus.PENDING);
@@ -115,10 +120,11 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
         for (ScheduledReservation reservation : reservations) {
             Spot spot = reservation.getSpot();
             if (spot.getIsAvailable()) {
-                spot.setIsAvailable(false); //Esta bien esto? Y si ya estaba ocupado?
+                findSpotAndChangeAvailability(spot.getId(), false);
                 reservation.setStatus(ReservationStatus.ACTIVE);
-                spotService.updateEntityById(spot.getId(), spot);
                 reservationRepository.save(reservation);
+            } else {
+                throw new BadRequestException("Spot " + spot.getId() + " is already occupied and cannot be used for scheduled reservation " + reservation.getId());
             }
         }
 
