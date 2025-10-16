@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from 'react';
 import type { SpotDTO } from '@parking/types';
 import { ParkingService } from '@parking/services/parkingService';
-import { PARKING_CONSTANTS } from '@parking/constants/parking'; 
+import { PARKING_CONSTANTS } from '@parking/constants/parking';
+import { naturalCompare } from '@shared/utils'; 
 
 interface Props {
   spots: SpotDTO[];
@@ -10,38 +11,6 @@ interface Props {
   floorsPerPage?: number; // Default: 2
 }
 
-// Natural sort helper
-function naturalCompare(a: string, b: string): number {
-  const chunkify = (str: string) =>
-    str.match(/(-?\d+|\D+)/g)?.map(part =>
-      /^-?\d+$/.test(part) ? Number(part) : part
-    ) || [str];
-
-  const aChunks = chunkify(a);
-  const bChunks = chunkify(b);
-
-  const len = Math.max(aChunks.length, bChunks.length);
-
-  for (let i = 0; i < len; i++) {
-    const aPart = aChunks[i];
-    const bPart = bChunks[i];
-
-    if (aPart === undefined) return -1;
-    if (bPart === undefined) return 1;
-
-    if (typeof aPart === "number" && typeof bPart === "number") {
-      if (aPart !== bPart) return aPart - bPart;
-    } else if (typeof aPart === "string" && typeof bPart === "string") {
-      const cmp = aPart.localeCompare(bPart);
-      if (cmp !== 0) return cmp;
-    } else {
-      // Numbers come before strings
-      return typeof aPart === "number" ? -1 : 1;
-    }
-  }
-
-  return 0;
-}
 
 export function ParkingSpotsGrid({ spots, isLoading = false, onSpotClick, floorsPerPage = 1 }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
