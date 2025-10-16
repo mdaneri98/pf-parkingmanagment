@@ -59,7 +59,7 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
         stay.setStatus(ReservationStatus.ACTIVE);
         stay.setExpectedEndTime(stay.getCheckInTime().plusHours(request.getExpectedDurationHours()));
         stay.setSpot(spot);
-        stay.setCheckOutTime(LocalDateTime.now().plusDays(1)); // Default value, will be updated on check-out
+        stay.setCheckOutTime(null);
         stay.setUserVehicleAssignment(assignment);
 
         //esto no me gusto tanto como quedo, pero habria que ver como refactorizar el updateEntityById
