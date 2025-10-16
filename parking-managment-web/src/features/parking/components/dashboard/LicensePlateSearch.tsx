@@ -166,7 +166,7 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
       <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-8 shadow-sm">
         {/* Search Input Section */}
         <div className="space-y-2 mb-8">
-          <div className="flex gap-3 items-start">
+          <div className="flex gap-3 items-end">
             <div className="flex-1">
               <Input
                 label="License Plate"
@@ -178,15 +178,13 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
                 autoFocus
               />
             </div>
-            <div className="flex items-end pb-1">
-              <Button
-                onClick={handleSearch}
-                disabled={!licensePlate.trim() || isSearching}
-                loading={isSearching}
-              >
-                Search
-              </Button>
-            </div>
+            <Button
+              onClick={handleSearch}
+              disabled={!licensePlate.trim() || isSearching}
+              loading={isSearching}
+            >
+              Search
+            </Button>
           </div>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
             Start typing to search automatically

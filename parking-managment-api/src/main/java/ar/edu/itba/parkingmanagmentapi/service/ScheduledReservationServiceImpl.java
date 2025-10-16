@@ -107,7 +107,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
     }
 
     @Override
-    public Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, String licensePlate, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return reservationRepository.findAll(ScheduledReservationSpecifications.withFilters(null, parkingLotId, status, null, from, to), pageable)
                 .map(ReservationResponse::fromEntityToGet);
     }

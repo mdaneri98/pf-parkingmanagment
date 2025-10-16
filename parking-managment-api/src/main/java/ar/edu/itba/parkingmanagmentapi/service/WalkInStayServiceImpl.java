@@ -105,9 +105,9 @@ public class WalkInStayServiceImpl extends ReservationServiceImpl<WalkInStayRequ
     }
 
     @Override
-    public Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, String licensePlate, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return walkInStayRepository.findAll(
-                        WalkInStaySpecifications.withFilters(null, parkingLotId, status, null, from, to),
+                        WalkInStaySpecifications.withFilters(null, parkingLotId, status, licensePlate, from, to),
                         pageable
                 )
                 .map(ReservationResponse::fromWalkInStay);
