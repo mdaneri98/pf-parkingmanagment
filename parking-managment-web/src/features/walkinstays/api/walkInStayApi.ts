@@ -26,6 +26,11 @@ interface GetWalkInStaysByParkingLotParams {
   parkingLotId: number;
 }
 
+interface GetWalkInStayByLicensePlateParams {
+  licensePlate: string;
+  parkingLotId: number;
+}
+
 const transformWalkInStayError = (response: any) => {
   const errorMap: Record<number, { message: string; code: string }> = {
     400: { 
@@ -76,9 +81,10 @@ export const walkInStayApi = createApi({
       ],
     }),
 
-    getWalkInStayById: builder.query<ApiResponse<WalkInStayResponse>, number>({
-      query: (id) => ({
+    getWalkInStayById: builder.query<ApiResponse<WalkInStayResponse>, { id: number; licensePlate?: string }>({
+      query: ({ id, licensePlate }) => ({
         url: `/reservations/walk-in/${id}`,
+        params: licensePlate ? { licensePlate } : undefined,
       }),
       providesTags: (result) =>
         result?.data
@@ -87,6 +93,20 @@ export const walkInStayApi = createApi({
               { type: 'WalkInStay', id: 'LIST' },
             ]
           : [{ type: 'WalkInStay', id: 'LIST' }],
+    }),
+
+    getWalkInStayByLicensePlate: builder.query<ApiResponse<WalkInStayResponse[]>, GetWalkInStayByLicensePlateParams>({
+      query: ({ licensePlate, parkingLotId }) => ({
+        url: `/reservations/walk-in/parking-lot/${parkingLotId}`,
+        params: { licensePlate },
+      }),
+      providesTags: (result) =>
+        result?.data && result.data.length > 0
+          ? [
+              ...result.data.map((stay) => ({ type: 'WalkInStay' as const, id: stay.id })),
+              { type: 'WalkInStay' as const, id: 'LIST' },
+            ]
+          : [{ type: 'WalkInStay' as const, id: 'LIST' }],
     }),
 
     getWalkInStaysByParkingLot: builder.query<ApiResponse<WalkInStayResponse[]>, GetWalkInStaysByParkingLotParams>({
@@ -158,6 +178,7 @@ export const walkInStayApi = createApi({
 export const {
   useCreateWalkInStayMutation,
   useGetWalkInStayByIdQuery,
+  useGetWalkInStayByLicensePlateQuery,
   useGetWalkInStaysByParkingLotQuery,
   useUpdateWalkInStayStatusMutation,
   useExtendWalkInStayMutation,

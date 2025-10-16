@@ -6,7 +6,7 @@ import { RequestRecoveryPage } from '@auth/pages/RequestRecoveryPage';
 import { ResetPasswordPage } from '@auth/pages/ResetPasswordPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AppLayout } from '@shared/layout';
-import { DashboardPage, SettingsPage, WelcomePage, SelectLotPage } from '@parking/pages';
+import { DashboardPage, SettingsPage, WelcomePage, SelectLotPage, LicensePlateSearchPage } from '@parking/pages';
 import { PricesPage } from '@prices/pages/PricesPage';
 import { ReservationsPage } from '../../features/reservations/pages/ReservationsPage';
 
@@ -52,6 +52,7 @@ export const router = createBrowserRouter([
           },
           // Lot-specific routes
           { path: 'dashboard/:lotId', element: <DashboardPage /> },
+          { path: 'license-plate-search/:lotId', element: <LicensePlateSearchPage /> },
           { path: 'prices/:lotId', element: <PricesPage /> },
           { path: 'settings/:lotId', element: <SettingsPage /> },
           { path: 'reservations/:lotId', element: <ReservationsPage />,},
