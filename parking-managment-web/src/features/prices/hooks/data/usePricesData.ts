@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useGetPricesByParkingLotIdQuery } from '@prices/api/pricesApi';
 import type { PriceSearchFilters, PriceDisplayData } from '@prices/types';
 import { enhancePriceForDisplay, sortPrices } from '@prices/utils/priceUtils';
+import { useNotification } from '@shared/contexts/NotificationContext';
+import { useErrorHandler } from '@shared/utils/errorHandling';
 
 interface UsePricesDataOptions {
   parkingLotId: number;
@@ -18,6 +20,9 @@ export const usePricesData = ({
   sortOrder = 'asc',
   enabled = true,
 }: UsePricesDataOptions) => {
+  const { showNotification } = useNotification();
+  const { getUserFriendlyMessage } = useErrorHandler();
+  
   // Build query parameters
   const queryParams = useMemo(() => ({
     parkingLotId,
@@ -120,6 +125,14 @@ export const usePricesData = ({
       upcomingRulesCount: processedData.upcomingPrices.length,
     };
   }, [processedData, pricesByVehicleType]);
+
+  // Show error notification when prices data fails to load
+  useEffect(() => {
+    if (isError && error) {
+      const errorMessage = getUserFriendlyMessage(error);
+      showNotification('error', `Failed to load pricing data: ${errorMessage}`);
+    }
+  }, [isError, error, showNotification, getUserFriendlyMessage]);
 
   return {
     // Data

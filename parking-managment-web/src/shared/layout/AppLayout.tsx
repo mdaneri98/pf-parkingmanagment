@@ -43,7 +43,7 @@ function AppContent() {
   const isError = useAppSelector(selectParkingLotsError);
 
   const dispatch = useAppDispatch();
-  const { notification } = useNotification();
+  const { notification, showNotification } = useNotification();
 
   // Initialize selected lot ID from localStorage when user is authenticated
   useEffect(() => {
@@ -92,6 +92,7 @@ function AppContent() {
         errorMessage = apiErrorMessage.message;
       }
       dispatch(setParkingLotsError(errorMessage));
+      showNotification('error', errorMessage);
       return;
     }
 

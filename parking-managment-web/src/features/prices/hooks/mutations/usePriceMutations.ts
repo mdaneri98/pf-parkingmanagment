@@ -85,11 +85,7 @@ export const usePriceMutations = ({
         body: apiRequest,
       }).unwrap();
 
-      // Show success notification
-      showNotification({
-        type: 'success',
-        message: PRICE_SUCCESS_MESSAGES.PRICE.CREATED,
-      });
+      showNotification('success', PRICE_SUCCESS_MESSAGES.PRICE.CREATED);
 
       // Call success callback
       onSuccess?.('create', response.data);
@@ -98,11 +94,7 @@ export const usePriceMutations = ({
     } catch (error: any) {
       const errorMessage = error?.message || PRICE_ERROR_MESSAGES.PRICE.CREATE_FAILED;
       
-      // Show error notification
-      showNotification({
-        type: 'error',
-        message: errorMessage,
-      });
+      showNotification('error', errorMessage);
 
       // Call error callback
       onError?.('create', error);
@@ -157,10 +149,7 @@ export const usePriceMutations = ({
       }).unwrap();
 
       // Show success notification
-      showNotification({
-        type: 'success',
-        message: PRICE_SUCCESS_MESSAGES.PRICE.UPDATED,
-      });
+      showNotification('success', PRICE_SUCCESS_MESSAGES.PRICE.UPDATED);
 
       // Call success callback
       onSuccess?.('update', response.data);
@@ -170,10 +159,7 @@ export const usePriceMutations = ({
       const errorMessage = error?.message || PRICE_ERROR_MESSAGES.PRICE.UPDATE_FAILED;
       
       // Show error notification
-      showNotification({
-        type: 'error',
-        message: errorMessage,
-      });
+      showNotification('error', errorMessage);
 
       // Call error callback
       onError?.('update', error);
@@ -199,10 +185,7 @@ export const usePriceMutations = ({
       }).unwrap();
 
       // Show success notification
-      showNotification({
-        type: 'success',
-        message: PRICE_SUCCESS_MESSAGES.PRICE.DELETED,
-      });
+      showNotification('info', PRICE_SUCCESS_MESSAGES.PRICE.DELETED);
 
       // Call success callback
       onSuccess?.('delete');
@@ -212,10 +195,7 @@ export const usePriceMutations = ({
       const errorMessage = error?.message || PRICE_ERROR_MESSAGES.PRICE.DELETE_FAILED;
       
       // Show error notification
-      showNotification({
-        type: 'error',
-        message: errorMessage,
-      });
+      showNotification('error', errorMessage);
 
       // Call error callback
       onError?.('delete', error);

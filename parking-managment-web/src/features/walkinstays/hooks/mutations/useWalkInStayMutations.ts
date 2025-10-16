@@ -50,10 +50,7 @@ export const useWalkInStayMutations = () => {
           parkingLotId: parkingLotId || 0, // Used for cache invalidation
         }).unwrap();
 
-        showNotification({
-          type: 'success',
-          message: WALK_IN_STAY_SUCCESS_MESSAGES.CREATED,
-        });
+        showNotification('success', WALK_IN_STAY_SUCCESS_MESSAGES.CREATED);
 
         onSuccess?.(response.data);
       } catch (error: any) {
@@ -62,10 +59,7 @@ export const useWalkInStayMutations = () => {
           error?.data?.message ||
           WALK_IN_STAY_ERROR_MESSAGES.CREATE_FAILED;
 
-        showNotification({
-          type: 'error',
-          message: errorMessage,
-        });
+        showNotification('error', errorMessage);
 
         throw error;
       }
@@ -93,10 +87,7 @@ export const useWalkInStayMutations = () => {
             ? WALK_IN_STAY_SUCCESS_MESSAGES.COMPLETED
             : WALK_IN_STAY_SUCCESS_MESSAGES.STATUS_UPDATED;
 
-        showNotification({
-          type: 'success',
-          message: successMessage,
-        });
+        showNotification('success', successMessage);
 
         onSuccess?.(response.data);
       } catch (error: any) {
@@ -107,10 +98,7 @@ export const useWalkInStayMutations = () => {
             ? WALK_IN_STAY_ERROR_MESSAGES.COMPLETE_FAILED
             : WALK_IN_STAY_ERROR_MESSAGES.STATUS_UPDATE_FAILED);
 
-        showNotification({
-          type: 'error',
-          message: errorMessage,
-        });
+        showNotification('error', errorMessage);
 
         throw error;
       }
@@ -133,10 +121,7 @@ export const useWalkInStayMutations = () => {
           extraHours,
         }).unwrap();
 
-        showNotification({
-          type: 'success',
-          message: WALK_IN_STAY_SUCCESS_MESSAGES.EXTENDED,
-        });
+        showNotification('success', WALK_IN_STAY_SUCCESS_MESSAGES.EXTENDED);
 
         onSuccess?.(response.data);
       } catch (error: any) {
@@ -145,10 +130,7 @@ export const useWalkInStayMutations = () => {
           error?.data?.message ||
           WALK_IN_STAY_ERROR_MESSAGES.EXTEND_FAILED;
 
-        showNotification({
-          type: 'error',
-          message: errorMessage,
-        });
+        showNotification('error', errorMessage);
 
         throw error;
       }

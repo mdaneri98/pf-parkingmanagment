@@ -29,6 +29,11 @@ export function useSpotMutations(lotId: number) {
     callback?.();
   }, [showNotification]);
 
+  const handleDeleteSuccess = useCallback((message: string, callback?: () => void) => {
+    showNotification('info', message, PARKING_CONSTANTS.NOTIFICATIONS.SUCCESS_DURATION);
+    callback?.();
+  }, [showNotification]);
+
   const createSpot = useCallback(async (
     lotId: number,
     data: CreateSpotRequest, 
@@ -61,11 +66,11 @@ export function useSpotMutations(lotId: number) {
   ) => {
     try {
       await deleteSpotMutation({ spotId, parkingLotId: lotId }).unwrap();
-      handleMutationSuccess(SUCCESS_MESSAGES.SPOT.DELETED, onSuccess);
+      handleDeleteSuccess(SUCCESS_MESSAGES.SPOT.DELETED, onSuccess);
     } catch (error) {
       handleMutationError(error, 'deleteSpot');
     }
-  }, [deleteSpotMutation, lotId, handleMutationSuccess, handleMutationError]);
+  }, [deleteSpotMutation, lotId, handleDeleteSuccess, handleMutationError]);
 
   return {
     mutations: {

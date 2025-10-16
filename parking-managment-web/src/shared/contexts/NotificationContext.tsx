@@ -1,13 +1,18 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface Notification {
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning' | 'info';
   message: string;
+  title?: string;
+}
+
+export interface NotificationState extends Notification {
+  isVisible: boolean;
 }
 
 interface NotificationContextType {
-  notification: Notification | null;
-  showNotification: (type: 'success' | 'error', message: string, duration?: number) => void;
+  notification: NotificationState | null;
+  showNotification: (type: 'success' | 'error' | 'warning' | 'info', message: string, duration?: number, title?: string) => void;
   clearNotification: () => void;
 }
 
@@ -26,10 +31,10 @@ interface NotificationProviderProps {
 }
 
 export const NotificationProvider = ({ children }: NotificationProviderProps) => {
-  const [notification, setNotification] = useState<Notification | null>(null);
+  const [notification, setNotification] = useState<NotificationState | null>(null);
 
-  const showNotification = (type: 'success' | 'error', message: string, duration: number = 3000) => {
-    setNotification({ type, message });
+  const showNotification = (type: 'success' | 'error' | 'warning' | 'info', message: string, duration: number = 3000, title?: string) => {
+    setNotification({ type, message, title, isVisible: true });
     setTimeout(() => setNotification(null), duration);
   };
 

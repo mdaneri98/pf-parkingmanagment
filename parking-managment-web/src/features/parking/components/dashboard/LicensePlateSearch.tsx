@@ -10,6 +10,8 @@ import { useGetSpotsByParkingLotIdQuery } from '@parking/api/parkingApi';
 import { PARKING_CONSTANTS } from '@parking/constants/parking';
 import type { SpotDTO } from '@parking/types';
 import { logger } from '@shared/utils/logger';
+import { useNotification } from '@shared/contexts/NotificationContext';
+import { useErrorHandler } from '@shared/utils/errorHandling';
 
 interface LicensePlateSearchProps {
   lotId: number;
@@ -20,6 +22,8 @@ interface LicensePlateSearchProps {
 export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicensePlateSearchProps) {
   const [licensePlate, setLicensePlate] = useState('');
   const [searchTrigger, setSearchTrigger] = useState<string | null>(null);
+  const { showNotification } = useNotification();
+  const { getUserFriendlyMessage } = useErrorHandler();
 
   // Live search with 500ms debounce
   useEffect(() => {
@@ -74,6 +78,14 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
       spotsData,
     });
   }, [lotId, searchTrigger, licensePlate, isSearching, isSearchError, searchError, walkInStayData, spotsData]);
+
+  // Show error notification when search fails
+  useEffect(() => {
+    if (isSearchError && searchError && searchTrigger) {
+      const errorMessage = getUserFriendlyMessage(searchError);
+      showNotification('error', `Failed to search for license plate "${searchTrigger}": ${errorMessage}`);
+    }
+  }, [isSearchError, searchError, searchTrigger, showNotification, getUserFriendlyMessage]);
 
   const handleSearch = () => {
     if (licensePlate.trim()) {

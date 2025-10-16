@@ -35,6 +35,11 @@ export function useParkingLotMutations() {
     callback?.();
   }, [showNotification]);
 
+  const handleDeleteSuccess = useCallback((message: string, callback?: () => void) => {
+    showNotification('info', message, PARKING_CONSTANTS.NOTIFICATIONS.SUCCESS_DURATION);
+    callback?.();
+  }, [showNotification]);
+
   const createLot = useCallback(async (
     data: CreateParkingLotRequest, 
     onSuccess?: (createdLot: ParkingLotResponse) => void
@@ -73,11 +78,11 @@ export function useParkingLotMutations() {
         dispatch(setSelectedParkingLotId(null));
       }
       
-      handleMutationSuccess(SUCCESS_MESSAGES.LOT.DELETED, onSuccess);
+      handleDeleteSuccess(SUCCESS_MESSAGES.LOT.DELETED, onSuccess);
     } catch (error) {
       handleMutationError(error, 'deleteParkingLot');
     }
-  }, [deleteLotMutation, selectedLotId, dispatch, handleMutationSuccess, handleMutationError]);
+  }, [deleteLotMutation, selectedLotId, dispatch, handleDeleteSuccess, handleMutationError]);
 
   return {
     mutations: {

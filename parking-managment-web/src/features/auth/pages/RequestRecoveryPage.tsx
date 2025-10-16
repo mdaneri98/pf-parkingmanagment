@@ -7,7 +7,8 @@ import { useAppDispatch } from '@hooks/useAppDispatch';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { setAuthError, setAuthLoading } from '../slice/authSlice';
 import { selectAuthError, selectAuthLoading } from '../selectors';
-import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
+import { Button, Input } from '@shared/ui/components';
+import { useNotification } from '@shared/contexts/NotificationContext';
 
 type FormValues = { email: string };
 
@@ -16,6 +17,7 @@ export function RequestRecoveryPage() {
   const [requestRecovery, { isLoading: isApiLoading }] = useRequestPasswordRecoveryMutation();
   const [isSuccess, setIsSuccess] = useState(false);
   const dispatch = useAppDispatch();
+  const { showNotification } = useNotification();
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
@@ -28,8 +30,9 @@ export function RequestRecoveryPage() {
       
       await requestRecovery(values).unwrap();
       setIsSuccess(true);
+      showNotification('success', 'If an account with that email exists, we\'ve sent you a password reset link.');
     } catch (error) {
-      dispatch(setAuthError('Recovery request failed. Please try again.'));
+      showNotification('error', 'Recovery request failed. Please try again.');
     } finally {
       dispatch(setAuthLoading(false));
     }
@@ -57,21 +60,6 @@ export function RequestRecoveryPage() {
             }
           />
 
-          {authError && (
-            <Alert variant="error">
-              <AlertDescription>
-                {authError}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {isSuccess && (
-            <Alert variant="success">
-              <AlertDescription>
-                If an account with that email exists, we've sent you a password reset link.
-              </AlertDescription>
-            </Alert>
-          )}
 
           <Button 
             type="submit" 

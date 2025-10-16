@@ -8,8 +8,9 @@ import { useAppSelector } from '@hooks/useAppSelector';
 import { selectAuth } from '../selectors';
 import { setAuthError, setInitialized, setCredentials, setUser } from '@auth/slice/authSlice';
 import { useErrorHandler } from '@shared/utils/errorHandling';
-import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
+import { Button, Input } from '@shared/ui/components';
 import { authInitializationService } from '@auth/services/authInitializationService';
+import { useNotification } from '@shared/contexts/NotificationContext';
 
 type FormValues = { email: string; password: string };
 
@@ -20,6 +21,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const { error: authError } = useAppSelector(selectAuth);
   const { handleError, getUserFriendlyMessage } = useErrorHandler();
+  const { showNotification } = useNotification();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,21 +41,22 @@ export function LoginPage() {
           dispatch(setUser(userResponse.data));
         } else {
           authInitializationService.clearStoredCredentials();
-          dispatch(setAuthError('Login failed: Unable to load user profile.'));
+          showNotification('error', 'Login failed: Unable to load user profile.');
           return;
         }
       } catch (userError) {
         console.error(userError);
         authInitializationService.clearStoredCredentials();
-        dispatch(setAuthError('Login failed: Unable to load user profile. Please try again.'));
+        showNotification('error', 'Login failed: Unable to load user profile. Please try again.');
         return;
       }
 
       dispatch(setInitialized(true));
+      showNotification('success', 'Successfully signed in!');
       navigate('/app', { replace: true });
     } catch (loginError) {
       const appError = handleError(loginError, { component: 'LoginPage', action: 'login_attempt' });
-      dispatch(setAuthError(getUserFriendlyMessage(appError)));
+      showNotification('error', getUserFriendlyMessage(appError));
     }
   };
 
@@ -86,11 +89,6 @@ export function LoginPage() {
             </label>
           </div>
 
-          {authError && (
-              <Alert variant="error">
-                <AlertDescription>{authError || 'Login failed. Please check your credentials and try again.'}</AlertDescription>
-              </Alert>
-          )}
 
           <Button type="submit" className="w-full" size="lg" loading={isSubmitting || isLoading}>
             Sign in
