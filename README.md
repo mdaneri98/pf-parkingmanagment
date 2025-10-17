@@ -29,10 +29,13 @@ A full-stack parking management system built with Spring Boot and React TypeScri
 
 ### Prerequisites
 
-- Java 21, Maven 3.6
+- Java 21+, Maven 3.6+
 - Node.js 18+, npm
+- **Docker** (required for backend database services)
 
 ### Backend Setup
+
+It is important to have Docker already running on the machine.
 
 ```bash
 cd parking-managment-api
