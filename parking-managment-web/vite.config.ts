@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => {
       '@prices': path.resolve(__dirname, './src/features/prices'),
       '@users': path.resolve(__dirname, './src/features/users'),
       '@auth': path.resolve(__dirname, './src/features/auth'),
+      '@walkinstays': path.resolve(__dirname, './src/features/walkinstays'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@stores': path.resolve(__dirname, './src/stores'),
       '@hooks': path.resolve(__dirname, './src/hooks'),

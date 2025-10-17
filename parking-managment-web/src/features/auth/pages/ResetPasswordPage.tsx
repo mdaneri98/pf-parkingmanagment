@@ -7,7 +7,8 @@ import { useAppDispatch } from '@hooks/useAppDispatch';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { setAuthError, setAuthLoading } from '../slice/authSlice';
 import { selectAuthError, selectAuthLoading } from '../selectors';
-import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
+import { Button, Input } from '@shared/ui/components';
+import { useNotification } from '@shared/contexts/NotificationContext';
 
 type FormValues = { token: string; newPassword: string };
 
@@ -16,6 +17,7 @@ export function ResetPasswordPage() {
   const [resetPassword, { isLoading: isApiLoading }] = useResetPasswordMutation();
   const [isSuccess, setIsSuccess] = useState(false);
   const dispatch = useAppDispatch();
+  const { showNotification } = useNotification();
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
@@ -28,8 +30,9 @@ export function ResetPasswordPage() {
       
       await resetPassword(values).unwrap();
       setIsSuccess(true);
+      showNotification('success', 'Password reset successfully! You can now sign in with your new password.');
     } catch (error) {
-      dispatch(setAuthError('Password reset failed. Please check your token and try again.'));
+      showNotification('error', 'Password reset failed. Please check your token and try again.');
     } finally {
       dispatch(setAuthLoading(false));
     }
@@ -69,21 +72,6 @@ export function ResetPasswordPage() {
             }
           />
 
-          {authError && (
-            <Alert variant="error">
-              <AlertDescription>
-                {authError}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {isSuccess && (
-            <Alert variant="success">
-              <AlertDescription>
-                Password reset successfully! You can now sign in with your new password.
-              </AlertDescription>
-            </Alert>
-          )}
 
           <Button 
             type="submit" 

@@ -35,6 +35,7 @@ interface DashboardModalsProps {
   onUpdateSpot: (spotId: number, data: UpdateSpotRequest) => void;
   onDeleteSpot: (id: number) => void;
   onSpotModalClose: () => void;
+  onRefetchSpots: () => void;
 }
 
 export function DashboardModals({
@@ -46,12 +47,14 @@ export function DashboardModals({
   onUpdateSpot,
   onDeleteSpot,
   onSpotModalClose,
+  onRefetchSpots,
 }: DashboardModalsProps) {
   return (
     <>
       {/* Spot Detail Modal */}
       <SpotDetailModal
         spot={selectedSpot}
+        lotId={lotId}
         isOpen={modalState.modals.spotDetail}
         onClose={onSpotModalClose}
         onEdit={() => {
@@ -74,6 +77,7 @@ export function DashboardModals({
           }
         }}
         isToggling={loadingStates.updateSpot}
+        onRefetchSpot={onRefetchSpots}
       />
 
       {/* Create Spot Modal */}

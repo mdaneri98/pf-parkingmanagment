@@ -53,7 +53,7 @@ export const parkingApi = createApi({
   baseQuery: smartBaseQuery,
   refetchOnFocus: true,
   refetchOnReconnect: true,
-  tagTypes: ['ParkingLot', 'UserParkingLots', 'Spots'],
+  tagTypes: ['ParkingLot', 'UserParkingLots', 'Spots', 'WalkInStay', 'ParkingLotWalkInStays', 'SpotWalkInStay'],
   endpoints: (builder) => ({
     getParkingLots: builder.query<ApiResponse<ParkingLotResponse[]>, void>({
       query: () => ({

@@ -6,7 +6,7 @@ import { RequestRecoveryPage } from '@auth/pages/RequestRecoveryPage';
 import { ResetPasswordPage } from '@auth/pages/ResetPasswordPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AppLayout } from '@shared/layout';
-import { DashboardPage, SettingsPage, WelcomePage } from '@parking/pages';
+import { DashboardPage, SettingsPage, WelcomePage, SelectLotPage, LicensePlateSearchPage } from '@parking/pages';
 import { PricesPage } from '@prices/pages/PricesPage';
 import { ReservationsPage } from '../../features/reservations/pages/ReservationsPage';
 
@@ -44,10 +44,7 @@ export const router = createBrowserRouter([
           },
           { 
             path: 'select-lot', 
-            element: <div className="p-4 text-center text-gray-600">
-              <h2 className="text-lg font-semibold mb-2">Select a Parking Lot</h2>
-              <p className="text-sm">Choose a parking lot from the sidebar to view its dashboard.</p>
-            </div> 
+            element: <SelectLotPage />
           },
           {
             path: 'welcome',
@@ -55,6 +52,7 @@ export const router = createBrowserRouter([
           },
           // Lot-specific routes
           { path: 'dashboard/:lotId', element: <DashboardPage /> },
+          { path: 'license-plate-search/:lotId', element: <LicensePlateSearchPage /> },
           { path: 'prices/:lotId', element: <PricesPage /> },
           { path: 'settings/:lotId', element: <SettingsPage /> },
           { path: 'reservations/:lotId', element: <ReservationsPage />,},

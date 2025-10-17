@@ -16,5 +16,5 @@ public class SpotRequest {
 
     private Boolean isAvailable;
 
-    private Boolean reservationPriority;
+    private Boolean isReservable;
 }

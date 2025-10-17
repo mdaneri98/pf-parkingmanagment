@@ -45,9 +45,9 @@ public class WalkInStaySpecifications {
 
             // filtrar por patente del vehículo
             if (vehiclePlate != null && !vehiclePlate.isBlank()) {
-                predicates.add(cb.equal(
-                        root.get("userVehicleAssignment").get("vehicle").get("licensePlate"),
-                        vehiclePlate
+                predicates.add(cb.like(
+                        cb.lower(root.get("userVehicleAssignment").get("vehicle").get("licensePlate")),
+                        "%" + vehiclePlate.toLowerCase() + "%"
                 ));
             }
 

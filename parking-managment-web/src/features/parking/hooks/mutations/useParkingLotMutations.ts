@@ -5,12 +5,18 @@ import {
   useDeleteParkingLotMutation,
 } from '@parking/api/parkingApi';
 import { useNotification } from '@shared/contexts/NotificationContext';
+import { useAppSelector } from '@hooks/useAppSelector';
+import { useAppDispatch } from '@hooks/useAppDispatch';
+import { setSelectedParkingLotId } from '@parking/slice/parkingSlice';
+import { selectSelectedParkingLotId } from '@parking/selectors/parkingLotSelectors';
 import type { CreateParkingLotRequest, UpdateParkingLotRequest, ParkingLotResponse } from '@parking/types';
 import { SUCCESS_MESSAGES, PARKING_CONSTANTS } from '@parking/constants/parking';
 import { ErrorHandlingService } from '@parking/services/errorHandlingService';
 
 export function useParkingLotMutations() {
   const { showNotification } = useNotification();
+  const dispatch = useAppDispatch();
+  const selectedLotId = useAppSelector(selectSelectedParkingLotId);
   
   const [createLotMutation, createLotState] = useCreateParkingLotMutation();
   const [updateLotMutation, updateLotState] = useUpdateParkingLotMutation();
@@ -26,6 +32,11 @@ export function useParkingLotMutations() {
 
   const handleMutationSuccess = useCallback((message: string, callback?: () => void) => {
     showNotification('success', message, PARKING_CONSTANTS.NOTIFICATIONS.SUCCESS_DURATION);
+    callback?.();
+  }, [showNotification]);
+
+  const handleDeleteSuccess = useCallback((message: string, callback?: () => void) => {
+    showNotification('info', message, PARKING_CONSTANTS.NOTIFICATIONS.SUCCESS_DURATION);
     callback?.();
   }, [showNotification]);
 
@@ -61,11 +72,17 @@ export function useParkingLotMutations() {
   ) => {
     try {
       await deleteLotMutation(lotId).unwrap();
-      handleMutationSuccess(SUCCESS_MESSAGES.LOT.DELETED, onSuccess);
+      
+      // If the deleted lot was the selected one, clear the selection
+      if (selectedLotId === lotId) {
+        dispatch(setSelectedParkingLotId(null));
+      }
+      
+      handleDeleteSuccess(SUCCESS_MESSAGES.LOT.DELETED, onSuccess);
     } catch (error) {
       handleMutationError(error, 'deleteParkingLot');
     }
-  }, [deleteLotMutation, handleMutationSuccess, handleMutationError]);
+  }, [deleteLotMutation, selectedLotId, dispatch, handleDeleteSuccess, handleMutationError]);
 
   return {
     mutations: {

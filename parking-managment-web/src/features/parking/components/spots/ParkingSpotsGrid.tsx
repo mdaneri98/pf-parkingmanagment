@@ -1,62 +1,37 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { SpotDTO } from '@parking/types';
 import { ParkingService } from '@parking/services/parkingService';
-import { PARKING_CONSTANTS } from '@parking/constants/parking'; 
+import { PARKING_CONSTANTS } from '@parking/constants/parking';
+import { naturalCompare } from '@shared/utils'; 
 
 interface Props {
   spots: SpotDTO[];
   isLoading?: boolean;
   onSpotClick?: (spot: SpotDTO) => void;
+  floorsPerPage?: number; // Default: 2
 }
 
-// Natural sort helper
-function naturalCompare(a: string, b: string): number {
-  const chunkify = (str: string) =>
-    str.match(/(\d+|\D+)/g)?.map(part =>
-      /^\d+$/.test(part) ? Number(part) : part
-    ) || [str];
 
-  const aChunks = chunkify(a);
-  const bChunks = chunkify(b);
-
-  const len = Math.max(aChunks.length, bChunks.length);
-
-  for (let i = 0; i < len; i++) {
-    const aPart = aChunks[i];
-    const bPart = bChunks[i];
-
-    if (aPart === undefined) return -1;
-    if (bPart === undefined) return 1;
-
-    if (typeof aPart === "number" && typeof bPart === "number") {
-      if (aPart !== bPart) return aPart - bPart;
-    } else if (typeof aPart === "string" && typeof bPart === "string") {
-      const cmp = aPart.localeCompare(bPart);
-      if (cmp !== 0) return cmp;
-    } else {
-      // Numbers come before strings
-      return typeof aPart === "number" ? -1 : 1;
-    }
-  }
-
-  return 0;
-}
-
-export function ParkingSpotsGrid({ spots, isLoading = false, onSpotClick }: Props) {
-  const [selectedFloor, setSelectedFloor] = useState<number | 'all'>('all');
+export function ParkingSpotsGrid({ spots, isLoading = false, onSpotClick, floorsPerPage = 1 }: Props) {
+  const [currentPage, setCurrentPage] = useState(0);
 
   const floors = useMemo(() => {
     const floorSet = new Set(spots.map(spot => String(spot.floor)));
     return Array.from(floorSet).sort(naturalCompare);
   }, [spots]);
 
-  const filteredSpots = useMemo(() => {
-    if (selectedFloor === 'all') return spots;
-    return spots.filter(spot => spot.floor === selectedFloor);
-  }, [spots, selectedFloor]);
+  // Reset to first page when spots change
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [spots]);
+
+  const totalPages = Math.ceil(floors.length / floorsPerPage);
+  const startFloorIndex = currentPage * floorsPerPage;
+  const endFloorIndex = startFloorIndex + floorsPerPage;
+  const currentFloors = floors.slice(startFloorIndex, endFloorIndex);
 
   const spotsByFloor = useMemo(() => {
-    const grouped = filteredSpots.reduce((acc, spot) => {
+    const grouped = spots.reduce((acc, spot) => {
       if (!acc[spot.floor]) acc[spot.floor] = [];
       acc[spot.floor].push(spot);
       return acc;
@@ -68,7 +43,7 @@ export function ParkingSpotsGrid({ spots, isLoading = false, onSpotClick }: Prop
     });
 
     return grouped;
-  }, [filteredSpots]);
+  }, [spots]);
 
   const getVehicleTypeIcon = (vehicleType: string) => {
     return ParkingService.getVehicleIcon(vehicleType as any);
@@ -112,10 +87,42 @@ export function ParkingSpotsGrid({ spots, isLoading = false, onSpotClick }: Prop
 
   return (
     <div className="space-y-6">
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+            disabled={currentPage === 0}
+            className="flex items-center px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Previous
+          </button>
+
+          <div className="text-sm text-neutral-600 dark:text-neutral-400">
+            Floor {currentFloors[0]} of {floors.length} floors
+          </div>
+
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+            disabled={currentPage === totalPages - 1}
+            className="flex items-center px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Next
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Spots grid by floor */}
-      {Object.entries(spotsByFloor).map(([floor, floorSpots]) => (
-        <div key={floor} className="space-y-4">
-          {floors.length > 1 && selectedFloor === 'all' && (
+      {currentFloors.map((floor) => {
+        const floorSpots = spotsByFloor[floor] || [];
+        return (
+          <div key={floor} className="space-y-4">
             <div className="flex items-center space-x-2">
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
                 Floor {floor}
@@ -124,21 +131,21 @@ export function ParkingSpotsGrid({ spots, isLoading = false, onSpotClick }: Prop
                 {floorSpots.length} spots
               </span>
             </div>
-          )}
-          
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-3">
-            {floorSpots.map((spot) => (
-              <SpotCard 
-                key={spot.id} 
-                spot={spot} 
-                onClick={() => onSpotClick?.(spot)}
-                icon={getVehicleTypeIcon(spot.vehicleType)}
-                colorClass={getSpotStatusColor(spot)}
-              />
-            ))}
+            
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-3">
+              {floorSpots.map((spot) => (
+                <SpotCard 
+                  key={spot.id} 
+                  spot={spot} 
+                  onClick={() => onSpotClick?.(spot)}
+                  icon={getVehicleTypeIcon(spot.vehicleType)}
+                  colorClass={getSpotStatusColor(spot)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

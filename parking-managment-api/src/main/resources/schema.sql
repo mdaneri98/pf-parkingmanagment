@@ -88,9 +88,9 @@ CREATE TABLE IF NOT EXISTS parking_price (
 -- Tabla de vehículos
 CREATE TABLE IF NOT EXISTS vehicle (
     license_plate VARCHAR(20) PRIMARY KEY,
-    brand VARCHAR(50) NOT NULL,
-    model VARCHAR(50) NOT NULL,
-    type VARCHAR(30) NOT NULL,
+    brand VARCHAR(50),
+    model VARCHAR(50),
+    type VARCHAR(30),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

@@ -1,11 +1,15 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGetSpotsByParkingLotIdQuery } from '@parking/api/parkingApi';
 import { PARKING_CONSTANTS } from '@parking/constants/parking';
 import { ParkingService } from '@parking/services/parkingService';
 import type { SpotFilters, AvailableFilters } from '@parking/types';
+import { useNotification } from '@shared/contexts/NotificationContext';
+import { useErrorHandler } from '@shared/utils/errorHandling';
 
 export function useSpotsData(lotId: number) {
   const [spotFilters, setSpotFilters] = useState<SpotFilters>({});
+  const { showNotification } = useNotification();
+  const { getUserFriendlyMessage } = useErrorHandler();
 
   
   const allSpotsQuery = useGetSpotsByParkingLotIdQuery(
@@ -35,6 +39,14 @@ export function useSpotsData(lotId: number) {
   const availableFilters: AvailableFilters = useMemo(() => {
     return ParkingService.generateFilterOptions(allSpots);
   }, [allSpots]);
+
+  // Show error notification when spots data fails to load
+  useEffect(() => {
+    if (allSpotsQuery.isError && allSpotsQuery.error) {
+      const errorMessage = getUserFriendlyMessage(allSpotsQuery.error);
+      showNotification('error', `Failed to load parking spots: ${errorMessage}`);
+    }
+  }, [allSpotsQuery.isError, allSpotsQuery.error, showNotification, getUserFriendlyMessage]);
 
   return {
     spots: {

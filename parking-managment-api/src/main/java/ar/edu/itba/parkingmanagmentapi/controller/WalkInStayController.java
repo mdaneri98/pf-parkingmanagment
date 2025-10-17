@@ -55,6 +55,17 @@ public class WalkInStayController {
         return ApiResponse.ok(PageResponse.of(responses));
     }
 
+    @GetMapping("/parking-lot/{parkingLotId}")
+    @PreAuthorize("@authorizationService.isCurrentUserManagerOfParkingLot(#parkingLotId)")
+    public ResponseEntity<?> getWalkInStaysByParkingLot(
+            @PathVariable Long parkingLotId,
+            @RequestParam(required = false, defaultValue = "ACTIVE") ReservationStatus status,
+            @RequestParam(required = false) String licensePlate
+    ) {
+        Page<ReservationResponse> response = walkInStayService.getReservationsByParkingLot(parkingLotId, status, licensePlate, null, null, Pageable.unpaged());
+        return ApiResponse.ok(response.getContent());
+    }
+
     @PatchMapping("/{id}/status")
     @PreAuthorize("@authorizationService.isCurrentUserManagerOfReservation(#id)")
     public ResponseEntity<?> updateWalkInStayStatus(

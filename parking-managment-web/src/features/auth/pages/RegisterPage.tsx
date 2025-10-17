@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthCard } from '../components/AuthCard';
 import { useRegisterMutation } from '../api/authApi';
@@ -7,7 +7,8 @@ import { useAppDispatch } from '@hooks/useAppDispatch';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { setAuthError, setAuthLoading } from '../slice/authSlice';
 import { selectAuthError, selectAuthLoading } from '../selectors';
-import { Button, Input, Alert, AlertDescription } from '@shared/ui/components';
+import { Button, Input } from '@shared/ui/components';
+import { useNotification } from '@shared/contexts/NotificationContext';
 
 type FormValues = { firstName: string; lastName: string; email: string; password: string };
 
@@ -16,9 +17,12 @@ export function RegisterPage() {
   const [doRegister, { isLoading: isApiLoading }] = useRegisterMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -27,9 +31,10 @@ export function RegisterPage() {
       
       await doRegister(values).unwrap();
       
+      showNotification('success', 'Account created successfully! Please sign in.');
       navigate("/login", { replace: true });
     } catch (error) {
-      dispatch(setAuthError('Registration failed. Please check your information and try again.'));
+      showNotification('error', 'Registration failed. Please check your information and try again.');
     } finally {
       dispatch(setAuthLoading(false));
     }
@@ -74,7 +79,7 @@ export function RegisterPage() {
         />
         
         <Input
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           label="Password"
           placeholder="Create a strong password"
           helpText="Use at least 8 characters with a mix of letters, numbers and symbols"
@@ -85,14 +90,18 @@ export function RegisterPage() {
             </svg>
           }
         />
+          {/* Checkbox para mostrar contraseña */}
+          <label className="flex items-center mt-1 text-sm select-none">
+              <input
+                  type="checkbox"
+                  className="mr-2"
+                  checked={showPassword}
+                  onChange={() => setShowPassword(!showPassword)}
+              />
+              Show password
+          </label>
 
-        {authError && (
-          <Alert variant="error">
-            <AlertDescription>
-              {authError}
-            </AlertDescription>
-          </Alert>
-        )}
+
 
         <Button 
           type="submit" 

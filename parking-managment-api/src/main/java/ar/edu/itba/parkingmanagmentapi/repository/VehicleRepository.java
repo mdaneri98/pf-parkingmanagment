@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, String> {
@@ -15,7 +16,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, String> {
     @Query("SELECT v FROM Vehicle v JOIN v.userAssignments ua WHERE ua.user.id = :userId")
     List<Vehicle> findByUserId(@Param("userId") Long userId);
 
-    Vehicle findByLicensePlate(String licensePlate);
+    Optional<Vehicle> findByLicensePlate(String licensePlate);
 
     @Query("SELECT v FROM Vehicle v " +
             "JOIN v.userAssignments uva " +

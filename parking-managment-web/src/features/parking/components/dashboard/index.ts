@@ -3,3 +3,4 @@ export { MetricsGrid } from './MetricsGrid';
 export { KpiCard } from './KpiCard';
 export { SpotsSection } from './SpotsSection';
 export { DashboardModals } from './DashboardModals';
+export { LicensePlateSearch } from './LicensePlateSearch';

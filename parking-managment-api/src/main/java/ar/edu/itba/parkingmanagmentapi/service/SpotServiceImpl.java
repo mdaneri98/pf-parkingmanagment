@@ -29,7 +29,6 @@ public class SpotServiceImpl implements SpotService {
     private final SpotRepository spotRepository;
     private final ParkingLotService parkingLotService;
     private final SpotRequestValidator spotRequestValidator;
-
     private final ScheduledReservationRepository scheduledReservationRepository;
     private final WalkInStayRepository walkInStayRepository;
 
@@ -57,7 +56,7 @@ public class SpotServiceImpl implements SpotService {
         spot.setCode(request.getCode());
         spot.setIsAvailable(true);
         spot.setParkingLot(parkingLot);
-        spot.setReservationPriority(request.getReservationPriority());
+        spot.setReservationPriority(request.getIsReservable());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
@@ -85,8 +84,7 @@ public class SpotServiceImpl implements SpotService {
         spot.setVehicleType(request.getVehicleType());
         spot.setCode(request.getCode());
         spot.setFloor(request.getFloor());
-        spot.setIsAvailable(request.getIsAvailable());
-        spot.setReservationPriority(request.getReservationPriority());
+        spot.setReservationPriority(request.getIsReservable());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
@@ -130,4 +128,16 @@ public class SpotServiceImpl implements SpotService {
                 .map(ParkingLotMapper::toSpotResponse);
     }
 
+    // -------------------------- RAW ENTITIES --------------------------
+
+
+    @Override
+    public Spot findEntityById(Long spotId) {
+        return spotRepository.findById(spotId).orElseThrow(() -> new NotFoundException("Spot not found"));
+    }
+
+    @Override
+    public Spot updateEntity(Spot spot) {
+        return spotRepository.save(spot);
+    }
 }

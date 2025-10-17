@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGetReservationsByParkingLotIdQuery } from '../api/reservationApi';
 import { ReservationResponse, ReservationStatus } from '../types';
 import {
@@ -8,6 +8,8 @@ import {
     getStatusColor,
 } from '../constants/reservations';
 import { ReservationDetailModal } from './modals/ReservationDetailModal';
+import { useNotification } from '@shared/contexts/NotificationContext';
+import { useErrorHandler } from '@shared/utils/errorHandling';
 
 const { DEFAULT_PAGE_SIZE} = RESERVATION_CONSTANTS.PAGINATION;
 
@@ -15,11 +17,14 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_PAGE_SIZE);
     const [selectedReservation, setSelectedReservation] = useState<ReservationResponse | null>(null);
+    const { showNotification } = useNotification();
+    const { getUserFriendlyMessage } = useErrorHandler();
 
     const {
         data,
         isLoading,
         isError,
+        error,
         refetch,
     } = useGetReservationsByParkingLotIdQuery({
         parkingLotId,
@@ -30,6 +35,14 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
 
     const reservations = data?.data?.content ?? [];
     const totalPages = Math.ceil(reservations.length / itemsPerPage);
+
+    // Show error notification when reservations fail to load
+    useEffect(() => {
+        if (isError && error) {
+            const errorMessage = getUserFriendlyMessage(error);
+            showNotification('error', `Failed to load reservations: ${errorMessage}`);
+        }
+    }, [isError, error, showNotification, getUserFriendlyMessage]);
 
     if (isLoading) return <div className="p-4 text-gray-500">Loading reservations...</div>;
     if (isError)

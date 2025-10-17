@@ -15,8 +15,8 @@ public interface ReservationService<T> {
 
     ReservationResponse getReservation(Long id);
 
-    Page<ReservationResponse> getReservationsByUser(Long userId, ReservationStatus status, String vehiclePlate, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<ReservationResponse> getReservationsByUser(Long userId, ReservationStatus status, String licensePlate, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    Page<ReservationResponse> getScheduledReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, String licensePlate, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
 }

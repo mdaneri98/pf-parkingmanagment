@@ -54,5 +54,9 @@ public interface UserService {
      */
     Optional<User> findEntityByEmail(String email);
 
+    /**
+     * Get the default user
+     */
+    User findDefaulUser();
 
 }

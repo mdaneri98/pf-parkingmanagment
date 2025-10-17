@@ -3,13 +3,14 @@ package ar.edu.itba.parkingmanagmentapi.service;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.ParkingLotResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateParkingLotRequest;
+import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingLot;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import ar.edu.itba.parkingmanagmentapi.repository.ParkingLotRepository;
-import ar.edu.itba.parkingmanagmentapi.repository.SpotRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
 import ar.edu.itba.parkingmanagmentapi.security.service.SecurityService;
 import ar.edu.itba.parkingmanagmentapi.util.ParkingLotMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.CreateParkingLotRequestValidator;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,13 +29,9 @@ import java.util.stream.Collectors;
 public class ParkingLotServiceImpl implements ParkingLotService {
 
     private final ParkingLotRepository parkingLotRepository;
-
-    private final SpotRepository spotRepository;
-
     private final CreateParkingLotRequestValidator createParkingLotRequestValidator;
-
     private final UpdateParkingLotRequestValidator updateParkingLotRequestValidator;
-
+    private final ScheduledReservationRepository scheduledReservationRepository;
     private final SecurityService securityService;
 
     @Override
@@ -104,8 +102,16 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteParkingLot(Long id) {
-        if (!parkingLotRepository.existsById(id)) {
-            throw new NotFoundException("ParkingLot with id " + id + " not found");
+        ParkingLot parkingLot = parkingLotRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Parking lot not found"));
+
+        boolean hasFutureScheduledReservations = scheduledReservationRepository.existsBySpotParkingLotIdAndReservedStartTimeAfter(
+                id, LocalDateTime.now());
+
+        boolean hasUnavailableSpots = parkingLot.getSpots().stream().anyMatch(spot -> !spot.getIsAvailable());
+
+        if (hasUnavailableSpots || hasFutureScheduledReservations) {
+            throw new BadRequestException("Cannot delete parking lot: it has active or future reservations");
         }
         parkingLotRepository.deleteById(id);
     }

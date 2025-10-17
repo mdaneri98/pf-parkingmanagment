@@ -30,3 +30,8 @@ recovery:
   token:
     ttl-seconds: 1800
   expose-token-in-response: false
+
+
+constants:
+  default:
+    user_id: 1

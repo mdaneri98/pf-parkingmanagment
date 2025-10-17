@@ -1,5 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.dto.ReservationResponse;
 import ar.edu.itba.parkingmanagmentapi.dto.ScheduledReservationRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.enums.ReservationStatus;
@@ -7,7 +8,12 @@ import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.ScheduledReservation;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
-import ar.edu.itba.parkingmanagmentapi.repository.*;
+import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
+import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationSpecifications;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 import ar.edu.itba.parkingmanagmentapi.validators.ScheduledReservationRequestValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,20 +29,22 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
     private final ScheduledReservationRequestValidator scheduledReservationRequestValidator;
 
     protected ScheduledReservationServiceImpl(
-            SpotRepository spotRepository,
+            SpotService spotService,
             ParkingPriceRepository parkingPriceRepository,
-            UserVehicleAssignmentRepository userVehicleAssignmentRepository,
-            ScheduledReservationRepository scheduledReservationRepository,
+            ScheduledReservationRepository reservationRepository,
+            VehicleService vehicleService,
+            WalkInStayRepository walkInStayRepository,
             ScheduledReservationRequestValidator scheduledReservationRequestValidator,
-            WalkInStayRepository walkInStayRepository) {
-        super(spotRepository, parkingPriceRepository, userVehicleAssignmentRepository, walkInStayRepository, scheduledReservationRepository);
+            UserVehicleAssignmentService userVehicleAssignmentService) {
+        super(spotService, parkingPriceRepository, vehicleService, walkInStayRepository, reservationRepository, userVehicleAssignmentService);
         this.scheduledReservationRequestValidator = scheduledReservationRequestValidator;
     }
 
     @Override
     public ReservationResponse createReservation(ScheduledReservationRequest request) {
         scheduledReservationRequestValidator.validate(request);
-        Spot spot = getSpotById(request.getSpotId());
+
+        Spot spot = spotService.findEntityById(request.getSpotId());
 
         boolean hasActiveWalkIn = walkInStayRepository.existsBySpotAndCheckOutTimeIsNull(spot);
         if (hasActiveWalkIn) {
@@ -52,13 +60,19 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
 
         BigDecimal estimatedPrice = calculateEstimatedPrice(spot, request.getReservedStartTime(), request.getExpectedEndTime());
 
+        UserVehicleAssignment assignment = findOrCreateVehicleAssignment(request.getVehicleLicensePlate(), spot.getVehicleType());
+
+        LocalDateTime now = LocalDateTime.now();
         ScheduledReservation reservation = new ScheduledReservation();
         reservation.setReservedStartTime(request.getReservedStartTime());
+        reservation.setCreatedAt(now);
+        reservation.setUpdatedAt(now);
         reservation.setExpectedEndTime(request.getExpectedEndTime());
         reservation.setEstimatedPrice(estimatedPrice);
         reservation.setStatus(ReservationStatus.PENDING);
         reservation.setSpot(spot);
-        reservation.setUserVehicleAssignment(verifyUserVehicleAssignment(request.getUserId(), request.getVehicleLicensePlate()));
+        reservation.setUserVehicleAssignment(assignment);
+
 
         reservationRepository.save(reservation);
         return ReservationResponse.fromScheduledReservation(reservation);
@@ -76,6 +90,10 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
         ScheduledReservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Reservation with id " + id + " not found"));
 
+        if (status == ReservationStatus.COMPLETED) {
+            findSpotAndChangeAvailability(reservation.getSpot().getId(), true);
+        }
+
         reservation.setStatus(status);
         reservationRepository.save(reservation);
 
@@ -89,7 +107,7 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
     }
 
     @Override
-    public Page<ReservationResponse> getScheduledReservationsByParkingLot(Long parkingLotId, ReservationStatus status, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<ReservationResponse> getReservationsByParkingLot(Long parkingLotId, ReservationStatus status, String licensePlate, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         return reservationRepository.findAll(ScheduledReservationSpecifications.withFilters(null, parkingLotId, status, null, from, to), pageable)
                 .map(ReservationResponse::fromEntityToGet);
     }
@@ -102,10 +120,11 @@ public class ScheduledReservationServiceImpl extends ReservationServiceImpl<Sche
         for (ScheduledReservation reservation : reservations) {
             Spot spot = reservation.getSpot();
             if (spot.getIsAvailable()) {
-                spot.setIsAvailable(false);
+                findSpotAndChangeAvailability(spot.getId(), false);
                 reservation.setStatus(ReservationStatus.ACTIVE);
-                spotRepository.save(spot);
                 reservationRepository.save(reservation);
+            } else {
+                throw new BadRequestException("Spot " + spot.getId() + " is already occupied and cannot be used for scheduled reservation " + reservation.getId());
             }
         }
 

@@ -8,6 +8,7 @@ import { useAppDispatch } from '@hooks/useAppDispatch';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { clearSession } from '@auth/slice/authSlice';
 import { selectAuth } from '@auth/selectors';
+import { authInitializationService } from '@auth/services/authInitializationService';
 
 export interface UserProfileProps extends HTMLAttributes<HTMLDivElement> {
   user: User | null;
@@ -22,7 +23,7 @@ const UserProfile = forwardRef<HTMLDivElement, UserProfileProps>(
     const { accessToken } = useAppSelector(selectAuth);
 
     const handleLogout = () => {
-      dispatch(clearSession());
+      authInitializationService.clearSession();
     }
 
     if (!user) return null;

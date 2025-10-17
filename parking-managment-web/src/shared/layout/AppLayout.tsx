@@ -12,7 +12,8 @@ import {
   setParkingLots,
   setParkingLotsLoading,
   setParkingLotsError,
-  clearParkingLotsError
+  clearParkingLotsError,
+  initializeSelectedLotId
 } from '@parking/slice/parkingSlice';
 import {
   selectSelectedParkingLotId,
@@ -42,7 +43,14 @@ function AppContent() {
   const isError = useAppSelector(selectParkingLotsError);
 
   const dispatch = useAppDispatch();
-  const { notification } = useNotification();
+  const { notification, showNotification } = useNotification();
+
+  // Initialize selected lot ID from localStorage when user is authenticated
+  useEffect(() => {
+    if (auth.user?.id && selectedLotId === null) {
+      dispatch(initializeSelectedLotId());
+    }
+  }, [auth.user?.id, selectedLotId, dispatch]);
 
   const { 
     data: managerLotsData, 
@@ -84,6 +92,7 @@ function AppContent() {
         errorMessage = apiErrorMessage.message;
       }
       dispatch(setParkingLotsError(errorMessage));
+      showNotification('error', errorMessage);
       return;
     }
 
@@ -97,9 +106,10 @@ function AppContent() {
 
   // Handle lot selection and URL sync
   useEffect(() => {
-    if (!auth.user?.id || isLoading) return;
+    if (!auth.user?.id || isLoading || apiLoading) return;
 
-    if (!managerLots.length) {
+    // Only redirect to welcome if we've finished loading and there are truly no lots
+    if (!apiLoading && !managerLots.length) {
       if (location.pathname !== '/app/welcome') {
         navigate('/app/welcome', { replace: true });
       }
@@ -110,24 +120,43 @@ function AppContent() {
     const isValidUrlLot = urlLotId && managerLots.some((lot: ParkingLotResponse) => lot.id === urlLotId);
     const isValidSelectedLot = selectedLotId && managerLots.some((lot: ParkingLotResponse) => lot.id === selectedLotId);
 
-    const targetLotId = isValidUrlLot
-      ? urlLotId
-      : isValidSelectedLot
-      ? selectedLotId
-      : managerLots[0]?.id;
-
-    if (targetLotId && targetLotId !== selectedLotId) {
-      dispatch(setSelectedParkingLotId(targetLotId));
+    // If we have a valid URL lot ID, use it
+    if (isValidUrlLot) {
+      if (urlLotId !== selectedLotId) {
+        dispatch(setSelectedParkingLotId(urlLotId));
+      }
+      return;
     }
 
-    const needsLotContext =
-      ['/app/dashboard', '/app/dashboard/select-lot'].includes(location.pathname) ||
-      /^\/app\/\d+$/.test(location.pathname);
-
-    if (needsLotContext && String(targetLotId) !== params.lotId) {
-      navigate(`/app/dashboard/${targetLotId}`, { replace: true });
+    // If we have a valid persisted lot ID, use it and navigate to dashboard
+    if (isValidSelectedLot) {
+      const needsLotContext = 
+        ['/app', '/app/select-lot'].includes(location.pathname) ||
+        /^\/app\/\d+$/.test(location.pathname);
+      
+      if (needsLotContext) {
+        navigate(`/app/dashboard/${selectedLotId}`, { replace: true });
+      }
+      return;
     }
-  }, [auth.user?.id, params.lotId, managerLots, selectedLotId, isLoading, location.pathname, navigate, dispatch]);
+
+    // First-time visitor with lots but no persisted selection
+    if (!selectedLotId && !urlLotId) {
+      if (location.pathname !== '/app/select-lot') {
+        navigate('/app/select-lot', { replace: true });
+      }
+      return;
+    }
+
+    // Fallback: select first lot if we have an invalid selection
+    if (selectedLotId && !isValidSelectedLot) {
+      const firstLotId = managerLots[0]?.id;
+      if (firstLotId) {
+        dispatch(setSelectedParkingLotId(firstLotId));
+        navigate(`/app/dashboard/${firstLotId}`, { replace: true });
+      }
+    }
+  }, [auth.user?.id, params.lotId, managerLots, selectedLotId, isLoading, apiLoading, location.pathname, navigate, dispatch]);
 
   const handleRefetch = () => {
     dispatch(clearParkingLotsError());

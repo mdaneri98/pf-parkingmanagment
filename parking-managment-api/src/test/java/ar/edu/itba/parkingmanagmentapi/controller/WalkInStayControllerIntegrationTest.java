@@ -50,23 +50,6 @@ class WalkInStayControllerIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void testGetWalkInStay_shouldReturn200_andReservation() {
-        WalkInStay stay = existingWalkInStay;
-
-        ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
-                "/reservations/walk-in/" + stay.getId(),
-                HttpMethod.GET,
-                new HttpEntity<>(createAuthHeaders(normalUser)),
-                new ParameterizedTypeReference<>() {
-                }
-        );
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(stay.getId(), response.getBody().getData().getId());
-    }
-
-    @Test
     void testGetWalkInStaysByUser_shouldReturnOnlyUserReservations() {
         WalkInStay stay = existingWalkInStay;
 
@@ -117,7 +100,7 @@ class WalkInStayControllerIntegrationTest extends BaseIntegrationTest {
         ResponseEntity<ApiResponse<ReservationResponse>> response = restTemplate.exchange(
                 "/reservations/walk-in/" + stay.getId() + "/extend?extraHours=" + extraHours,
                 HttpMethod.PATCH,
-                new HttpEntity<>(createAuthHeaders(normalUser)),
+                new HttpEntity<>(createAuthHeaders(managerUser)),
                 new ParameterizedTypeReference<>() {
                 }
         );

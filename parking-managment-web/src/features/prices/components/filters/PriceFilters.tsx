@@ -53,36 +53,6 @@ export function PriceFilters({
 
             {/* Quick Filters + Sorting */}
             <div className="flex flex-wrap gap-2 items-center w-full">
-                <button
-                    onClick={() => updateFilter('showActiveOnly', !filters.showActiveOnly)}
-                    className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
-                        filters.showActiveOnly
-                            ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700'
-                            : 'bg-white text-neutral-600 border-neutral-300 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-600 dark:hover:bg-neutral-700'
-                    }`}
-                    disabled={isLoading}
-                >
-          <span className={`w-2 h-2 rounded-full mr-2 inline-block ${
-              filters.showActiveOnly ? 'bg-green-500' : 'bg-neutral-400'
-          }`}></span>
-                    Active Only
-                </button>
-
-                <button
-                    onClick={() => updateFilter('showExpiredOnly', !filters.showExpiredOnly)}
-                    className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
-                        filters.showExpiredOnly
-                            ? 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700'
-                            : 'bg-white text-neutral-600 border-neutral-300 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-600 dark:hover:bg-neutral-700'
-                    }`}
-                    disabled={isLoading}
-                >
-          <span className={`w-2 h-2 rounded-full mr-2 inline-block ${
-              filters.showExpiredOnly ? 'bg-red-500' : 'bg-neutral-400'
-          }`}></span>
-                    Expired Only
-                </button>
-
                 <select
                     value={filters.sort}
                     onChange={(e) => updateFilter('sort', e.target.value as 'asc' | 'desc')}

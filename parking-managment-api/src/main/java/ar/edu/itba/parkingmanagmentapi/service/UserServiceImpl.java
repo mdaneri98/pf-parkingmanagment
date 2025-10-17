@@ -1,5 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
 import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
@@ -11,8 +12,6 @@ import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.util.UserMapper;
 import ar.edu.itba.parkingmanagmentapi.validators.CreateUserRequestValidator;
 import ar.edu.itba.parkingmanagmentapi.validators.UpdatedUserRequestedValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final CreateUserRequestValidator createUserRequestValidator;
     private final UpdatedUserRequestedValidator updatedUserRequestValidator;
     private final UserRepository userRepository;
@@ -54,8 +53,6 @@ public class UserServiceImpl implements UserService {
         user.setImageUrl(userRequest.getImageUrl());
         user.setPasswordHash(passwordEncoder.encode(userRequest.getPassword()));
         userRepository.save(user);
-
-
 
         return UserResponse.builder()
                 .id(user.getId())
@@ -159,5 +156,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findEntityByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    /**
+     * Find default user
+     */
+    @Override
+    public User findDefaulUser() {
+        return userRepository.findById(AppConstants.DEFAULT_USER_ID)
+                .orElseThrow(() -> new NotFoundException("There is no default user"));
     }
 }

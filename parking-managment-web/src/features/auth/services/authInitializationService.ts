@@ -95,6 +95,7 @@ export const authInitializationService = {
   clearStoredCredentials(): void {
     try {
       appStorage.clearAuth();
+      appStorage.clearSelectedParkingLotId();
     } catch (error) {
       logger.error('Error clearing stored credentials', { error });
     }

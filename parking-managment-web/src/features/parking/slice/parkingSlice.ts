@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import type { ParkingLotResponse } from '../types';
+import { appStorage } from '@shared/utils/storage';
 
 interface ParkingState {
   selectedParkingLotId: number | null;
@@ -10,7 +11,7 @@ interface ParkingState {
 }
 
 const initialState: ParkingState = {
-  selectedParkingLotId: null,
+  selectedParkingLotId: null, // Will be loaded after auth is confirmed
   parkingLots: [],
   isLoading: false,
   isError: false,
@@ -22,7 +23,17 @@ const parkingSlice = createSlice({
   initialState,
   reducers: {
     setSelectedParkingLotId(state, action: PayloadAction<number | null>) {
+      if (state.selectedParkingLotId === action.payload) {
+        return; 
+      }
       state.selectedParkingLotId = action.payload;
+      
+      // Persist to localStorage
+      if (action.payload !== null) {
+        appStorage.setSelectedParkingLotId(action.payload);
+      } else {
+        appStorage.clearSelectedParkingLotId();
+      }
     },
     setParkingLots(state, action: PayloadAction<ParkingLotResponse[]>) {
       state.parkingLots = action.payload;
@@ -41,7 +52,16 @@ const parkingSlice = createSlice({
       state.isError = false;
       state.error = null;
     },
-    resetParkingState: () => initialState,
+    initializeSelectedLotId(state) {
+      const persistedLotId = appStorage.getSelectedParkingLotId();
+      if (persistedLotId !== null) {
+        state.selectedParkingLotId = persistedLotId;
+      }
+    },
+    resetParkingState: () => {
+      appStorage.clearSelectedParkingLotId();
+      return initialState;
+    },
   },
 });
 
@@ -51,6 +71,7 @@ export const {
   setParkingLotsLoading,
   setParkingLotsError,
   clearParkingLotsError,
+  initializeSelectedLotId,
   resetParkingState 
 } = parkingSlice.actions;
 export const parkingReducer = parkingSlice.reducer;

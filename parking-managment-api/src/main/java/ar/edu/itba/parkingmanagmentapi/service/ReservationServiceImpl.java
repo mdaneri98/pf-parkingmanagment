@@ -1,10 +1,14 @@
 package ar.edu.itba.parkingmanagmentapi.service;
 
+import ar.edu.itba.parkingmanagmentapi.config.AppConstants;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.ParkingPrice;
 import ar.edu.itba.parkingmanagmentapi.model.Spot;
 import ar.edu.itba.parkingmanagmentapi.model.UserVehicleAssignment;
-import ar.edu.itba.parkingmanagmentapi.repository.*;
+import ar.edu.itba.parkingmanagmentapi.model.Vehicle;
+import ar.edu.itba.parkingmanagmentapi.repository.ParkingPriceRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.ScheduledReservationRepository;
+import ar.edu.itba.parkingmanagmentapi.repository.WalkInStayRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,18 +16,32 @@ import java.util.List;
 
 public abstract class ReservationServiceImpl<T> implements ReservationService<T> {
 
-    protected final SpotRepository spotRepository;
-    private final ParkingPriceRepository parkingPriceRepository;
-    private final UserVehicleAssignmentRepository userVehicleAssignmentRepository;
+    protected final SpotService spotService;
+    protected final ParkingPriceRepository parkingPriceRepository;
+    protected final VehicleService vehicleService;
     protected final WalkInStayRepository walkInStayRepository;
     protected final ScheduledReservationRepository reservationRepository;
+    protected final UserVehicleAssignmentService userVehicleAssignmentService;
 
-    protected ReservationServiceImpl(SpotRepository spotRepository, ParkingPriceRepository parkingPriceRepository, UserVehicleAssignmentRepository userVehicleAssignmentRepository, WalkInStayRepository walkInStayRepository, ScheduledReservationRepository reservationRepository) {
-        this.userVehicleAssignmentRepository = userVehicleAssignmentRepository;
-        this.spotRepository = spotRepository;
+    protected ReservationServiceImpl(
+            SpotService spotService,
+            ParkingPriceRepository parkingPriceRepository,
+            VehicleService vehicleService,
+            WalkInStayRepository walkInStayRepository,
+            ScheduledReservationRepository reservationRepository,
+            UserVehicleAssignmentService userVehicleAssignmentService
+    ) {
+        this.vehicleService = vehicleService;
+        this.spotService = spotService;
         this.parkingPriceRepository = parkingPriceRepository;
         this.walkInStayRepository = walkInStayRepository;
         this.reservationRepository = reservationRepository;
+        this.userVehicleAssignmentService = userVehicleAssignmentService;
+    }
+
+    protected boolean existActivePrice(Long parkingLotId, String vehicleType) {
+        List<ParkingPrice> prices = parkingPriceRepository.findByParkingLotIdAndVehicleType(parkingLotId, vehicleType);
+        return !prices.isEmpty();
     }
 
     protected BigDecimal calculateEstimatedPrice(Spot spot, LocalDateTime start, LocalDateTime end) {
@@ -38,32 +56,29 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
 
         ParkingPrice price = prices.get(0);
         long hours = java.time.Duration.between(start, end).toHours();
-        if (hours == 0) hours = 1;
+        if (hours == 0) hours = AppConstants.MINIMUM_BILLING_HOURS;
 
         return price.getPrice().multiply(BigDecimal.valueOf(hours));
     }
 
-    protected UserVehicleAssignment verifyUserVehicleAssignment(Long userId, String licensePlate) {
-        // buscar relación User-Vehicle
-        return userVehicleAssignmentRepository
-                .findByUserIdAndVehicleLicensePlate(userId, licensePlate)
-                .orElseThrow(() -> new NotFoundException(
-                        "There is no vehicle assignment with license plate " + licensePlate +
-                                " for the user with id " + userId
-                ));
+    protected Spot findSpotAndChangeAvailability(Long spotId, boolean makeAvailable) {
+        Spot spot = spotService.findEntityById(spotId);
+
+        if (!makeAvailable && !spot.getIsAvailable()) {
+            throw new NotFoundException("The spot with id " + spot.getId() + " is not available");
+        }
+
+        spot.setIsAvailable(makeAvailable);
+        return spotService.updateEntity(spot);
     }
 
-    protected UserVehicleAssignment getUserVehicleAssignmentByVehicleLicensePlate(String licensePlate) {
-        return userVehicleAssignmentRepository
-                .findByVehicleLicensePlate(licensePlate)
-                .orElseThrow(() -> new NotFoundException(
-                        "There is no vehicle assignment with license plate " + licensePlate
-                ));
+    protected UserVehicleAssignment findOrCreateVehicleAssignment(String licensePlate, String vehicleType) {
+        Vehicle vehicle = vehicleService.findEntityByLicensePlateOrCreate(
+                new Vehicle(licensePlate, null, null, vehicleType)
+        );
+        return userVehicleAssignmentService.findByUserIdAndLicensePlateOrCreate(
+                AppConstants.DEFAULT_USER_ID, vehicle.getLicensePlate()
+        );
     }
-    
 
-    protected Spot getSpotById(Long spotId) {
-        return spotRepository.findById(spotId)
-                .orElseThrow(() -> new NotFoundException("Spot with id " + spotId + " not found"));
-    }
 }
