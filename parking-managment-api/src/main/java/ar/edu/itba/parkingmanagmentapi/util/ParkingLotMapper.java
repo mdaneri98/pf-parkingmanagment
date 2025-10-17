@@ -52,6 +52,7 @@ public class ParkingLotMapper {
         dto.setCode(spot.getCode());
         dto.setIsAvailable(spot.getIsAvailable());
         dto.setIsReservable(spot.getIsReservable());
+        dto.setIsAccessible(spot.getIsAccessible());
         return dto;
     }
 }
