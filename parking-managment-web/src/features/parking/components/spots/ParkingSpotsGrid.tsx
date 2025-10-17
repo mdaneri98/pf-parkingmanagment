@@ -174,6 +174,26 @@ function SpotCard({ spot, onClick, icon, colorClass }: SpotCardProps) {
       <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${
         spot.isAvailable ? 'bg-green-500' : 'bg-red-500'
       }`} />
+      
+      {/* Attribute indicators - bottom corners */}
+      {spot.isAccessible && (
+        <span 
+          title="Accessible" 
+          className="absolute bottom-1 left-1 text-xs bg-white/90 dark:bg-neutral-800/90 rounded-full w-3 h-3 flex items-center justify-center border border-white/50 dark:border-neutral-700/50 shadow-sm"
+          aria-label="Accessible parking spot"
+        >
+          ♿
+        </span>
+      )}
+      {spot.isReservable && (
+        <span 
+          title="Reservable" 
+          className="absolute bottom-1 right-1 text-xs bg-white/90 dark:bg-neutral-800/90 rounded-full w-3 h-3 flex items-center justify-center border border-white/50 dark:border-neutral-700/50 shadow-sm"
+          aria-label="Reservable parking spot"
+        >
+          📅
+        </span>
+      )}
     </button>
   );
 }

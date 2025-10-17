@@ -33,6 +33,26 @@ function SpotCardComponent({ spot, onClick }: SpotCardProps) {
         aria-hidden="true"
       />
       
+      {/* Attribute indicators - bottom corners */}
+      {spot.isAccessible && (
+        <span 
+          title="Accessible" 
+          className="absolute bottom-1 left-1 text-xs bg-white/90 dark:bg-neutral-800/90 rounded-full w-4 h-4 flex items-center justify-center border border-white/50 dark:border-neutral-700/50 shadow-sm"
+          aria-label="Accessible parking spot"
+        >
+          ♿
+        </span>
+      )}
+      {spot.isReservable && (
+        <span 
+          title="Reservable" 
+          className="absolute bottom-1 right-1 text-xs bg-white/90 dark:bg-neutral-800/90 rounded-full w-4 h-4 flex items-center justify-center border border-white/50 dark:border-neutral-700/50 shadow-sm"
+          aria-label="Reservable parking spot"
+        >
+          📅
+        </span>
+      )}
+      
       {/* Hover effect overlay */}
       <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
     </button>
