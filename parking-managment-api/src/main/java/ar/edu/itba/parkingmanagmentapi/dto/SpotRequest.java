@@ -17,4 +17,6 @@ public class SpotRequest {
     private Boolean isAvailable;
 
     private Boolean isReservable;
+
+    private Boolean isAccessible;
 }

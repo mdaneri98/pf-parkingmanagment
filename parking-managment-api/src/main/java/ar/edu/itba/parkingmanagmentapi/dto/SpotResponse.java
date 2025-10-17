@@ -13,5 +13,6 @@ public class SpotResponse {
     private Integer floor;
     private String code;
     private Boolean isAvailable;
-    private Boolean reservationPriority;
+    private Boolean isReservable;
+    private Boolean isAccessible;
 }

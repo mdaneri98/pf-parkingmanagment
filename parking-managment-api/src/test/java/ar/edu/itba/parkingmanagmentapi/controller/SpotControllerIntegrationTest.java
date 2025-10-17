@@ -29,6 +29,7 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         request.setCode("A");
         request.setFloor(1);
         request.setIsReservable(false);
+        request.setIsAccessible(false);
 
         HttpEntity<SpotRequest> requestEntity = new HttpEntity<>(request, createAuthHeaders(managerUser));
         ResponseEntity<ApiResponse<SpotResponse>> response = restTemplate.exchange(
@@ -47,6 +48,8 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(VehicleType.CAR.getName(), savedSpot.get().getVehicleType());
         assertEquals(1, savedSpot.get().getFloor());
         assertTrue(savedSpot.get().getIsAvailable());
+        assertFalse(savedSpot.get().getIsReservable());
+        assertFalse(savedSpot.get().getIsAccessible());
         assertEquals(existingParkingLot.getId(), savedSpot.get().getParkingLot().getId());
     }
 
@@ -75,7 +78,6 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         updateRequest.setCode("C4");
         updateRequest.setVehicleType(VehicleType.MOTORCYCLE.getName());
         updateRequest.setFloor(3);
-        updateRequest.setIsAvailable(false);
         updateRequest.setIsReservable(true);
 
         HttpEntity<SpotRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(managerUser));
@@ -88,7 +90,8 @@ class SpotControllerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(response.getBody());
         SpotResponse body = response.getBody().getData();
         assertEquals("C4", body.getCode());
-        assertFalse(body.getIsAvailable());
+        assertTrue(body.getIsAvailable());
+        assertTrue(body.getIsReservable());
 
         Spot updatedSpot = spotRepository.findById(spot.getId()).orElseThrow();
         assertEquals("C4", updatedSpot.getCode());

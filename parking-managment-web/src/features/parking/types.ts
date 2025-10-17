@@ -13,6 +13,8 @@ export interface SpotDTO extends BaseEntity {
   code: string;
   isAvailable: boolean;
   parkingLotId: number;
+  isReservable: boolean;
+  isAccessible: boolean;
 }
 
 export interface ParkingLotResponse extends BaseEntity {
@@ -84,6 +86,7 @@ export interface CreateSpotRequest {
   vehicleType: VehicleType;
   isAvailable?: boolean;
   isReservable?: boolean;
+  isAccessible?: boolean;
 }
 
 export interface UpdateSpotRequest {

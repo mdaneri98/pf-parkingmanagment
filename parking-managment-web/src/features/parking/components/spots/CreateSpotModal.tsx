@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import type { CreateSpotRequest } from '@parking/types';
 import { VEHICLE_TYPES, getVehicleTypeOptions, VehicleType } from '@shared/constants';
 
-// Definición de tipos de datos de formulario, incluyendo el nuevo estado
 interface FormData {
   parkingLotId: number;
   floor: number | '';
@@ -57,19 +56,17 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
           isAccessible,
           floor: floorValue,
         };
-        if (isSingleSpot) {
 
+        if (isSingleSpot) {
           spots.push({
-            ...rest,
-            floor: floorValue,
+            ...baseSpotData,
             code: `${prefix || ''}${start}`,
           });
         } else {
           const end = Number(endNumber);
           for (let i = start; i <= end; i++) {
             spots.push({
-              ...rest,
-              floor: floorValue,
+              ...baseSpotData,
               code: `${prefix || ''}${i}`,
             });
           }
@@ -94,7 +91,6 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
     setFormData(prev => ({
       ...prev,
       isSingleSpot: !prev.isSingleSpot,
-      // Limpiamos los campos al cambiar de modo
       startNumber: '',
       endNumber: '',
     }));
@@ -269,7 +265,7 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                     id="isReservable"
                     checked={formData.isReservable}
                     onChange={(e) => updateFormField('isReservable', e.target.checked)}
-                    className="w-5 h-5 text-blue-600 border-neutral-300 dark:border-neutral-600 rounded focus:ring-blue-500"
+                    className="w-5 h-5 text-blue-600 border-neutral-400 dark:border-neutral-500 rounded focus:ring-blue-500"
                 />
               </div>
 
@@ -306,7 +302,6 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
               </button>
               <button
                   type="submit"
-                  // Lógica de validación ajustada para el modo simple y múltiple
                   disabled={
                       isLoading ||
                       formData.startNumber === '' ||

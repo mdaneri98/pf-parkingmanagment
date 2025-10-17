@@ -20,7 +20,7 @@ public interface SpotService {
 
     Optional<User> getManagerOfSpot(Long spotId);
 
-    Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Pageable pageable);
+    Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Boolean isAccessible, Boolean isReservable, Pageable pageable);
 
     // -------------------------- RAW ENTITIES --------------------------
 

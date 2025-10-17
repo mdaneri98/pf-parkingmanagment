@@ -8,9 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpotSpecifications {
-    public static Specification<Spot> withFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor) {
+
+    public static Specification<Spot> withFilters(
+            Long parkingLotId,
+            Boolean available,
+            String vehicleType,
+            Integer floor,
+            Boolean isAccessible,
+            Boolean isReservable
+    ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
             predicates.add(cb.equal(root.get("parkingLot").get("id"), parkingLotId));
 
             if (available != null) {
@@ -22,8 +31,15 @@ public class SpotSpecifications {
             if (floor != null) {
                 predicates.add(cb.equal(root.get("floor"), floor));
             }
+            if (isAccessible != null) {
+                predicates.add(cb.equal(root.get("isAccessible"), isAccessible));
+            }
+            if (isReservable != null) {
+                predicates.add(cb.equal(root.get("isReservable"), isReservable));
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
+
 }

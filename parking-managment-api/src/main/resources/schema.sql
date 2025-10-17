@@ -59,13 +59,13 @@ CREATE TABLE IF NOT EXISTS parking_lot (
     );
 
 -- Tabla de espacios
-CREATE TABLE IF NOT EXISTS spot (
-                                    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS spot (id BIGINT PRIMARY KEY AUTO_INCREMENT,
                                     vehicle_type VARCHAR(30) NOT NULL,
     floor INTEGER NOT NULL,
     code VARCHAR(20) NOT NULL,
     is_available BOOLEAN NOT NULL DEFAULT TRUE,
-    reservation_priority BOOLEAN DEFAULT FALSE,
+    is_reservable BOOLEAN DEFAULT FALSE,
+    is_accessible BOOLEAN DEFAULT FALSE,
     parking_lot_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

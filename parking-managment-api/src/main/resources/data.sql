@@ -62,43 +62,50 @@ VALUES ('Av. Corrientes 1500', 'Estacionamiento 1',
 
 -- Espacios de estacionamiento
 -- Estacionamiento 1 (Corrientes) - 12 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
-VALUES ('auto', 0, 'A01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 0, 'A04', false, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 1, 'A01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 1, 'A02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', 1, 'A03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', 0, 'M01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', 0, 'M02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', 0, 'M03', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('camioneta', 0, 'C01', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('camioneta', 0, 'C02', true, false, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, is_reservable, is_accessible, parking_lot_id,
+                  created_at, updated_at)
+VALUES ('auto', 0, 'A01', FALSE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A02', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A03', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'A04', FALSE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A01', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A02', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'A03', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M01', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M02', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'M03', FALSE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'C01', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'C02', TRUE, FALSE, FALSE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+---
 
 -- Estacionamiento 2 (Santa Fe) - 10 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
-VALUES ('auto', -1, 'A01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', -1, 'A02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', -1, 'A03', false, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', -1, 'A04', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', -1, 'A05', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('auto', -1, 'A06', false, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', -1, 'M01', true, true, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('moto', -1, 'M02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('camioneta', -1, 'C01', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('camioneta', -1, 'C02', true, false, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, is_reservable, is_accessible, parking_lot_id,
+                  created_at, updated_at)
+VALUES ('auto', -1, 'A01', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A02', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A03', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A04', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A05', TRUE, TRUE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', -1, 'A06', TRUE, TRUE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', -1, 'M01', TRUE, TRUE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', -1, 'M02', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', -1, 'C01', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', -1, 'C02', TRUE, FALSE, FALSE, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+---
 
 -- Estacionamiento 3 (Cabildo) - 8 espacios
-INSERT INTO spot (vehicle_type, floor, code, is_available, reservation_priority, parking_lot_id, created_at, updated_at)
-VALUES ('AUTO', 0, 'CAB-A01', true, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'CAB-A02', true, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 0, 'CAB-A03', false, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('AUTO', 1, 'CAB-A04', true, true, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'CAB-M01', true, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('MOTO', 0, 'CAB-M02', true, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', 0, 'CAB-C01', true, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('CAMIONETA', 0, 'CAB-C02', false, false, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO spot (vehicle_type, floor, code, is_available, is_reservable, is_accessible, parking_lot_id,
+                  created_at, updated_at)
+VALUES ('auto', 0, 'CAB-A01', TRUE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'CAB-A02', FALSE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 0, 'CAB-A03', TRUE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('auto', 1, 'CAB-A04', TRUE, TRUE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'CAB-M01', TRUE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('moto', 0, 'CAB-M02', TRUE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'CAB-C01', TRUE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('camioneta', 0, 'CAB-C02', TRUE, FALSE, FALSE, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Precios de estacionamiento (por hora)
 INSERT INTO parking_price (vehicle_type, price, valid_from, valid_to, parking_lot_id, created_at, updated_at)
@@ -146,13 +153,13 @@ INSERT INTO scheduled_reservation (reserved_start_time, expected_end_time, statu
                                    created_at, updated_at)
 VALUES
 -- Pendiente (futuro cercano)
-('2025-10-15 09:00:00', '2025-10-15 18:00:00', 'PENDING', 7200.00, 2, 1, 'ABC123', null, null, CURRENT_TIMESTAMP,
+('2025-10-28 09:00:00', '2025-10-30 18:00:00', 'PENDING', 7200.00, 2, 1, 'ABC123', null, null, CURRENT_TIMESTAMP,
  CURRENT_TIMESTAMP),
 -- Pendiente (futuro lejano)
 ('2025-12-12 08:00:00', '2025-12-12 17:00:00', 'PENDING', 8000.00, 6, 2, 'DEF456', null, null, CURRENT_TIMESTAMP,
  CURRENT_TIMESTAMP),
 -- En progreso
-('2025-10-12 10:00:00', '2025-10-12 20:00:00', 'IN_PROGRESS', 2100.00, 4, 3, 'JKL012', null, null, CURRENT_TIMESTAMP,
+('2025-10-24 10:00:00', '2025-10-24 20:00:00', 'IN_PROGRESS', 2100.00, 4, 3, 'JKL012', null, null, CURRENT_TIMESTAMP,
  CURRENT_TIMESTAMP),
 -- Cancelada (ayer)
 ('2025-10-11 12:00:00', '2025-10-11 16:00:00', 'CANCELLED', 2800.00, 3, 2, 'GHI789', null, null, CURRENT_TIMESTAMP,

@@ -55,8 +55,10 @@ public class SpotServiceImpl implements SpotService {
         spot.setFloor(request.getFloor());
         spot.setCode(request.getCode());
         spot.setIsAvailable(true);
+        spot.setIsReservable(request.getIsReservable());
+        spot.setIsAccessible(request.getIsAccessible());
         spot.setParkingLot(parkingLot);
-        spot.setReservationPriority(request.getIsReservable());
+        spot.setIsReservable(request.getIsReservable());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
@@ -84,7 +86,8 @@ public class SpotServiceImpl implements SpotService {
         spot.setVehicleType(request.getVehicleType());
         spot.setCode(request.getCode());
         spot.setFloor(request.getFloor());
-        spot.setReservationPriority(request.getIsReservable());
+        spot.setIsReservable(request.getIsReservable());
+        spot.setIsAccessible(request.getIsAccessible());
 
         return ParkingLotMapper.toSpotResponse(spotRepository.save(spot));
     }
@@ -123,8 +126,8 @@ public class SpotServiceImpl implements SpotService {
     }
 
     @Override
-    public Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Pageable pageable) {
-        return spotRepository.findAll(SpotSpecifications.withFilters(parkingLotId, available, vehicleType, floor), pageable)
+    public Page<SpotResponse> findByFilters(Long parkingLotId, Boolean available, String vehicleType, Integer floor, Boolean isAccessible, Boolean isReservable, Pageable pageable) {
+        return spotRepository.findAll(SpotSpecifications.withFilters(parkingLotId, available, vehicleType, floor, isAccessible, isReservable), pageable)
                 .map(ParkingLotMapper::toSpotResponse);
     }
 

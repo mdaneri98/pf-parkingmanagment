@@ -55,8 +55,10 @@ public class SpotController {
             @RequestParam(required = false) Boolean available,
             @RequestParam(required = false) String vehicleType,
             @RequestParam(required = false) Integer floor,
+            @RequestParam(required = false) Boolean isAccessible,
+            @RequestParam(required = false) Boolean isReservable,
             Pageable pageable) {
-        Page<SpotResponse> spots = spotService.findByFilters(parkingLotId, available, vehicleType, floor, pageable);
+        Page<SpotResponse> spots = spotService.findByFilters(parkingLotId, available, vehicleType, floor, isAccessible, isReservable, pageable);
         return ApiResponse.ok(PageResponse.of(spots));
     }
 }

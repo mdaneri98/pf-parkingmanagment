@@ -28,8 +28,11 @@ public class Spot {
     @Column(name = "is_available", nullable = false)
     private Boolean isAvailable = true;
 
-    @Column(name = "reservation_priority")
-    private Boolean reservationPriority = false;
+    @Column(name = "is_accessible")
+    private Boolean isAccessible = false;
+
+    @Column(name = "is_reservable")
+    private Boolean isReservable = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -126,12 +129,21 @@ public class Spot {
         this.parkingLot = parkingLot;
     }
 
-    public Boolean getReservationPriority() {
-        return reservationPriority;
+    public Boolean getIsReservable() {
+        return isReservable;
     }
 
-    public void setReservationPriority(Boolean reservationPriority) {
-        this.reservationPriority = reservationPriority;
+    public void setIsReservable(Boolean isReservable) {
+        this.isReservable = isReservable;
     }
+
+    public Boolean getIsAccessible() {
+        return isAccessible;
+    }
+
+    public void setIsAccessible(Boolean isAccessible) {
+        this.isAccessible = isAccessible;
+    }
+
 
 } 

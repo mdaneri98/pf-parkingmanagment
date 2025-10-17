@@ -139,7 +139,8 @@ public abstract class BaseIntegrationTest {
         spotEntity.setIsAvailable(true);
         spotEntity.setVehicleType(VehicleType.CAR.getName());
         spotEntity.setParkingLot(existingParkingLot);
-        spotEntity.setReservationPriority(false);
+        spotEntity.setIsReservable(false);
+        spotEntity.setIsAccessible(true);
         existingSpot = spotRepository.save(spotEntity);
 
         Spot spotEntity2 = new Spot();
@@ -147,6 +148,8 @@ public abstract class BaseIntegrationTest {
         spotEntity2.setFloor(1);
         spotEntity2.setIsAvailable(true);
         spotEntity2.setVehicleType(VehicleType.CAR.getName());
+        spotEntity2.setIsReservable(false);
+        spotEntity2.setIsAccessible(true);
         spotEntity2.setParkingLot(existingParkingLot);
         otherSpot = spotRepository.save(spotEntity2);
 
