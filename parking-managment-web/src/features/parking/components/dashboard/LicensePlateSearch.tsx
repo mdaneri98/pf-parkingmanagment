@@ -12,6 +12,7 @@ import type { SpotDTO } from '@parking/types';
 import { logger } from '@shared/utils/logger';
 import { useNotification } from '@shared/contexts/NotificationContext';
 import { useErrorHandler } from '@shared/utils/errorHandling';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface LicensePlateSearchProps {
   lotId: number;
@@ -24,6 +25,7 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
   const [searchTrigger, setSearchTrigger] = useState<string | null>(null);
   const { showNotification } = useNotification();
   const { getUserFriendlyMessage } = useErrorHandler();
+  const { t } = useTypedTranslation();
 
   // Live search with 500ms debounce
   useEffect(() => {
@@ -167,10 +169,10 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
       {/* Page Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-          License Plate Search
+          {t('parking.search.title')}
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">
-          Find vehicles by their license plate number
+          {t('parking.search.description')}
         </p>
       </div>
 
@@ -181,8 +183,8 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
           <div className="flex gap-3 items-end">
             <div className="flex-1">
               <Input
-                label="License Plate"
-                placeholder="e.g., ABC123"
+                label={t('parking.search.licensePlate')}
+                placeholder={t('parking.search.licensePlatePlaceholder')}
                 value={licensePlate}
                 onChange={(e) => setLicensePlate(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -195,11 +197,11 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
               disabled={!licensePlate.trim() || isSearching}
               loading={isSearching}
             >
-              Search
+              {t('parking.search.searchButton')}
             </Button>
           </div>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            Start typing to search automatically
+            {t('parking.search.autoSearchHint')}
           </p>
         </div>
 
@@ -212,10 +214,10 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-              Ready to Search
+              {t('parking.search.readyToSearch')}
             </h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
-              Enter a license plate number above to find the vehicle's parking spot
+              {t('parking.search.readyToSearchMessage')}
             </p>
           </div>
         )}
@@ -224,7 +226,7 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
           <div className="flex flex-col justify-center items-center py-16">
             <LoadingSpinner />
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-4">
-              Searching for "{searchTrigger}"...
+              {t('parking.search.searching', { plate: searchTrigger })}
             </p>
           </div>
         )}
@@ -237,18 +239,17 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-              Vehicle Not Found
+              {t('parking.search.vehicleNotFound')}
             </h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-md mx-auto">
-              No active parking session found for <span className="font-medium text-neutral-900 dark:text-neutral-100">"{searchTrigger}"</span>. 
-              The vehicle may not be parked in this lot or the license plate may be incorrect.
+              {t('parking.search.vehicleNotFoundMessage', { plate: searchTrigger })}
             </p>
             <div className="flex justify-center pt-2">
               <Button
                 variant="outline"
                 onClick={handleClearSearch}
               >
-                Try Another Search
+                {t('parking.search.tryAnotherSearch')}
               </Button>
             </div>
           </div>
@@ -260,7 +261,7 @@ export function LicensePlateSearch({ lotId, onSpotFound, onSpotClick }: LicenseP
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                  Parking Spots
+                  {t('parking.search.parkingSpots')}
                 </h4>
               </div>
               <ParkingSpotsGrid 

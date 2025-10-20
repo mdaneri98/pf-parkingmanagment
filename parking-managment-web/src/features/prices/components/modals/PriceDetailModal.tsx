@@ -1,5 +1,7 @@
 import type { PriceDisplayData } from '../../types';
-import { formatARS } from '@prices/utils/PriceUtils';
+import { formatARS } from '@prices/utils/priceUtils';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+import { Modal } from '@shared/ui/components';
 
 interface Props {
   isOpen: boolean;
@@ -20,6 +22,7 @@ export function PriceDetailModal({
   canEdit = true,
   canDelete = true,
 }: Props) {
+  const { t } = useTypedTranslation();
   if (!isOpen || !price) return null;
 
   const handleEdit = () => {
@@ -37,7 +40,7 @@ export function PriceDetailModal({
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
           <span className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></span>
-          Active
+          {t('prices.card.status.active')}
         </span>
       );
     }
@@ -46,7 +49,7 @@ export function PriceDetailModal({
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
           <span className="w-1.5 h-1.5 bg-red-400 rounded-full mr-1.5"></span>
-          Expired
+          {t('prices.card.status.expired')}
         </span>
       );
     }
@@ -54,7 +57,7 @@ export function PriceDetailModal({
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
         <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-1.5"></span>
-        Upcoming
+        {t('prices.card.status.upcoming')}
       </span>
     );
   };
@@ -65,18 +68,18 @@ export function PriceDetailModal({
     const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 1) return '1 day';
-    if (diffDays < 30) return `${diffDays} days`;
-    if (diffDays < 365) return `${Math.round(diffDays / 30)} months`;
-    return `${Math.round(diffDays / 365)} years`;
+    if (diffDays === 1) return `1 ${t('prices.detailModal.day')}`;
+    if (diffDays < 30) return `${diffDays} ${t('prices.detailModal.days')}`;
+    if (diffDays < 365) return `${Math.round(diffDays / 30)} ${t('prices.detailModal.months')}`;
+    return `${Math.round(diffDays / 365)} ${t('prices.detailModal.years')}`;
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-lg w-full">
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="lg">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl w-full">
         <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
           <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            Price Rule Details
+            {t('prices.detailModal.title')}
           </h2>
           <button 
             onClick={onClose} 
@@ -111,23 +114,23 @@ export function PriceDetailModal({
           <div className="grid grid-cols-1 gap-4 mb-6">
             <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
               <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-                Validity Period
+                {t('prices.detailModal.validityPeriod')}
               </h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-neutral-600 dark:text-neutral-400">Start Date:</span>
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">{t('prices.detailModal.startDate')}</span>
                   <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {price.formattedValidFrom}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-neutral-600 dark:text-neutral-400">End Date:</span>
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">{t('prices.detailModal.endDate')}</span>
                   <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {price.formattedValidTo}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-neutral-600 dark:text-neutral-400">Duration:</span>
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">{t('prices.detailModal.duration')}</span>
                   <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {getDuration()}
                   </span>
@@ -144,7 +147,7 @@ export function PriceDetailModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="text-sm font-medium text-green-800 dark:text-green-200">
-                  This price rule is currently active
+                  {t('prices.detailModal.currentlyActive')}
                 </span>
               </div>
             </div>
@@ -157,7 +160,7 @@ export function PriceDetailModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="text-sm font-medium text-red-800 dark:text-red-200">
-                  This price rule has expired
+                  {t('prices.modals.detail.expired')}
                 </span>
               </div>
             </div>
@@ -170,7 +173,7 @@ export function PriceDetailModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  This price rule will become active on {new Date(price.validFrom).toLocaleDateString()}
+                  {t('prices.modals.detail.upcoming', { date: new Date(price.validFrom).toLocaleDateString() })}
                 </span>
               </div>
             </div>
@@ -186,7 +189,7 @@ export function PriceDetailModal({
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
-                Edit
+                {t('prices.card.edit')}
               </button>
             )}
             {canDelete && (
@@ -197,12 +200,12 @@ export function PriceDetailModal({
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Delete
+                {t('prices.card.delete')}
               </button>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

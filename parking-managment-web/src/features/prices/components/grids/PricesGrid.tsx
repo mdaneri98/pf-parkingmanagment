@@ -1,7 +1,8 @@
 import { PriceCard } from '../cards/PriceCard';
 import { LoadingSpinner } from '@shared/ui/components';
 import type { PriceDisplayData } from '../../types';
-import { formatARS } from '@prices/utils/PriceUtils';
+import { formatARS } from '@prices/utils/priceUtils';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface Props {
   prices: PriceDisplayData[];
@@ -18,6 +19,14 @@ interface Props {
   layoutMode?: 'default' | 'active';
 }
 
+interface PricesStatsProps {
+  totalCount: number;
+  activeCount: number;
+  upcomingCount: number;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
 export function PricesGrid({
                              prices,
                              isLoading = false,
@@ -28,10 +37,15 @@ export function PricesGrid({
                              canEdit = true,
                              canDelete = true,
                              compact = false,
-                             emptyMessage = "No price rules found",
-                             emptyDescription = "Create your first price rule to get started",
+                             emptyMessage,
+                             emptyDescription,
                              layoutMode = 'default',
                            }: Props) {
+  const { t } = useTypedTranslation();
+  
+  // Use provided messages or fallback to translated defaults
+  const finalEmptyMessage = emptyMessage || t('prices.noPriceRulesFound');
+  const finalEmptyDescription = emptyDescription || t('prices.createFirstPriceRule');
   if (isLoading) {
     return (
         <div className="flex items-center justify-center py-12">
@@ -50,10 +64,10 @@ export function PricesGrid({
             </svg>
           </div>
           <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-            {emptyMessage}
+            {finalEmptyMessage}
           </h3>
           <p className="text-neutral-600 dark:text-neutral-400 max-w-sm">
-            {emptyDescription}
+            {finalEmptyDescription}
           </p>
         </div>
     );
@@ -92,7 +106,8 @@ export function PricesStats({
   upcomingCount,
   minPrice = 0,
   maxPrice = 0,
-}: Props) {
+}: PricesStatsProps) {
+  const { t } = useTypedTranslation();
   const formatPrice = (price: number) => `$${price.toFixed(2)}`;
 
   return (
@@ -102,7 +117,7 @@ export function PricesStats({
           {activeCount}
         </div>
         <div className="text-sm text-green-700 dark:text-green-300">
-          Active
+          {t('prices.stats.active')}
         </div>
       </div>
 
@@ -111,7 +126,7 @@ export function PricesStats({
           {upcomingCount}
         </div>
         <div className="text-sm text-blue-700 dark:text-blue-300">
-          Upcoming
+          {t('prices.stats.upcoming')}
         </div>
       </div>
 
@@ -120,7 +135,7 @@ export function PricesStats({
           {formatARS(minPrice)}
         </div>
         <div className="text-sm text-neutral-600 dark:text-neutral-400">
-          Min Price
+          {t('prices.stats.minPrice')}
         </div>
       </div>
 
@@ -129,7 +144,7 @@ export function PricesStats({
           {formatARS(maxPrice)}
         </div>
         <div className="text-sm text-neutral-600 dark:text-neutral-400">
-          Max Price
+          {t('prices.stats.maxPrice')}
         </div>
       </div>
     </div>

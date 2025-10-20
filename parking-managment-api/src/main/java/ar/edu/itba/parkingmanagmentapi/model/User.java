@@ -39,7 +39,8 @@ public class User {
     private LocalDateTime updatedAt;
 
     // Relaciones
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "user_detail_id")
     private UserDetail userDetail;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

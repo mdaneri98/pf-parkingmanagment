@@ -2,6 +2,7 @@ import { Input } from '@shared/ui/components';
 import { getVehicleTypeOptions } from '@shared/constants';
 import { formatDateTimeForInput, parseDateTimeFromInput } from '@prices/utils/priceUtils';
 import type { PriceFilterState } from '@prices/slice/pricesSlice';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface Props {
     filters: PriceFilterState;
@@ -19,6 +20,7 @@ export function PriceFilters({
                                  isLoading = false,
                              }: Props) {
     const vehicleTypeOptions = getVehicleTypeOptions();
+    const { t } = useTypedTranslation();
 
     const updateFilter = <K extends keyof PriceFilterState>(
         field: K,
@@ -33,10 +35,10 @@ export function PriceFilters({
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center space-x-3">
-                    <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Filters</h3>
+                    <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{t('prices.filters.title')}</h3>
                     {activeCount > 0 && (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-              {activeCount} active
+              {t('prices.filters.active', { count: activeCount })}
             </span>
                     )}
                 </div>
@@ -46,7 +48,7 @@ export function PriceFilters({
                         className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
                         disabled={isLoading}
                     >
-                        Clear all
+                        {t('prices.filters.clearAll')}
                     </button>
                 )}
             </div>
@@ -59,8 +61,8 @@ export function PriceFilters({
                     className="px-3 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded-full bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
                     disabled={isLoading}
                 >
-                    <option value="asc">Price: Low to High</option>
-                    <option value="desc">Price: High to Low</option>
+                    <option value="asc">{t('prices.filters.sortLowToHigh')}</option>
+                    <option value="desc">{t('prices.filters.sortHighToLow')}</option>
                 </select>
             </div>
 
@@ -68,14 +70,14 @@ export function PriceFilters({
             <div className="flex flex-wrap gap-4 w-full">
                 {/* Vehicle Type */}
                 <div className="flex flex-col flex-1 min-w-[160px]">
-                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Vehicle Type</label>
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('prices.filters.vehicleType')}</label>
                     <select
                         value={filters.vehicleType || ''}
                         onChange={(e) => updateFilter('vehicleType', e.target.value || undefined)}
                         className="input w-full"
                         disabled={isLoading}
                     >
-                        <option value="">All vehicle types</option>
+                        <option value="">{t('prices.filters.allVehicleTypes')}</option>
                         {vehicleTypeOptions.map(option => (
                             <option key={option.value} value={option.value}>
                                 {option.icon} {option.label}
@@ -86,7 +88,7 @@ export function PriceFilters({
 
                 {/* Date Range */}
                 <div className="flex flex-col flex-1 min-w-[160px]">
-                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">From</label>
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('prices.filters.from')}</label>
                     <Input
                         type="datetime-local"
                         value={filters.startDate ? formatDateTimeForInput(filters.startDate) : ''}
@@ -95,7 +97,7 @@ export function PriceFilters({
                     />
                 </div>
                 <div className="flex flex-col flex-1 min-w-[160px]">
-                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">To</label>
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('prices.filters.to')}</label>
                     <Input
                         type="datetime-local"
                         value={filters.endDate ? formatDateTimeForInput(filters.endDate) : ''}
@@ -106,11 +108,11 @@ export function PriceFilters({
 
                 {/* Price Range */}
                 <div className="flex flex-col flex-1 min-w-[200px]">
-                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Price Range</label>
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('prices.filters.priceRange')}</label>
                     <div className="flex gap-2">
                         <Input
                             type="number"
-                            placeholder="Min"
+                            placeholder={t('prices.filters.minPrice')}
                             value={filters.minPrice || ''}
                             onChange={(e) => updateFilter('minPrice', e.target.value ? parseFloat(e.target.value) : undefined)}
                             step="0.01"
@@ -121,7 +123,7 @@ export function PriceFilters({
                         />
                         <Input
                             type="number"
-                            placeholder="Max"
+                            placeholder={t('prices.filters.maxPrice')}
                             value={filters.maxPrice || ''}
                             onChange={(e) => updateFilter('maxPrice', e.target.value ? parseFloat(e.target.value) : undefined)}
                             step="0.01"
@@ -142,7 +144,7 @@ export function PriceFilters({
                         className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                         disabled={isLoading}
                     >
-                        Clear price range
+                        {t('prices.filters.clearPriceRange')}
                     </button>
                 )}
                 {filters.vehicleType && (
@@ -151,7 +153,7 @@ export function PriceFilters({
                         className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                         disabled={isLoading}
                     >
-                        Clear vehicle type
+                        {t('prices.filters.clearVehicleType')}
                     </button>
                 )}
                 {(filters.startDate || filters.endDate) && (
@@ -160,7 +162,7 @@ export function PriceFilters({
                         className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                         disabled={isLoading}
                     >
-                        Clear date range
+                        {t('prices.filters.clearDateRange')}
                     </button>
                 )}
             </div>

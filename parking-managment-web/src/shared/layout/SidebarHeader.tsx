@@ -1,9 +1,13 @@
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+
 interface SidebarHeaderProps {
   collapsed: boolean;
   onToggle: () => void;
 }
 
 export function SidebarHeader({ collapsed, onToggle }: SidebarHeaderProps) {
+  const { t } = useTypedTranslation();
+
   return (
     <div className="flex items-center justify-between p-4 border-b border-neutral-200/50 dark:border-neutral-700/50 bg-gradient-to-r from-primary-50/30 to-transparent dark:from-primary-900/10">
       {!collapsed && (
@@ -15,10 +19,10 @@ export function SidebarHeader({ collapsed, onToggle }: SidebarHeaderProps) {
           </div>
           <div>
             <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
-              ParkingManager
+              {t('shared.sidebarHeader.appName')}
             </h1>
             <p className="text-xs text-neutral-600 dark:text-neutral-400">
-              Management Portal
+              {t('shared.sidebarHeader.subtitle')}
             </p>
           </div>
         </div>
@@ -29,7 +33,7 @@ export function SidebarHeader({ collapsed, onToggle }: SidebarHeaderProps) {
         className={`p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors ${
           collapsed ? 'mx-auto' : ''
         }`}
-        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        title={collapsed ? t('shared.sidebarHeader.expandSidebar') : t('shared.sidebarHeader.collapseSidebar')}
       >
         <svg 
           className={`w-5 h-5 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} 

@@ -9,6 +9,7 @@ import { setAuthError, setAuthLoading } from '../slice/authSlice';
 import { selectAuthError, selectAuthLoading } from '../selectors';
 import { Button, Input } from '@shared/ui/components';
 import { useNotification } from '@shared/contexts/NotificationContext';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 type FormValues = { email: string };
 
@@ -18,6 +19,7 @@ export function RequestRecoveryPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const dispatch = useAppDispatch();
   const { showNotification } = useNotification();
+  const { t } = useTypedTranslation();
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
@@ -30,28 +32,28 @@ export function RequestRecoveryPage() {
       
       await requestRecovery(values).unwrap();
       setIsSuccess(true);
-      showNotification('success', 'If an account with that email exists, we\'ve sent you a password reset link.');
+      showNotification('success', t('auth.passwordRecovery.successMessage'));
     } catch (error) {
-      showNotification('error', 'Recovery request failed. Please try again.');
+      showNotification('error', t('auth.passwordRecovery.errorMessage'));
     } finally {
       dispatch(setAuthLoading(false));
     }
   };
 
   return (
-    <AuthCard title="Password recovery">
+    <AuthCard title={t('auth.passwordRecovery.requestTitle')}>
       <div className="space-y-5">
         <div className="text-center">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Enter your email address and we'll send you a link to reset your password.
+            {t('auth.passwordRecovery.requestDescription')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Input
             type="email"
-            label="Email address"
-            placeholder="Enter your email"
+            label={t('auth.passwordRecovery.email')}
+            placeholder={t('auth.passwordRecovery.emailPlaceholder')}
             {...register('email', { required: true })}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +69,7 @@ export function RequestRecoveryPage() {
             size="lg"
             loading={isSubmitting || authLoading || isApiLoading}
           >
-            Send recovery link
+            {t('auth.passwordRecovery.submitButton')}
           </Button>
         </form>
         
@@ -76,7 +78,7 @@ export function RequestRecoveryPage() {
             to="/login" 
             className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
           >
-            Back to sign in
+            {t('auth.passwordRecovery.backToLogin')}
           </Link>
         </div>
       </div>

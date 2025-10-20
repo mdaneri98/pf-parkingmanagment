@@ -1,13 +1,13 @@
 import { useState, FormEvent } from 'react';
 import type { WalkInStayFormData } from '../types';
 import { 
-  WALK_IN_STAY_CONSTANTS, 
-  UI_LABELS 
+  WALK_IN_STAY_CONSTANTS 
 } from '../constants/walkInStays';
 import { 
   normalizeLicensePlate, 
   validateWalkInStayForm 
 } from '../utils/walkInStayUtils';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface WalkInStayFormProps {
   onSubmit: (formData: WalkInStayFormData) => void;
@@ -23,6 +23,7 @@ export const WalkInStayForm = ({
   const [licensePlate, setLicensePlate] = useState('');
   const [expectedHours, setExpectedHours] = useState(2);
   const [errors, setErrors] = useState<string[]>([]);
+  const { t } = useTypedTranslation();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -57,14 +58,14 @@ export const WalkInStayForm = ({
           htmlFor="licensePlate" 
           className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1"
         >
-          {UI_LABELS.LICENSE_PLATE}
+          {t('walkinstays.licensePlate')}
         </label>
         <input
           id="licensePlate"
           type="text"
           value={licensePlate}
           onChange={(e) => handleLicensePlateChange(e.target.value)}
-          placeholder={UI_LABELS.LICENSE_PLATE_PLACEHOLDER}
+          placeholder={t('walkinstays.licensePlatePlaceholder')}
           disabled={isLoading}
           className="w-full px-3 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-md 
                      bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100
@@ -80,7 +81,7 @@ export const WalkInStayForm = ({
         <label 
           className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-2"
         >
-          {UI_LABELS.EXPECTED_HOURS}
+          {t('walkinstays.expectedHours')}
         </label>
         <div className="grid grid-cols-4 gap-2">
           {WALK_IN_STAY_CONSTANTS.EXTEND_OPTIONS.map((hours) => (
@@ -127,7 +128,7 @@ export const WalkInStayForm = ({
                      disabled:opacity-50 disabled:cursor-not-allowed
                      transition-colors"
         >
-          {UI_LABELS.CANCEL}
+          {t('walkinstays.cancel')}
         </button>
         <button
           type="submit"
@@ -136,7 +137,7 @@ export const WalkInStayForm = ({
                      disabled:opacity-50 disabled:cursor-not-allowed
                      transition-colors font-medium"
         >
-          {isLoading ? 'Creating...' : UI_LABELS.SUBMIT}
+          {isLoading ? t('walkinstays.creating') : t('walkinstays.submit')}
         </button>
       </div>
     </form>

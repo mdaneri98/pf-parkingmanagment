@@ -3,6 +3,7 @@ import { SpotFilters as SpotFiltersComponent } from '@parking/components/spots/S
 import { ParkingSpotsGrid } from '@parking/components/spots/ParkingSpotsGrid';
 import { ErrorState } from '@parking/components/common/ErrorState';
 import { PlusIcon } from '@parking/components/common/Icons';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface SpotsSectionProps {
   spots: SpotDTO[];
@@ -32,11 +33,13 @@ export function SpotsSection({
   spotFilters,
   isCreating
 }: SpotsSectionProps) {
+  const { t } = useTypedTranslation();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-          Parking Spots
+          {t('parking.dashboard.spotsTitle')}
         </h2>
         <div className="flex items-center space-x-3">
           {isError && (
@@ -44,7 +47,7 @@ export function SpotsSection({
               onClick={onRetry}
               className="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
             >
-              Retry Loading Spots
+              {t('common.retry')}
             </button>
           )}
           <button
@@ -53,7 +56,7 @@ export function SpotsSection({
             disabled={isCreating}
           >
             <PlusIcon />
-            <span>Add Spot</span>
+            <span>{t('parking.spots.createSpot')}</span>
           </button>
         </div>
       </div>
@@ -68,8 +71,8 @@ export function SpotsSection({
       <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6">
         {isError ? (
           <ErrorState 
-            title="Failed to Load Spots"
-            message="Unable to fetch parking spots data."
+            title={t('parking.dashboard.loadingError')}
+            message={t('parking.dashboard.loadingErrorMessage')}
             onRetry={onRetry}
           />
         ) : (

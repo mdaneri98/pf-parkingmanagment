@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import type { CreateSpotRequest } from '@parking/types';
 import { VEHICLE_TYPES, getVehicleTypeOptions, VehicleType } from '@shared/constants';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+import { Modal } from '@shared/ui/components';
 
 interface FormData {
   parkingLotId: number;
@@ -24,7 +26,7 @@ interface Props {
 
 const getInitialFormData = (parkingLotId: number): FormData => ({
   parkingLotId,
-  floor: 1, // Inicializado como number
+  floor: 1,
   prefix: '',
   startNumber: '' as number | '',
   endNumber: '' as number | '',
@@ -36,6 +38,7 @@ const getInitialFormData = (parkingLotId: number): FormData => ({
 
 export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoading }: Props) {
   const [formData, setFormData] = useState<FormData>(() => getInitialFormData(parkingLotId));
+  const { t } = useTypedTranslation();
 
   const resetForm = useCallback(() => {
     setFormData(getInitialFormData(parkingLotId));
@@ -99,12 +102,12 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
   if (!isOpen) return null;
 
   return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-md w-full">
+      <Modal isOpen={isOpen} onClose={handleClose} maxWidth="md">
+        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl w-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
             <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              {formData.isSingleSpot ? 'Create New Spot' : 'Create Multiple Spots'}
+              {formData.isSingleSpot ? t('parking.spots.modals.createSpot.titleSingle') : t('parking.spots.modals.createSpot.titleMultiple')}
             </h2>
             <button
                 onClick={handleClose}
@@ -132,7 +135,7 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
             {/* Spot Code Input */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                {formData.isSingleSpot ? 'Spot Number' : 'Spot Code Range'}
+                {formData.isSingleSpot ? t('parking.spots.modals.createSpot.spotNumber') : t('parking.spots.modals.createSpot.spotCodeRange')}
               </label>
               <div className="grid grid-cols-3 gap-4">
 
@@ -144,7 +147,7 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                     className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg
                            bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100
                            focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Prefix (e.g. A)"
+                    placeholder={t('parking.spots.modals.createSpot.prefixPlaceholder')}
                     maxLength={5}
                 />
 
@@ -161,8 +164,8 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                     className={`w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg 
                             bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 
                             focus:ring-2 focus:ring-blue-500 focus:border-transparent 
-                            ${formData.isSingleSpot ? 'col-span-2' : 'col-span-1'}`} // Ocupa 2 columnas en modo single
-                    placeholder={formData.isSingleSpot ? 'Spot Number (e.g. 10)' : '(e.g. 1)'}
+                            ${formData.isSingleSpot ? 'col-span-2' : 'col-span-1'}`}
+                    placeholder={formData.isSingleSpot ? t('parking.spots.modals.createSpot.spotNumberPlaceholder') : t('parking.spots.modals.createSpot.startPlaceholder')}
                     min={0}
                     required
                 />
@@ -181,7 +184,7 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                         className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg
                              bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100
                              focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="(e.g. 50)"
+                        placeholder={t('parking.spots.modals.createSpot.endPlaceholder')}
                         min={0}
                         required
                     />
@@ -189,8 +192,8 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
               </div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                 {formData.isSingleSpot
-                    ? 'Code will be generated as: Prefix + Number (e.g. A10)'
-                    : 'Codes will be generated as: Prefix + number (e.g. A1, A2, ..., A50)'}
+                    ? t('parking.spots.modals.createSpot.codeHintSingle')
+                    : t('parking.spots.modals.createSpot.codeHintMultiple')}
               </p>
             </div>
             {/* Toggle para Single/Multiple Spots */}
@@ -202,14 +205,14 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                           bg-neutral-100 dark:bg-neutral-700 text-blue-600 dark:text-blue-400
                           hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
               >
-                {formData.isSingleSpot ? 'Multiple Spots Mode' : 'Single Spot Mode'}
+                {formData.isSingleSpot ? t('parking.spots.modals.createSpot.multipleSpotsMode') : t('parking.spots.modals.createSpot.singleSpotMode')}
               </button>
             </div>
 
             {/* Floor */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Floor
+                {t('parking.spots.modals.createSpot.floor')}
               </label>
               <input
                   type="number"
@@ -232,7 +235,7 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
             {/* Vehicle Type */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Vehicle Type
+                {t('parking.spots.modals.createSpot.vehicleType')}
               </label>
               <select
                   value={formData.vehicleType}
@@ -255,9 +258,9 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
               {/* 1. isReservable */}
               <div className="flex items-center justify-between">
                 <label htmlFor="isReservable" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer">
-                  Consider for Online Reservations
+                  {t('parking.spots.modals.createSpot.reservableTitle')}
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                    If enabled, this spot can be booked by users.
+                    {t('parking.spots.modals.createSpot.reservableDesc')}
                   </p>
                 </label>
                 <input
@@ -269,12 +272,12 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                 />
               </div>
 
-              {/* 2. isAccessible (¿Acepta Discapacitados?) */}
+              {/* 2. isAccessible */}
               <div className="flex items-center justify-between">
                 <label htmlFor="isAccessible" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer">
-                  Accessible Spot (PCD)
+                  {t('parking.spots.modals.createSpot.accessibleTitle')}
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                    Designated for users with reduced mobility or special needs.
+                    {t('parking.spots.modals.createSpot.accessibleDesc')}
                   </p>
                 </label>
                 <input
@@ -298,7 +301,7 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                          rounded-lg transition-colors"
                   disabled={isLoading}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                   type="submit"
@@ -312,13 +315,13 @@ export function CreateSpotModal({ isOpen, onClose, onSubmit, parkingLotId, isLoa
                          transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading
-                    ? 'Creating...'
-                    : formData.isSingleSpot ? 'Create Spot' : 'Create Spots' // Texto del botón dinámico
+                    ? t('parking.spots.modals.createSpot.creating')
+                    : formData.isSingleSpot ? t('parking.spots.modals.createSpot.createButton') : t('parking.spots.modals.createSpot.createButtonMultiple')
                 }
               </button>
             </div>
           </form>
         </div>
-      </div>
+      </Modal>
   );
 }

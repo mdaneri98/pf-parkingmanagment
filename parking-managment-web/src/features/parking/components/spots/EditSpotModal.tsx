@@ -1,6 +1,8 @@
 import { useEffect, useCallback, useReducer } from 'react';
 import type { SpotDTO, UpdateSpotRequest } from '@parking/types';
 import { VEHICLE_TYPES, getVehicleTypeOptions, type VehicleType } from '@shared/constants';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+import { Modal } from '@shared/ui/components';
 
 interface Props {
   isOpen: boolean;
@@ -51,6 +53,7 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
     isReservable: true,
     isAccessible: false,
   });
+  const { t } = useTypedTranslation();
 
   useEffect(() => {
     if (spot) {
@@ -61,8 +64,8 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
           code: spot.code,
           vehicleType: spot.vehicleType,
           isAvailable: spot.isAvailable,
-          isReservable: spot.isReservable ?? false, // CORRECCIÓN
-          isAccessible: spot.isAccessible ?? false, // CORRECCIÓN
+          isReservable: spot.isReservable ?? false, 
+          isAccessible: spot.isAccessible ?? false, 
         },
       });
     }
@@ -82,17 +85,12 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
   if (!isOpen || !spot) return null;
 
   return (
-      <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="edit-spot-title"
-      >
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-md w-full animate-fadeIn">
+      <Modal isOpen={isOpen} onClose={onClose} maxWidth="md">
+        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl w-full animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="edit-spot-title">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
             <h2 id="edit-spot-title" className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              Edit Spot {spot.code}
+              {t('parking.spots.modals.editSpot.title', { code: spot.code })}
             </h2>
           </div>
 
@@ -101,14 +99,14 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             {/* Spot Code */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Spot Code
+                {t('parking.spots.modals.editSpot.spotCode')}
               </label>
               <input
                   type="text"
                   value={formData.code}
                   onChange={(e) => dispatch({ type: 'SET_CODE', payload: e.target.value })}
                   className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., A1, B2, C3"
+                  placeholder={t('parking.spots.modals.editSpot.spotCodePlaceholder')}
                   required
               />
             </div>
@@ -116,7 +114,7 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             {/* Floor */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Floor
+                {t('parking.spots.modals.editSpot.floor')}
               </label>
               <input
                   type="number"
@@ -137,7 +135,7 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             {/* Vehicle Type */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Vehicle Type
+                {t('parking.spots.modals.editSpot.vehicleType')}
               </label>
               <select
                   value={formData.vehicleType}
@@ -153,16 +151,14 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
               </select>
             </div>
 
-            {/* --- FILTROS BOOLEANOS (Checkbox) --- */}
-
             <div className="space-y-3 pt-2">
 
               {/* 1. isReservable */}
               <div className="flex items-center justify-between">
                 <label htmlFor="isReservable" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer">
-                  Consider for Online Reservations
+                  {t('parking.spots.modals.editSpot.reservableTitle')}
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                    If enabled, this spot can be booked by external users.
+                    {t('parking.spots.modals.editSpot.reservableDesc')}
                   </p>
                 </label>
                 <input
@@ -177,9 +173,9 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
               {/* 2. isAccessible  */}
               <div className="flex items-center justify-between">
                 <label htmlFor="isAccessible" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 cursor-pointer">
-                  Accessible Spot (PCD)
+                  {t('parking.spots.modals.editSpot.accessibleTitle')}
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                    Designated for users with reduced mobility or special needs.
+                    {t('parking.spots.modals.editSpot.accessibleDesc')}
                   </p>
                 </label>
                 <input
@@ -196,14 +192,14 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
             {/* Current Status */}
             <div className="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-600 dark:text-neutral-400">Current Status:</span>
+                <span className="text-neutral-600 dark:text-neutral-400">{t('common.status')}:</span>
                 <div className={`flex items-center space-x-2 px-2 py-1 rounded-full text-xs font-medium ${
                     spot.isAvailable
                         ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
                         : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
                 }`}>
                   <span className={`w-2 h-2 rounded-full ${spot.isAvailable ? 'bg-green-500' : 'bg-red-500'}`} />
-                  <span>{spot.isAvailable ? 'Available' : 'Occupied'}</span>
+                  <span>{spot.isAvailable ? t('parking.spots.modals.editSpot.available') : t('parking.spots.modals.editSpot.occupied')}</span>
                 </div>
               </div>
             </div>
@@ -216,18 +212,18 @@ export function EditSpotModal({ isOpen, onClose, onSubmit, spot, isLoading }: Pr
                   className="px-4 py-2 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg"
                   disabled={isLoading}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                   type="submit"
                   disabled={isLoading || !formData.code?.trim()}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50"
               >
-                {isLoading ? 'Updating...' : 'Update Spot'}
+                {isLoading ? t('common.updating') : t('parking.spots.modals.editSpot.saveChanges')}
               </button>
             </div>
           </form>
         </div>
-      </div>
+      </Modal>
   );
 }

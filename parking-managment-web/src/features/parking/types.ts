@@ -1,5 +1,6 @@
 import type { BaseEntity } from '../users/types';
 import type { VehicleType } from '@shared/constants';
+import type { AppError } from '@shared/utils/errorHandling';
 
 // ====== Core Domain Types ======
 export interface ParkingLotCoordinates {
@@ -57,6 +58,8 @@ export interface SpotFilters {
   available?: boolean;
   vehicleType?: VehicleType | string; 
   floor?: number;
+  isAccessible?: boolean;
+  isReservable?: boolean;
   page?: number;
   size?: number;
   sort?: string;
@@ -110,21 +113,9 @@ export interface ConfirmDeleteState {
   id: number;
 }
 
-// ====== Error Handling Types ======
-export class ParkingError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public details?: Record<string, unknown>
-  ) {
-    super(message);
-    this.name = 'ParkingError';
-  }
-}
-
 export type ParkingResult<T> = 
   | { success: true; data: T }
-  | { success: false; error: ParkingError };
+  | { success: false; error: AppError };
 
 // ====== Loading States ======
 export interface MutationLoadingStates {

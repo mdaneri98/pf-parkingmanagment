@@ -1,5 +1,6 @@
 import type { TimeThresholdStatus, WalkInStayFormData } from '../types';
-import { WALK_IN_STAY_CONSTANTS, WALK_IN_STAY_ERROR_MESSAGES } from '../constants/walkInStays';
+import { WALK_IN_STAY_CONSTANTS } from '../constants/walkInStays';
+import i18n from '@shared/i18n/config';
 
 /**
  * Format remaining time in minutes to human-readable string
@@ -122,18 +123,18 @@ export const validateWalkInStayForm = (formData: WalkInStayFormData): {
   
   // Validate license plate
   if (!formData.licensePlate || formData.licensePlate.trim().length === 0) {
-    errors.push(WALK_IN_STAY_ERROR_MESSAGES.VALIDATION.LICENSE_PLATE_REQUIRED);
+    errors.push(i18n.t('walkinstays.validation.licensePlateRequired'));
   } else if (!validateLicensePlate(formData.licensePlate)) {
-    errors.push(WALK_IN_STAY_ERROR_MESSAGES.VALIDATION.LICENSE_PLATE_INVALID);
+    errors.push(i18n.t('walkinstays.validation.licensePlateInvalid'));
   }
   
   // Validate expected hours
   if (!formData.expectedHours) {
-    errors.push(WALK_IN_STAY_ERROR_MESSAGES.VALIDATION.HOURS_REQUIRED);
+    errors.push(i18n.t('walkinstays.validation.hoursRequired'));
   } else if (formData.expectedHours < WALK_IN_STAY_CONSTANTS.MIN_EXPECTED_HOURS) {
-    errors.push(WALK_IN_STAY_ERROR_MESSAGES.VALIDATION.HOURS_MIN);
+    errors.push(i18n.t('walkinstays.validation.hoursMin', { min: WALK_IN_STAY_CONSTANTS.MIN_EXPECTED_HOURS }));
   } else if (formData.expectedHours > WALK_IN_STAY_CONSTANTS.MAX_EXPECTED_HOURS) {
-    errors.push(WALK_IN_STAY_ERROR_MESSAGES.VALIDATION.HOURS_MAX);
+    errors.push(i18n.t('walkinstays.validation.hoursMax', { max: WALK_IN_STAY_CONSTANTS.MAX_EXPECTED_HOURS }));
   }
   
   return {
@@ -153,12 +154,12 @@ export const formatPrice = (price: number | undefined): string => {
 };
 
 /**
- * Check if walk-in stay is active (IN_USE status)
+ * Check if walk-in stay is active (ACTIVE status)
  * @param status - Reservation status
  * @returns true if active, false otherwise
  */
 export const isActiveWalkInStay = (status: string): boolean => {
-  return status === 'IN_USE' || status === 'ACTIVE';
+  return status === 'ACTIVE';
 };
 
 /**

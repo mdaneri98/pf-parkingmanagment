@@ -10,6 +10,7 @@ import {
 import { ReservationDetailModal } from './modals/ReservationDetailModal';
 import { useNotification } from '@shared/contexts/NotificationContext';
 import { useErrorHandler } from '@shared/utils/errorHandling';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 const { DEFAULT_PAGE_SIZE} = RESERVATION_CONSTANTS.PAGINATION;
 
@@ -19,6 +20,7 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
     const [selectedReservation, setSelectedReservation] = useState<ReservationResponse | null>(null);
     const { showNotification } = useNotification();
     const { getUserFriendlyMessage } = useErrorHandler();
+    const { t } = useTypedTranslation();
 
     const {
         data,
@@ -40,15 +42,15 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
     useEffect(() => {
         if (isError && error) {
             const errorMessage = getUserFriendlyMessage(error);
-            showNotification('error', `Failed to load reservations: ${errorMessage}`);
+            showNotification('error', `${t('reservations.errorLoading')}: ${errorMessage}`);
         }
-    }, [isError, error, showNotification, getUserFriendlyMessage]);
+    }, [isError, error, showNotification, getUserFriendlyMessage, t]);
 
-    if (isLoading) return <div className="p-4 text-gray-500">Loading reservations...</div>;
+    if (isLoading) return <div className="p-4 text-gray-500">{t('reservations.loadingReservations')}</div>;
     if (isError)
         return (
             <div className="p-4 text-red-600">
-                Error loading reservations. <button onClick={refetch}>Retry</button>
+                {t('reservations.errorLoading')} <button onClick={refetch}>{t('common.retry')}</button>
             </div>
         );
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -61,7 +63,7 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
             vehicleType: 'Car',
             spotFloor: 1,
             totalPrice: reservation.price || 0,
-        });
+        } as any);
     };
 
     const closeModal = () => {
@@ -80,37 +82,37 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
                                     scope="col"
                                     className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
                                 >
-                                    Vehicle
+                                    {t('reservations.table.vehicle')}
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
                                 >
-                                    Parked In
+                                    {t('reservations.table.parkedIn')}
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
                                 >
-                                    Start
+                                    {t('reservations.table.start')}
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
                                 >
-                                    End
+                                    {t('reservations.table.end')}
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
                                 >
-                                    Status
+                                    {t('reservations.table.status')}
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-sm font-semibold text-gray-900"
                                 >
-                                    More details
+                                    {t('reservations.table.moreDetails')}
                                 </th>
                             </tr>
                             </thead>
@@ -144,7 +146,7 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
                                             onClick={() => openReservationDetails(reservation)}
                                             className="text-indigo-600 hover:text-indigo-900"
                                         >
-                                            View
+                                            {t('reservations.table.view')}
                                         </button>
                                     </td>
                                 </tr>
@@ -161,11 +163,11 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
                 <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                     <div>
                         <p className="text-sm text-gray-700">
-                            Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
+                            {t('reservations.table.showing')} <span className="font-medium">{indexOfFirstItem + 1}</span> {t('reservations.table.to')}{' '}
                             <span className="font-medium">
                 {Math.min(indexOfLastItem, reservations.length)}
               </span>{' '}
-                            of <span className="font-medium">{reservations.length}</span> results
+                            {t('reservations.table.of')} <span className="font-medium">{reservations.length}</span> {t('reservations.table.results')}
                         </p>
                     </div>
                     <div>
@@ -175,7 +177,7 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
                                 disabled={currentPage === 1}
                                 className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                             >
-                                <span className="sr-only">Previous</span>
+                                <span className="sr-only">{t('reservations.table.previous')}</span>
                                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                                 </svg>
@@ -198,7 +200,7 @@ export function ReservationList({ parkingLotId, filters }: { parkingLotId: numbe
                                 disabled={currentPage === totalPages}
                                 className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                             >
-                                <span className="sr-only">Next</span>
+                                <span className="sr-only">{t('reservations.table.next')}</span>
                                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                                 </svg>

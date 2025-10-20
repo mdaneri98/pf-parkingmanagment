@@ -4,6 +4,7 @@ import { Input } from "@shared/ui/components";
 import { RESERVATION_STATUS } from '../constants/reservations';
 import { formatDateTimeForInput, parseDateTimeFromInput } from "@features/prices";
 import { ReservationFilterState } from '../slice/reservationsSlice';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface ReservationFiltersProps {
     filters?: ReservationFilterState;
@@ -26,6 +27,7 @@ export function ReservationFilters({
                                        onFiltersChange,
                                        initialFilters = {}
                                    }: ReservationFiltersProps) {
+    const { t } = useTypedTranslation();
 
     const [status, setStatus] = useState<ReservationStatus | ''>(
         initialFilters.status ?? ReservationStatus.PENDING
@@ -60,12 +62,12 @@ export function ReservationFilters({
 
     const hasActiveFilters = status !== '' || fromDate || toDate;
 
-    // 🔹 Convertimos el objeto RESERVATION_STATUS en una lista de opciones
+    // Convert RESERVATION_STATUS object to options list
     const statusOptions = [
-        { value: '', label: 'Todos' },
+        { value: '', label: t('reservations.filters.allStatuses') },
         ...Object.entries(RESERVATION_STATUS).map(([key, value]) => ({
             value: key as ReservationStatus,
-            label: value.label,
+            label: t(value.labelKey),
         })),
     ];
 
@@ -73,14 +75,14 @@ export function ReservationFilters({
         <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-                    Filtros de Reservas
+                    {t('reservations.filters.title')}
                 </h3>
                 {hasActiveFilters && (
                     <button
                         onClick={clearFilters}
                         className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
-                        Limpiar filtros
+                        {t('reservations.filters.clearFilters')}
                     </button>
                 )}
             </div>
@@ -89,7 +91,7 @@ export function ReservationFilters({
                 {/* Status Filter */}
                 <div className="space-y-2">
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                        Status
+                        {t('reservations.filters.status')}
                     </label>
                     <select
                         value={status}
@@ -106,7 +108,7 @@ export function ReservationFilters({
 
                 {/* Date Range - From */}
                 <Input
-                    label="From Date"
+                    label={t('reservations.filters.fromDate')}
                     type="datetime-local"
                     value={fromDate ? formatDateTimeForInput(fromDate) : ''}
                     onChange={(e) => {
@@ -115,12 +117,12 @@ export function ReservationFilters({
                         updateFilter('from', val ? formatDateTimeForInput(parseDateTimeFromInput(val)) : undefined);
                     }}
                     disabled={isLoading}
-                    helpText="Filter reservations from this date"
+                    helpText={t('reservations.filters.fromDateHelp')}
                 />
 
                 {/* Date Range - To */}
                 <Input
-                    label="To Date"
+                    label={t('reservations.filters.toDate')}
                     type="datetime-local"
                     value={toDate ? formatDateTimeForInput(toDate) : ''}
                     onChange={(e) => {
@@ -129,7 +131,7 @@ export function ReservationFilters({
                         updateFilter('to', val ? formatDateTimeForInput(parseDateTimeFromInput(val)) : undefined);
                     }}
                     disabled={isLoading}
-                    helpText="Filter reservations until this date"
+                    helpText={t('reservations.filters.toDateHelp')}
                 />
             </div>
 
@@ -139,7 +141,7 @@ export function ReservationFilters({
                     <div className="flex flex-wrap gap-2">
                         {status && (
                             <span className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full">
-                                {RESERVATION_STATUS[status]?.label ?? status}
+                                {t(RESERVATION_STATUS[status]?.labelKey) ?? status}
                                 <button
                                     onClick={() => setStatus('')}
                                     className="ml-1 text-blue-500 hover:text-blue-700"
@@ -150,7 +152,7 @@ export function ReservationFilters({
                         )}
                         {fromDate && (
                             <span className="inline-flex items-center px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full">
-                                Desde: {fromDate.toLocaleString()}
+                                {t('reservations.filters.from')} {fromDate.toLocaleString()}
                                 <button
                                     onClick={() => setFromDate(undefined)}
                                     className="ml-1 text-purple-500 hover:text-purple-700"
@@ -161,7 +163,7 @@ export function ReservationFilters({
                         )}
                         {toDate && (
                             <span className="inline-flex items-center px-2 py-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full">
-                                Hasta: {toDate.toLocaleString()}
+                                {t('reservations.filters.to')} {toDate.toLocaleString()}
                                 <button
                                     onClick={() => setToDate(undefined)}
                                     className="ml-1 text-orange-500 hover:text-orange-700"

@@ -47,7 +47,7 @@ public class SpotServiceImpl implements SpotService {
         ParkingLot parkingLot = parkingLotService.findEntityById(parkingLotId);
 
         if (spotRepository.existsByParkingLotAndFloorAndCode(parkingLot, request.getFloor(), request.getCode())) {
-            throw new BadRequestException("Spot with code " + request.getCode() + " and floor " + request.getFloor() + " already exists in this parking lot");
+            throw new BadRequestException("spot.already.exists", request.getCode(), request.getFloor());
         }
 
         Spot spot = new Spot();
@@ -68,7 +68,7 @@ public class SpotServiceImpl implements SpotService {
         return spotRepository.findById(id)
                 .filter(spot -> spot.getParkingLot().getId().equals(parkingLotId))
                 .map(ParkingLotMapper::toSpotResponse)
-                .orElseThrow(() -> new NotFoundException("Spot not found in this parking lot with id: " + id));
+                .orElseThrow(() -> new NotFoundException("spot.not.found", id));
     }
 
     @Override
@@ -77,10 +77,10 @@ public class SpotServiceImpl implements SpotService {
 
         Spot spot = spotRepository.findById(id)
                 .filter(s -> s.getParkingLot().getId().equals(parkingLotId))
-                .orElseThrow(() -> new NotFoundException("Spot not found in this parking lot with id: " + id));
+                .orElseThrow(() -> new NotFoundException("spot.not.found", id));
 
         if (spotRepository.existsByParkingLotAndFloorAndCodeAndIdNot(parkingLotService.findEntityById(parkingLotId), request.getFloor(), request.getCode(), id)) {
-            throw new BadRequestException("Spot with code " + request.getCode() + " and floor " + request.getFloor() + " already exists in this parking lot");
+            throw new BadRequestException("spot.already.exists", request.getCode(), request.getFloor());
         }
 
         spot.setVehicleType(request.getVehicleType());
@@ -96,7 +96,7 @@ public class SpotServiceImpl implements SpotService {
     @Override
     public void deleteSpot(Long parkingLotId, Long id) {
         Spot spot = spotRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Spot not found"));
+                .orElseThrow(() -> new NotFoundException("spot.not.found", id));
 
         boolean hasFutureScheduledReservations = scheduledReservationRepository.existsBySpotIdAndReservedStartTimeAfter(spot.getId(), LocalDateTime.now());
         if (hasFutureScheduledReservations || !spot.getIsAvailable()) {
@@ -136,7 +136,7 @@ public class SpotServiceImpl implements SpotService {
 
     @Override
     public Spot findEntityById(Long spotId) {
-        return spotRepository.findById(spotId).orElseThrow(() -> new NotFoundException("Spot not found"));
+        return spotRepository.findById(spotId).orElseThrow(() -> new NotFoundException("spot.not.found", spotId));
     }
 
     @Override

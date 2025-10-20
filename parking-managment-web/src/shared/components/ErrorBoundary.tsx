@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { logger } from '../utils/logger';
+import i18n from '../i18n/config';
 
 interface Props {
   children: ReactNode;
@@ -55,30 +56,30 @@ export class ErrorBoundary extends Component<Props, State> {
                   </svg>
                 </div>
                 <h3 className="ml-3 text-sm font-medium text-red-800">
-                  Something went wrong
+                  {i18n.t('shared.errorBoundary.title')}
                 </h3>
               </div>
               <div className="text-sm text-red-700 mb-4">
-                An unexpected error occurred. Please try refreshing the page or contact support if the problem persists.
+                {i18n.t('shared.errorBoundary.message')}
               </div>
               <div className="flex space-x-3">
                 <button
                   onClick={this.handleRetry}
                   className="bg-red-100 hover:bg-red-200 text-red-800 px-3 py-2 rounded text-sm font-medium transition-colors"
                 >
-                  Try Again
+                  {i18n.t('shared.errorBoundary.tryAgain')}
                 </button>
                 <button
                   onClick={() => window.location.reload()}
                   className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
                 >
-                  Refresh Page
+                  {i18n.t('shared.errorBoundary.refreshPage')}
                 </button>
               </div>
               {import.meta.env.DEV && this.state.error && (
                 <details className="mt-4">
                   <summary className="text-xs text-red-600 cursor-pointer">
-                    Error Details (Development)
+                    {i18n.t('shared.errorBoundary.errorDetails')}
                   </summary>
                   <pre className="mt-2 text-xs text-red-600 bg-red-100 p-2 rounded overflow-auto">
                     {this.state.error.stack}

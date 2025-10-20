@@ -16,12 +16,14 @@ import { LoadingState, ErrorState, EmptyState } from '@parking/components/common
 import { SettingsModals } from '@parking/components/settings/SettingsModals';
 import { ImagePreview } from '@shared/components/ImagePreview';
 import { Button } from '@shared/ui/components';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 import type { CreateParkingLotRequest, UpdateParkingLotRequest } from '@parking/types';
 
-export function SettingsPage() {
+export function ParkingLotManagement() {
   const params = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { t } = useTypedTranslation();
   const selectedLotId = useAppSelector(selectSelectedParkingLotId);
   const isLoading = useAppSelector(selectParkingLotsLoading);
   const isError = useAppSelector(selectParkingLotsError);
@@ -29,7 +31,6 @@ export function SettingsPage() {
   
   const lotId = params.lotId ? Number(params.lotId) : selectedLotId;
   const isValidLot = Boolean(lotId && !isNaN(lotId));
-
 
   const { 
     data: parkingLotsResponse, 
@@ -95,8 +96,8 @@ export function SettingsPage() {
   if (!user?.id) {
     return (
       <EmptyState
-        title="Authentication Required"
-        message="Please log in to manage your parking lots."
+        title={t('settings.parkingLots.authenticationRequired')}
+        message={t('settings.parkingLots.authenticationMessage')}
       />
     );
   }
@@ -108,8 +109,8 @@ export function SettingsPage() {
   if (isLotsError) {
     return (
       <ErrorState
-        title="Failed to Load Parking Lots"
-        message="Unable to fetch parking lot data. Please check your connection and try again."
+        title={t('settings.parkingLots.loadingError')}
+        message={t('settings.parkingLots.loadingErrorMessage')}
         onRetry={refetchLots}
       />
     );
@@ -118,8 +119,8 @@ export function SettingsPage() {
   if (!parkingLots.length) {
     return (
       <EmptyState
-        title="No Parking Lots"
-        message="You don't have any parking lots yet. Create your first one to get started."
+        title={t('settings.parkingLots.noLotsTitle')}
+        message={t('settings.parkingLots.noLotsMessage')}
       />
     );
   }
@@ -131,11 +132,11 @@ export function SettingsPage() {
           {/* Header with Actions */}
           <div className="flex items-start justify-between mb-8">
             <div>
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-                Parking Lot Settings
-              </h1>
+              <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                {t('settings.parkingLots.title')}
+              </h2>
               <p className="text-neutral-600 dark:text-neutral-400">
-                Manage your parking lot information and create new locations
+                {t('settings.parkingLots.description')}
               </p>
             </div>
             
@@ -144,16 +145,16 @@ export function SettingsPage() {
               disabled={loadingStates.createLot}
               className="btn-primary shrink-0"
             >
-              {loadingStates.createLot ? 'Creating...' : 'New Parking Lot'}
+              {loadingStates.createLot ? t('settings.parkingLots.creating') : t('settings.parkingLots.newParkingLot')}
             </Button>
           </div>
 
           {/* Featured Parking Lot (Selected) */}
           {selectedLot && (
             <div className="mb-12">
-              <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-6 text-center">
-                Current Parking Lot
-              </h2>
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-6 text-center">
+                {t('settings.parkingLots.currentLot')}
+              </h3>
               <div className="flex justify-center">
                 <div className="w-full max-w-md">
                   {renderParkingLotCard(selectedLot, true)}
@@ -165,9 +166,9 @@ export function SettingsPage() {
           {/* Other Parking Lots */}
           {otherLots.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
-                {selectedLot ? 'Additional Parking Lots' : 'All Parking Lots'}
-              </h2>
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+                {selectedLot ? t('settings.parkingLots.additionalLots') : t('settings.parkingLots.allLots')}
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                 {otherLots.map((lotData) => (
                   renderParkingLotCard(lotData, false)
@@ -221,7 +222,7 @@ export function SettingsPage() {
               setOpenMenuId(openMenuId === lotData.id ? null : lotData.id);
             }}
             className="p-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
-            title="More options"
+            title={t('settings.parkingLots.moreOptions')}
           >
             <svg className="w-5 h-5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -244,7 +245,7 @@ export function SettingsPage() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  Delete Parking Lot
+                  {t('settings.parkingLots.deleteLot')}
                 </button>
               </div>
             </div>

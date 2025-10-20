@@ -24,3 +24,6 @@ export { UserProfile } from './UserProfile';
 export type { UserProfileProps } from './UserProfile';
 
 export { ConfirmDeleteModal } from './ConfirmDeleteModal';
+
+export { Modal } from './Modal';
+export type { ModalProps } from './Modal';

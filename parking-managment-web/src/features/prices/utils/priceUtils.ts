@@ -12,7 +12,7 @@ import {
   isPriceActive,
   isPriceExpired,
   PRICE_CONSTANTS,
-  PRICE_ERROR_MESSAGES,
+  PRICE_ERROR_MESSAGE_KEYS,
 } from '../constants/prices';
 
 // ====== Data Transformation Utils ======
@@ -131,17 +131,17 @@ export const validatePriceFormData = (
   if (!formData.price && formData.price !== 0) {
     errors.push({
       field: 'price',
-      message: PRICE_ERROR_MESSAGES.VALIDATION.PRICE_REQUIRED,
+      message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.PRICE_REQUIRED,
     });
   } else if (formData.price < PRICE_CONSTANTS.VALIDATION.MIN_PRICE) {
     errors.push({
       field: 'price',
-      message: PRICE_ERROR_MESSAGES.VALIDATION.PRICE_MIN,
+      message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.PRICE_MIN,
     });
   } else if (formData.price > PRICE_CONSTANTS.VALIDATION.MAX_PRICE) {
     errors.push({
       field: 'price',
-      message: PRICE_ERROR_MESSAGES.VALIDATION.PRICE_MAX,
+      message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.PRICE_MAX,
     });
   }
 
@@ -149,7 +149,7 @@ export const validatePriceFormData = (
   if (!formData.vehicleType) {
     errors.push({
       field: 'vehicleType',
-      message: PRICE_ERROR_MESSAGES.VALIDATION.VEHICLE_TYPE_REQUIRED,
+      message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.VEHICLE_TYPE_REQUIRED,
     });
   }
 
@@ -157,14 +157,14 @@ export const validatePriceFormData = (
   if (!formData.validFrom) {
     errors.push({
       field: 'validFrom',
-      message: PRICE_ERROR_MESSAGES.VALIDATION.VALID_FROM_REQUIRED,
+      message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.VALID_FROM_REQUIRED,
     });
   }
 
   if (!formData.validTo) {
     errors.push({
       field: 'validTo',
-      message: PRICE_ERROR_MESSAGES.VALIDATION.VALID_TO_REQUIRED,
+      message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.VALID_TO_REQUIRED,
     });
   }
 
@@ -173,7 +173,7 @@ export const validatePriceFormData = (
     if (formData.validTo <= formData.validFrom) {
       errors.push({
         field: 'validTo',
-        message: PRICE_ERROR_MESSAGES.VALIDATION.DATE_RANGE_INVALID,
+        message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.DATE_RANGE_INVALID,
       });
     }
 
@@ -185,7 +185,7 @@ export const validatePriceFormData = (
     if (startDate < today) {
       errors.push({
         field: 'validFrom',
-        message: PRICE_ERROR_MESSAGES.VALIDATION.DATE_PAST,
+        message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.DATE_PAST,
       });
     }
   }
@@ -201,7 +201,7 @@ export const validatePriceFormData = (
     if (overlappingPrices.length > 0) {
       errors.push({
         field: 'validFrom',
-        message: PRICE_ERROR_MESSAGES.VALIDATION.OVERLAPPING_PERIOD,
+        message: PRICE_ERROR_MESSAGE_KEYS.VALIDATION.OVERLAPPING_PERIOD,
       });
     }
   }

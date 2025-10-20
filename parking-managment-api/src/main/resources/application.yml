@@ -35,3 +35,6 @@ recovery:
 constants:
   default:
     user_id: 1
+
+app:
+  default-language: es

@@ -9,6 +9,7 @@ import { setAuthError, setAuthLoading } from '../slice/authSlice';
 import { selectAuthError, selectAuthLoading } from '../selectors';
 import { Button, Input } from '@shared/ui/components';
 import { useNotification } from '@shared/contexts/NotificationContext';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 type FormValues = { firstName: string; lastName: string; email: string; password: string };
 
@@ -18,6 +19,7 @@ export function RegisterPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+  const { t } = useTypedTranslation();
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
@@ -31,22 +33,22 @@ export function RegisterPage() {
       
       await doRegister(values).unwrap();
       
-      showNotification('success', 'Account created successfully! Please sign in.');
+      showNotification('success', t('auth.register.successMessage'));
       navigate("/login", { replace: true });
     } catch (error) {
-      showNotification('error', 'Registration failed. Please check your information and try again.');
+      showNotification('error', t('auth.register.errorMessage'));
     } finally {
       dispatch(setAuthLoading(false));
     }
   };
 
   return (
-    <AuthCard title="Create account">
+    <AuthCard title={t('auth.register.title')}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
-            label="First name"
-            placeholder="Enter your first name"
+            label={t('auth.register.firstName')}
+            placeholder={t('auth.register.firstNamePlaceholder')}
             {...register('firstName', { required: true })}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,8 +57,8 @@ export function RegisterPage() {
             }
           />
           <Input
-            label="Last name"
-            placeholder="Enter your last name"
+            label={t('auth.register.lastName')}
+            placeholder={t('auth.register.lastNamePlaceholder')}
             {...register('lastName', { required: true })}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,8 +70,8 @@ export function RegisterPage() {
         
         <Input
           type="email"
-          label="Email address"
-          placeholder="Enter your email"
+          label={t('auth.register.email')}
+          placeholder={t('auth.register.emailPlaceholder')}
           {...register('email', { required: true })}
           leftIcon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,9 +82,9 @@ export function RegisterPage() {
         
         <Input
           type={showPassword ? 'text' : 'password'}
-          label="Password"
-          placeholder="Create a strong password"
-          helpText="Use at least 8 characters with a mix of letters, numbers and symbols"
+          label={t('auth.register.password')}
+          placeholder={t('auth.register.passwordPlaceholder')}
+          helpText={t('auth.register.passwordHelp')}
           {...register('password', { required: true })}
           leftIcon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +92,6 @@ export function RegisterPage() {
             </svg>
           }
         />
-          {/* Checkbox para mostrar contraseña */}
           <label className="flex items-center mt-1 text-sm select-none">
               <input
                   type="checkbox"
@@ -98,7 +99,7 @@ export function RegisterPage() {
                   checked={showPassword}
                   onChange={() => setShowPassword(!showPassword)}
               />
-              Show password
+              {t('auth.register.showPassword')}
           </label>
 
 
@@ -109,7 +110,7 @@ export function RegisterPage() {
           size="lg"
           loading={isSubmitting || authLoading || isApiLoading}
         >
-          Create account
+          {t('auth.register.submitButton')}
         </Button>
       </form>
       
@@ -118,7 +119,7 @@ export function RegisterPage() {
           to="/login" 
           className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
         >
-          Already have an account? Sign in
+          {t('auth.register.alreadyHaveAccount')}
         </Link>
       </div>
     </AuthCard>

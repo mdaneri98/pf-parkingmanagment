@@ -2,7 +2,7 @@ package ar.edu.itba.parkingmanagmentapi.validators.common;
 
 public abstract class Validator<V> {
     public static final String CONCATENATE = "%s.%s";
-    public static final String ERROR_MESSAGE_MANDATORY = "The field [%s] is mandatory but was empty";
+    public static final String ERROR_MESSAGE_MANDATORY = "validation.field.mandatory";
 
     public void validate(V validatable, String... args) {
         String path = joinArgs(args);
@@ -22,5 +22,4 @@ public abstract class Validator<V> {
         }
         return path;
     }
-
 }

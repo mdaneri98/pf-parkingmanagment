@@ -71,6 +71,8 @@ export class ParkingService {
       available?: boolean;
       vehicleType?: string;
       floor?: number;
+      isAccessible?: boolean;
+      isReservable?: boolean;
     }
   ): SpotDTO[] {
     return spots.filter(spot => {
@@ -83,6 +85,14 @@ export class ParkingService {
       }
       
       if (filters.floor !== undefined && spot.floor !== filters.floor) {
+        return false;
+      }
+      
+      if (filters.isAccessible !== undefined && spot.isAccessible !== filters.isAccessible) {
+        return false;
+      }
+      
+      if (filters.isReservable !== undefined && spot.isReservable !== filters.isReservable) {
         return false;
       }
       

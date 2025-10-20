@@ -9,6 +9,7 @@ import {
   selectParkingLotsLoading,
   selectParkingLotsError
 } from '@parking/selectors/parkingLotSelectors';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 export interface AppSidebarProps {
   sidebarCollapsed: boolean;
@@ -17,7 +18,7 @@ export interface AppSidebarProps {
 }
 
 interface NavigationItem {
-  name: string;
+  nameKey: string;
   path: string | ((lotId: number | null) => string);
   icon: React.ReactNode;
   requiresLot?: boolean;
@@ -34,10 +35,11 @@ export function AppSidebar({
   const selectedLotId = useAppSelector(selectSelectedParkingLotId);
   const isLoading = useAppSelector(selectParkingLotsLoading);
   const isError = useAppSelector(selectParkingLotsError);
+  const { t } = useTypedTranslation();
 
   const navigationItems: NavigationItem[] = [
     {
-      name: 'Dashboard',
+      nameKey: 'sidebar.dashboard',
       path: (lotId) => lotId ? `/app/dashboard/${lotId}` : '/app/select-lot',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +51,7 @@ export function AppSidebar({
       description: '',
     },
     {
-      name: 'Search',
+      nameKey: 'sidebar.search',
       path: (lotId) => lotId ? `/app/license-plate-search/${lotId}` : '/app/select-lot',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +62,7 @@ export function AppSidebar({
       description: '',
     },
     {
-      name: 'Prices',
+      nameKey: 'sidebar.prices',
       path: (lotId) => lotId ? `/app/prices/${lotId}` : '/app/select-lot',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,7 +74,7 @@ export function AppSidebar({
       badge: '',
     },
     {
-      name: 'Reservations',
+      nameKey: 'sidebar.reservations',
       path: (lotId) => lotId ? `/app/reservations/${lotId}` : '/app/select-lot',
       icon: (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +87,7 @@ export function AppSidebar({
   ];
 
   const settingsItem: NavigationItem = {
-    name: 'Settings',
+    nameKey: 'sidebar.settings',
     path: (lotId) => lotId ? `/app/settings/${lotId}` : '/app/settings',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,6 +108,7 @@ export function AppSidebar({
 
   const renderNavigationItem = (item: NavigationItem, isCollapsed: boolean = false) => {
     const path = getNavigationPath(item);
+    const itemName = t(item.nameKey);
     
     const content = (
       <div className={`flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
@@ -115,7 +118,7 @@ export function AppSidebar({
         {!isCollapsed && (
           <div className="flex-1">
             <div className="flex items-center">
-              <span className="font-medium">{item.name}</span>
+              <span className="font-medium">{itemName}</span>
               {item.badge && (
                 <span className="ml-2 px-1.5 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 rounded-full">
                   {item.badge}
@@ -134,7 +137,7 @@ export function AppSidebar({
 
     return (
       <NavLink
-        key={item.name}
+        key={item.nameKey}
         to={path}
         className={({ isActive }) => {
           // If no parking lot is selected, no navigation item should be active
@@ -146,7 +149,7 @@ export function AppSidebar({
               : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100/80 dark:hover:bg-neutral-700/80 hover:text-neutral-900 dark:hover:text-neutral-100 hover:shadow-sm'
           } ${isCollapsed ? 'justify-center' : ''}`;
         }}
-        title={isCollapsed ? item.name : undefined}
+        title={isCollapsed ? itemName : undefined}
       >
         {content}
       </NavLink>

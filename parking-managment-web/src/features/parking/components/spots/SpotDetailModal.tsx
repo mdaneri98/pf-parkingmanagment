@@ -10,12 +10,13 @@ import {
   ExtendTimeForm,
   WalkInStayDetails,
   WALK_IN_STAY_CONSTANTS,
-  UI_LABELS,
   formatDateTime,
   ReservationStatus,
 } from '@walkinstays';
 import type { WalkInStayFormData, WalkInStayResponse } from '@walkinstays/types';
 import { CompletionSummary } from '@walkinstays/components/CompletionSummary';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+import { Modal } from '@shared/ui/components';
 
 interface Props {
   spot?: SpotDTO;
@@ -42,11 +43,12 @@ export function SpotDetailModal({
                                 }: Props) {
   if (!isOpen || !spot) return null;
 
+  const { t } = useTypedTranslation();
+
   // Walk-in stay hooks
   const { mutations, loadingStates } = useWalkInStayMutations();
   const {
     data: activeWalkInStay,
-    refetch: refetchActiveWalkInStay
   } = useActiveWalkInStayForSpot(spot.id, lotId);
 
   const { remainingMinutes } = useGetRemainingTime(activeWalkInStay?.id, {
@@ -60,10 +62,9 @@ export function SpotDetailModal({
 
   useEffect(() => {
     if (isOpen) {
-      refetchActiveWalkInStay?.();
       setCompletedStaySummary(null);
     }
-  }, [isOpen, refetchActiveWalkInStay]);
+  }, [isOpen]);
 
   const getVehicleTypeIcon = (vehicleType: string) => {
     return ParkingService.getVehicleIcon(vehicleType as any);
@@ -125,8 +126,8 @@ export function SpotDetailModal({
   };
 
   return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl max-w-sm w-full border border-neutral-200 dark:border-neutral-700">
+      <Modal isOpen={isOpen} onClose={handleCloseModal} maxWidth="sm">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full border border-neutral-200 dark:border-neutral-700">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
             <div className="flex items-center space-x-3">
@@ -163,7 +164,7 @@ export function SpotDetailModal({
 
             {/* 2. WALK-IN STAY DETAILS (Prioridad 2) */}
             {!modalState.summary && activeWalkInStay && (
-                <div className="space-y-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
+                <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
                   {!modalState.extendForm ? (
                       <WalkInStayDetails
                           walkInStay={activeWalkInStay}
@@ -175,7 +176,7 @@ export function SpotDetailModal({
                       />
                   ) : (
                       <div className="space-y-3">
-                        <h3 className="text-sm font-medium text-green-900 dark:text-green-100">{UI_LABELS.EXTEND_TIME}</h3>
+                        <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">{t('walkinstays.extendTime')}</h3>
                         <ExtendTimeForm
                             onSubmit={handleExtendWalkInStay}
                             onCancel={() => closeModal('extendForm')}
@@ -194,14 +195,14 @@ export function SpotDetailModal({
                       onClick={() => openModal('createForm')}
                       className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium"
                   >
-                    {UI_LABELS.CREATE_WALK_IN_STAY}
+                    {t('walkinstays.createWalkInStay')}
                   </button>
                 </div>
             )}
 
             {modalState.createForm && (
                 <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
-                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">{UI_LABELS.CREATE_WALK_IN_STAY}</h3>
+                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">{t('walkinstays.createWalkInStay')}</h3>
                   <WalkInStayForm
                       onSubmit={handleCreateWalkInStay}
                       onCancel={() => closeModal('createForm')}
@@ -218,7 +219,7 @@ export function SpotDetailModal({
                           onClick={onEdit}
                           className="flex-1 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
                       >
-                        Edit
+                        {t('common.edit')}
                       </button>
                   )}
                   {onDelete && (
@@ -226,13 +227,13 @@ export function SpotDetailModal({
                           onClick={onDelete}
                           className="flex-1 px-3 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
                       >
-                        Delete
+                        {t('common.delete')}
                       </button>
                   )}
                 </div>
             )}
           </div>
         </div>
-      </div>
+      </Modal>
   );
 }

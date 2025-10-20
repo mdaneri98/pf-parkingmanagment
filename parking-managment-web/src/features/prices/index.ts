@@ -26,8 +26,8 @@ export type { PriceFilterState } from './slice/pricesSlice';
 // Constants
 export {
   PRICE_CONSTANTS,
-  PRICE_ERROR_MESSAGES,
-  PRICE_SUCCESS_MESSAGES,
+  PRICE_ERROR_MESSAGE_KEYS,
+  PRICE_SUCCESS_MESSAGE_KEYS,
   formatPrice,
   isPriceActive,
   isPriceExpired,

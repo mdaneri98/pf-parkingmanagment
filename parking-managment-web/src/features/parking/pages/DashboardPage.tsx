@@ -9,10 +9,12 @@ import { selectSelectedParkingLotId } from '@parking/selectors/parkingLotSelecto
 import { useGetParkingLotByIdQuery } from '@parking/api/parkingApi';
 import { useDashboardState } from '@parking/hooks';
 import { PARKING_CONSTANTS } from '@parking/constants/parking';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 export function DashboardPage() {
   const params = useParams();
   const selectedLotId = useAppSelector(selectSelectedParkingLotId);
+  const { t } = useTypedTranslation();
   
   const lotId = params.lotId ? Number(params.lotId) : null;
   const isValidLot = lotId && !isNaN(lotId);
@@ -51,8 +53,8 @@ export function DashboardPage() {
   if (!isValidLot) {
     return (
       <EmptyState
-        title="Select a Parking Lot"
-        message="Choose a parking lot from the sidebar to view its dashboard and manage spots."
+        title={t('parking.dashboard.selectLotTitle')}
+        message={t('parking.dashboard.selectLotMessage')}
       />
     );
   }
@@ -64,8 +66,8 @@ export function DashboardPage() {
   if (isLotError) {
     return (
       <ErrorState
-        title="Failed to Load Dashboard"
-        message="Unable to fetch parking lot data. Please check your connection and try again."
+        title={t('parking.dashboard.loadingError')}
+        message={t('parking.dashboard.loadingErrorMessage')}
         onRetry={refetchLot}
       />
     );

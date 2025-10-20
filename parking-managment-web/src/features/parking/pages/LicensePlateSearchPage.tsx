@@ -9,11 +9,13 @@ import { useSpotMutations } from '@parking/hooks/mutations/useSpotMutations';
 import { DashboardModals } from '@parking/components/dashboard/DashboardModals';
 import { useGetSpotsByParkingLotIdQuery } from '@parking/api/parkingApi';
 import { useCallback } from 'react';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 export function LicensePlateSearchPage() {
   const params = useParams();
   const lotId = params.lotId ? Number(params.lotId) : null;
   const isValidLot = lotId && !isNaN(lotId);
+  const { t } = useTypedTranslation();
 
   const { 
     data: lotData, 
@@ -78,8 +80,8 @@ export function LicensePlateSearchPage() {
   if (!isValidLot) {
     return (
       <EmptyState
-        title="Select a Parking Lot"
-        message="Choose a parking lot from the sidebar to search for vehicles by license plate."
+        title={t('parking.search.selectLotTitle')}
+        message={t('parking.search.selectLotMessage')}
       />
     );
   }
@@ -91,8 +93,8 @@ export function LicensePlateSearchPage() {
   if (isLotError) {
     return (
       <ErrorState
-        title="Failed to Load Parking Lot"
-        message="Unable to fetch parking lot data. Please check your connection and try again."
+        title={t('parking.search.loadingError')}
+        message={t('parking.search.loadingErrorMessage')}
         onRetry={refetchLot}
       />
     );

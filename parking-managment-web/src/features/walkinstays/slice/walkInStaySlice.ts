@@ -15,6 +15,7 @@ const initialState: WalkInStayState = {
   modalState: {
     createForm: false,
     extendForm: false,
+    summary: false,
   },
   activeWalkInStays: {},
 };
@@ -39,6 +40,7 @@ const walkInStaySlice = createSlice({
       state.modalState = {
         createForm: false,
         extendForm: false,
+        summary: false,
       };
     },
 

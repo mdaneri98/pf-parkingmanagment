@@ -5,6 +5,7 @@ import ar.edu.itba.parkingmanagmentapi.exceptions.AlreadyExistsException;
 import ar.edu.itba.parkingmanagmentapi.exceptions.NotFoundException;
 import ar.edu.itba.parkingmanagmentapi.model.Manager;
 import ar.edu.itba.parkingmanagmentapi.model.User;
+import ar.edu.itba.parkingmanagmentapi.model.UserDetail;
 import ar.edu.itba.parkingmanagmentapi.repository.ManagerRepository;
 import ar.edu.itba.parkingmanagmentapi.repository.UserRepository;
 import ar.edu.itba.parkingmanagmentapi.security.provider.EmailBasedAuthenticationProvider;
@@ -105,6 +106,7 @@ public class AuthServiceImpl implements AuthService {
         user.setLastName(registerRequest.getLastName());
         user.setEmail(registerRequest.getEmail());
         user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setUserDetail(new UserDetail());
 
         User savedUser = userRepository.save(user);
 

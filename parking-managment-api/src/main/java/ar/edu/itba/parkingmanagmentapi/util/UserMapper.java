@@ -23,6 +23,7 @@ public class UserMapper {
         Optional.ofNullable(user.getUserDetail()).ifPresent(d -> {
             detail.setPhone(d.getPhone());
             detail.setAddress(d.getAddress());
+            detail.setLang(d.getLang());
         });
 
         dto.setUserDetail(detail);

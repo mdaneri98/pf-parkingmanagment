@@ -18,6 +18,9 @@ public class UserDetail {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "lang", nullable = false)
+    private String lang = "en";
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -26,8 +29,7 @@ public class UserDetail {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "userDetail", fetch = FetchType.LAZY)
     private User user;
 
     public UserDetail() {
@@ -36,6 +38,13 @@ public class UserDetail {
     public UserDetail(String phone, String address) {
         this.phone = phone;
         this.address = address;
+        this.lang = "en";
+    }
+
+    public UserDetail(String phone, String address, String lang) {
+        this.phone = phone;
+        this.address = address;
+        this.lang = lang;
     }
 
     // Getters y Setters
@@ -85,5 +94,13 @@ public class UserDetail {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 } 

@@ -3,6 +3,16 @@
 -- Sistema de Gestión de Estacionamientos
 -- =============================================
 
+-- Tabla de detalles de usuario
+CREATE TABLE IF NOT EXISTS user_detail (
+                                           id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                           phone VARCHAR(20),
+    address VARCHAR(255),
+    lang VARCHAR(20) DEFAULT 'en',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
 -- Tabla de usuarios comunes
 CREATE TABLE IF NOT EXISTS common_user (
                                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -11,19 +21,10 @@ CREATE TABLE IF NOT EXISTS common_user (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     image_url VARCHAR(500),
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
--- Tabla de detalles de usuario
-CREATE TABLE IF NOT EXISTS user_detail (
-                                           id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                                           phone VARCHAR(20),
-    address VARCHAR(255),
-    user_id BIGINT NOT NULL,
+    user_detail_id BIGINT UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_user_detail_user FOREIGN KEY (user_id) REFERENCES common_user(id)
+    CONSTRAINT fk_user_user_detail FOREIGN KEY (user_detail_id) REFERENCES user_detail(id)
     );
 
 -- Tabla de gerentes

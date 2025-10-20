@@ -1,3 +1,4 @@
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface ErrorStateProps {
   title: string;
@@ -6,6 +7,8 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ title, message, onRetry }: ErrorStateProps) {
+  const { t } = useTypedTranslation();
+
   return (
     <div className="flex items-center justify-center h-64">
       <div className="p-6 border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 rounded-lg text-center max-w-md">
@@ -23,7 +26,7 @@ export function ErrorState({ title, message, onRetry }: ErrorStateProps) {
             className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" 
             onClick={onRetry}
           >
-            Retry
+            {t('common.retry')}
           </button>
         )}
       </div>

@@ -10,6 +10,7 @@ import {
 import type { ParkingLotResponse } from '@parking/types';
 import { parkingApi } from '@parking/api/parkingApi';
 import { clearParkingLotsError } from '@parking/slice/parkingSlice';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface Props {
   collapsed?: boolean;
@@ -20,6 +21,7 @@ export function ParkingLotSelector({ collapsed = false }: Props) {
   const params = useParams();
   const dispatch = useAppDispatch();
   const activeId = params.lotId ? Number(params.lotId) : null;
+  const { t } = useTypedTranslation();
   
   const parkingLots = useAppSelector(selectParkingLots);
   const isLoading = useAppSelector(selectParkingLotsLoading);
@@ -47,7 +49,7 @@ export function ParkingLotSelector({ collapsed = false }: Props) {
         }`}>
           {!collapsed && (
             <div className="text-error-700 dark:text-error-300 text-sm font-semibold mb-3">
-              Failed to load parking lots
+              {t('parking.lots.failedToLoad')}
             </div>
           )}
           <button
@@ -57,9 +59,9 @@ export function ParkingLotSelector({ collapsed = false }: Props) {
                 ? 'p-3 w-full' 
                 : 'px-4 py-2'
             } text-sm bg-error-600 hover:bg-error-700 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md`}
-            title={collapsed ? 'Retry loading parking lots' : undefined}
+            title={collapsed ? t('parking.lots.retryLoading') : undefined}
           >
-            {collapsed ? '⟳' : 'Retry'}
+            {collapsed ? '⟳' : t('common.retry')}
           </button>
         </div>
       );
@@ -73,14 +75,14 @@ export function ParkingLotSelector({ collapsed = false }: Props) {
             <button
               onClick={() => navigate('/app/welcome')}
               className="w-full p-3 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
-              title="Create your first parking lot"
+              title={t('parking.lots.createFirstLot')}
             >
               +
             </button>
           ) : (
             <div className="text-center">
               <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-3">
-                No parking lots yet.
+                {t('parking.lots.noLotsYet')}
               </p>
             </div>
           )}
@@ -115,13 +117,13 @@ export function ParkingLotSelector({ collapsed = false }: Props) {
         ))}
       </ul>
     );
-  }, [isLoading, isError, parkingLots, activeId, navigate, collapsed, handleRefetch]);
+  }, [isLoading, isError, parkingLots, activeId, navigate, collapsed, handleRefetch, t]);
 
   return (
     <div>
       {!collapsed && (
         <div className="mb-3 text-sm font-semibold text-neutral-700 dark:text-neutral-300 bg-gradient-to-r from-neutral-700 to-neutral-500 dark:from-neutral-300 dark:to-neutral-100 bg-clip-text">
-          Your Parking Lots
+          {t('sidebar.parkingLots')}
         </div>
       )}
       {content}

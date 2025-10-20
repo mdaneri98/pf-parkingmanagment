@@ -4,6 +4,7 @@ export type UserRole = 'user' | 'manager' | 'admin';
 export interface UserDetails {
   phone: string;
   address: string;
+  lang?: string;
 }
 
 export interface User {

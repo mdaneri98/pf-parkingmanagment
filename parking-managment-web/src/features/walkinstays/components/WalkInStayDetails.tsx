@@ -1,11 +1,12 @@
 import type { WalkInStayResponse } from '../types';
-import { UI_LABELS, TIME_THRESHOLD_CONFIGS } from '../constants/walkInStays';
+import { TIME_THRESHOLD_CONFIGS } from '../constants/walkInStays';
 import {
   formatDateTime,
   formatRemainingTime,
   getTimeThresholdStatus,
   formatPrice,
 } from '../utils/walkInStayUtils';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface WalkInStayDetailsProps {
   walkInStay: WalkInStayResponse;
@@ -26,19 +27,20 @@ export const WalkInStayDetails = ({
 }: WalkInStayDetailsProps) => {
   const thresholdStatus = getTimeThresholdStatus(remainingMinutes);
   const thresholdConfig = TIME_THRESHOLD_CONFIGS[thresholdStatus];
+  const { t } = useTypedTranslation();
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-green-900 dark:text-green-100">
-          {UI_LABELS.ACTIVE}
+          {t('walkinstays.active')}
         </h3>
       </div>
 
       {/* Vehicle Info */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-neutral-600 dark:text-neutral-400">{UI_LABELS.VEHICLE}:</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{t('walkinstays.vehicle')}:</span>
           <span className="font-mono font-medium text-neutral-900 dark:text-neutral-100">
             {walkInStay.vehicleLicensePlate}
           </span>
@@ -46,7 +48,7 @@ export const WalkInStayDetails = ({
 
         {/* Start Time */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-neutral-600 dark:text-neutral-400">{UI_LABELS.STARTED_AT}:</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{t('walkinstays.startedAt')}:</span>
           <span className="text-neutral-900 dark:text-neutral-100">
             {formatDateTime(walkInStay.reservedStartTime)}
           </span>
@@ -54,7 +56,7 @@ export const WalkInStayDetails = ({
 
         {/* Expected End Time */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-neutral-600 dark:text-neutral-400">{UI_LABELS.EXPECTED_END}:</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{t('walkinstays.expectedEnd')}:</span>
           <span className="text-neutral-900 dark:text-neutral-100">
             {formatDateTime(walkInStay.expectedEndTime)}
           </span>
@@ -62,12 +64,12 @@ export const WalkInStayDetails = ({
 
         {/* Remaining Time with Warning Indicator */}
         {remainingMinutes !== undefined && (
-          <div className={`flex items-center justify-between text-sm p-2 rounded-md ${thresholdConfig.bgClass}`}>
-            <span className={`font-medium ${thresholdConfig.textClass} flex items-center gap-1`}>
+          <div className="flex items-center justify-between text-sm p-2 rounded-md bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <span className="font-medium text-blue-900 dark:text-blue-100 flex items-center gap-1">
               <span>{thresholdConfig.icon}</span>
-              {UI_LABELS.REMAINING_TIME}:
+              {t('walkinstays.remainingTime')}:
             </span>
-            <span className={`font-bold ${thresholdConfig.colorClass}`}>
+            <span className="font-bold text-blue-600 dark:text-blue-400">
               {formatRemainingTime(remainingMinutes)}
             </span>
           </div>
@@ -79,7 +81,7 @@ export const WalkInStayDetails = ({
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
-            <span>{UI_LABELS.TIME_WARNING}</span>
+            <span>{t('walkinstays.timeWarning')}</span>
           </div>
         )}
 
@@ -88,14 +90,14 @@ export const WalkInStayDetails = ({
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
             </svg>
-            <span className="font-medium">{UI_LABELS.TIME_CRITICAL}</span>
+            <span className="font-medium">{t('walkinstays.timeCritical')}</span>
           </div>
         )}
 
         {/* Price */}
         {walkInStay.price > 0 && (
           <div className="flex items-center justify-between text-sm pt-2 border-t border-green-200 dark:border-green-800">
-            <span className="text-neutral-600 dark:text-neutral-400">{UI_LABELS.PRICE}:</span>
+            <span className="text-neutral-600 dark:text-neutral-400">{t('walkinstays.price')}:</span>
             <span className="font-medium text-neutral-900 dark:text-neutral-100">
               {formatPrice(walkInStay.price)}
             </span>
@@ -108,20 +110,20 @@ export const WalkInStayDetails = ({
         <button
           onClick={onExtend}
           disabled={isExtending || isCompleting}
-          className="flex-1 px-3 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md
+          className="flex-1 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md
                      disabled:opacity-50 disabled:cursor-not-allowed
                      transition-colors font-medium"
         >
-          {isExtending ? 'Extending...' : UI_LABELS.EXTEND}
+          {isExtending ? t('walkinstays.extending') : t('walkinstays.extend')}
         </button>
         <button
           onClick={onComplete}
           disabled={isExtending || isCompleting}
-          className="flex-1 px-3 py-2 text-sm bg-neutral-600 hover:bg-neutral-700 text-white rounded-md
+          className="flex-1 px-3 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md
                      disabled:opacity-50 disabled:cursor-not-allowed
                      transition-colors font-medium"
         >
-          {isCompleting ? 'Completing...' : UI_LABELS.COMPLETE}
+          {isCompleting ? t('walkinstays.completing') : t('walkinstays.complete')}
         </button>
       </div>
     </div>

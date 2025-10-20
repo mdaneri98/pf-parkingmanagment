@@ -2,10 +2,12 @@ import { useParams } from 'react-router-dom';
 import { PricesManagement } from '../components/PricesManagement';
 import { LoadingState, ErrorState, EmptyState } from '@parking/components/common';
 import { useGetParkingLotByIdQuery } from '@parking/api/parkingApi';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 export function PricesPage() {
   const { lotId } = useParams<{ lotId: string }>();
   const parkingLotId = lotId ? parseInt(lotId, 10) : null;
+  const { t } = useTypedTranslation();
 
   // Fetch parking lot data to validate access
   const {
@@ -21,8 +23,8 @@ export function PricesPage() {
   if (!parkingLotId) {
     return (
       <EmptyState
-        title="Select a Parking Lot"
-        message="Choose a parking lot from the sidebar to manage its pricing rules."
+        title={t('prices.selectLotTitle')}
+        message={t('prices.selectLotMessage')}
       />
     );
   }
@@ -34,8 +36,8 @@ export function PricesPage() {
   if (isLotError) {
     return (
       <ErrorState
-        title="Failed to Load Parking Lot"
-        message="Unable to fetch parking lot data. Please check your connection and try again."
+        title={t('prices.loadingError')}
+        message={t('prices.loadingErrorMessage')}
         onRetry={refetchLot}
       />
     );
@@ -44,8 +46,8 @@ export function PricesPage() {
   if (!lotResponse?.data) {
     return (
       <EmptyState
-        title="Parking Lot Not Found"
-        message="The requested parking lot could not be found."
+        title={t('prices.notFound')}
+        message={t('prices.notFoundMessage')}
       />
     );
   }

@@ -3,6 +3,7 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
 import ar.edu.itba.parkingmanagmentapi.exceptions.ApiErrorCode;
 import ar.edu.itba.parkingmanagmentapi.exceptions.BaseException;
+import ar.edu.itba.parkingmanagmentapi.util.LocaleContextUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,9 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    public GlobalExceptionHandler() {
+    }
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException ex, HttpServletRequest request) {
@@ -48,13 +52,23 @@ public class GlobalExceptionHandler {
 
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream()
-                .map(err -> String.format("Field [%s]: %s", err.getField(), err.getDefaultMessage()))
+                .map(err -> {
+                    String fieldName = err.getField();
+                    String defaultMessage = err.getDefaultMessage();
+                    // Try to resolve the message using the error code if it exists
+                    if (err.getCode() != null && LocaleContextUtils.hasMessage("validation.field." + err.getCode())) {
+                        return LocaleContextUtils.getMessage("validation.field." + err.getCode(), fieldName);
+                    }
+                    // Fall back to default message
+                    return String.format("Field [%s]: %s", fieldName, defaultMessage);
+                })
                 .collect(Collectors.toList());
 
+        String validationMessage = LocaleContextUtils.getMessage("api.error.validation");
         ApiResponse<Void> response = new ApiResponse<>(
                 false,
                 null,
-                "Validation failed",
+                validationMessage,
                 ApiErrorCode.VALIDATION_ERROR.getCode(),
                 errors,
                 Instant.now().toString(),
@@ -67,10 +81,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex, HttpServletRequest request) {
         logger.info("Unhandled exception occurred: {}", ex.getMessage(), ex);
 
+        String errorMessage = LocaleContextUtils.getMessage("error.internal.server.error");
         ApiResponse<Void> response = new ApiResponse<>(
                 false,
                 null,
-                "Internal server error",
+                errorMessage,
                 ApiErrorCode.INTERNAL_SERVER_ERROR.getCode(),
                 null,
                 Instant.now().toString(),
@@ -84,10 +99,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAuthorizationDeniedException(AuthorizationDeniedException ex, HttpServletRequest request) {
         logger.info("Authorization denied: {}", ex.getMessage());
 
+        String errorMessage = LocaleContextUtils.getMessage("error.auth.access_denied");
         ApiResponse<Void> response = new ApiResponse<>(
                 false,
                 null,
-                "Access denied",
+                errorMessage,
                 ApiErrorCode.ACCESS_DENIED.getCode(),
                 null,
                 Instant.now().toString(),
@@ -101,10 +117,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         logger.warn("Access denied: {}", ex.getMessage());
 
+        String errorMessage = LocaleContextUtils.getMessage("error.auth.access_denied");
         ApiResponse<Void> response = new ApiResponse<>(
                 false,
                 null,
-                "Access Denied",
+                errorMessage,
                 ApiErrorCode.ACCESS_DENIED.getCode(),
                 null,
                 Instant.now().toString(),

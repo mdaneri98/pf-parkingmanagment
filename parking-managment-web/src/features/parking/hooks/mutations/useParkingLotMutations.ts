@@ -10,8 +10,9 @@ import { useAppDispatch } from '@hooks/useAppDispatch';
 import { setSelectedParkingLotId } from '@parking/slice/parkingSlice';
 import { selectSelectedParkingLotId } from '@parking/selectors/parkingLotSelectors';
 import type { CreateParkingLotRequest, UpdateParkingLotRequest, ParkingLotResponse } from '@parking/types';
-import { SUCCESS_MESSAGES, PARKING_CONSTANTS } from '@parking/constants/parking';
-import { ErrorHandlingService } from '@parking/services/errorHandlingService';
+import { SUCCESS_MESSAGE_KEYS, PARKING_CONSTANTS } from '@parking/constants/parking';
+import { AppErrorHandler } from '@shared/utils/errorHandling';
+import i18n from '@shared/i18n/config';
 
 export function useParkingLotMutations() {
   const { showNotification } = useNotification();
@@ -23,10 +24,10 @@ export function useParkingLotMutations() {
   const [deleteLotMutation, deleteLotState] = useDeleteParkingLotMutation();
 
   const handleMutationError = useCallback((error: any, context: string) => {
-    const parkingError = ErrorHandlingService.transformApiError(error, context);
-    const userMessage = ErrorHandlingService.getUserFriendlyMessage(parkingError);
+    const appError = AppErrorHandler.transformApiError(error, context);
+    const userMessage = AppErrorHandler.getUserFriendlyMessage(appError);
     
-    ErrorHandlingService.logError(parkingError, { context });
+    AppErrorHandler.handleError(appError, { context });
     showNotification('error', userMessage, PARKING_CONSTANTS.NOTIFICATIONS.ERROR_DURATION);
   }, [showNotification]);
 
@@ -47,7 +48,7 @@ export function useParkingLotMutations() {
     try {
       const response = await createLotMutation(data).unwrap();
       const createdLot = response.data;
-      handleMutationSuccess(SUCCESS_MESSAGES.LOT.CREATED, () => onSuccess?.(createdLot));
+      handleMutationSuccess(i18n.t(SUCCESS_MESSAGE_KEYS.LOT.CREATED), () => onSuccess?.(createdLot));
     } catch (error) {
       handleMutationError(error, 'createParkingLot');
     }
@@ -60,7 +61,7 @@ export function useParkingLotMutations() {
   ) => {
     try {
       await updateLotMutation({ id: lotId, body: data }).unwrap();
-      handleMutationSuccess(SUCCESS_MESSAGES.LOT.UPDATED, onSuccess);
+      handleMutationSuccess(i18n.t(SUCCESS_MESSAGE_KEYS.LOT.UPDATED), onSuccess);
     } catch (error) {
       handleMutationError(error, 'updateParkingLot');
     }
@@ -78,7 +79,7 @@ export function useParkingLotMutations() {
         dispatch(setSelectedParkingLotId(null));
       }
       
-      handleDeleteSuccess(SUCCESS_MESSAGES.LOT.DELETED, onSuccess);
+      handleDeleteSuccess(i18n.t(SUCCESS_MESSAGE_KEYS.LOT.DELETED), onSuccess);
     } catch (error) {
       handleMutationError(error, 'deleteParkingLot');
     }

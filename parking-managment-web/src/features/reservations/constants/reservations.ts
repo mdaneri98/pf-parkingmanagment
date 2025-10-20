@@ -28,28 +28,24 @@ export const RESERVATION_CONSTANTS = {
 // ====== Status Configuration ======
 export const RESERVATION_STATUS = {
     [ReservationStatus.PENDING]: {
-        label: 'Pending',
+        labelKey: 'reservations.status.pending',
         color: 'bg-yellow-100 text-yellow-800',
     },
     [ReservationStatus.CONFIRMED]: {
-        label: 'Confirmed',
+        labelKey: 'reservations.status.confirmed',
         color: 'bg-green-100 text-green-800',
     },
     [ReservationStatus.CANCELLED]: {
-        label: 'Cancelled',
+        labelKey: 'reservations.status.cancelled',
         color: 'bg-red-100 text-red-800',
     },
     [ReservationStatus.COMPLETED]: {
-        label: 'Completed',
+        labelKey: 'reservations.status.completed',
         color: 'bg-blue-100 text-blue-800',
     },
-    [ReservationStatus.IN_USE]: {
-        label: 'In Use',
+    [ReservationStatus.ACTIVE]: {
+        labelKey: 'reservations.status.active',
         color: 'bg-purple-100 text-purple-800',
-    },
-    [ReservationStatus.NO_SHOW]: {
-        label: 'No Show',
-        color: 'bg-gray-100 text-gray-800',
     },
 } as const;
 
@@ -125,8 +121,11 @@ export const isReservationUpcoming = (startTime: string): boolean => {
     return new Date(startTime) > new Date();
 };
 
+import i18n from '@shared/i18n/config';
+
 export const getStatusLabel = (status: ReservationStatus): string => {
-    return RESERVATION_STATUS[status]?.label || status;
+    const labelKey = RESERVATION_STATUS[status]?.labelKey;
+    return labelKey ? i18n.t(labelKey) : status;
 };
 
 export const getStatusColor = (status: ReservationStatus): string => {

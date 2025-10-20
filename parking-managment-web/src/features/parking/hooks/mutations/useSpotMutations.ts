@@ -6,8 +6,9 @@ import {
 } from '@parking/api/parkingApi';
 import { useNotification } from '@shared/contexts/NotificationContext';
 import type { CreateSpotRequest, UpdateSpotRequest } from '@parking/types';
-import { SUCCESS_MESSAGES, PARKING_CONSTANTS } from '@parking/constants/parking';
-import { ErrorHandlingService } from '@parking/services/errorHandlingService';
+import { SUCCESS_MESSAGE_KEYS, PARKING_CONSTANTS } from '@parking/constants/parking';
+import { AppErrorHandler } from '@shared/utils/errorHandling';
+import i18n from '@shared/i18n/config';
 
 export function useSpotMutations(lotId: number) {
   const { showNotification } = useNotification();
@@ -17,10 +18,10 @@ export function useSpotMutations(lotId: number) {
   const [deleteSpotMutation, deleteSpotState] = useDeleteSpotMutation();
 
   const handleMutationError = useCallback((error: any, context: string) => {
-    const parkingError = ErrorHandlingService.transformApiError(error, context);
-    const userMessage = ErrorHandlingService.getUserFriendlyMessage(parkingError);
+    const appError = AppErrorHandler.transformApiError(error, context);
+    const userMessage = AppErrorHandler.getUserFriendlyMessage(appError);
     
-    ErrorHandlingService.logError(parkingError, { context, lotId });
+    AppErrorHandler.handleError(appError, { context, lotId });
     showNotification('error', userMessage, PARKING_CONSTANTS.NOTIFICATIONS.ERROR_DURATION);
   }, [showNotification, lotId]);
 
@@ -41,7 +42,7 @@ export function useSpotMutations(lotId: number) {
   ) => {
     try {
       await createSpotMutation({ parkingLotId: lotId, body: data }).unwrap();
-      handleMutationSuccess(SUCCESS_MESSAGES.SPOT.CREATED, onSuccess);
+      handleMutationSuccess(i18n.t(SUCCESS_MESSAGE_KEYS.SPOT.CREATED), onSuccess);
     } catch (error) {
       handleMutationError(error, 'createSpot');
     }
@@ -54,7 +55,7 @@ export function useSpotMutations(lotId: number) {
   ) => {
     try {
       await updateSpotMutation({ spotId, parkingLotId: lotId, body: data }).unwrap();
-      handleMutationSuccess(SUCCESS_MESSAGES.SPOT.UPDATED, onSuccess);
+      handleMutationSuccess(i18n.t(SUCCESS_MESSAGE_KEYS.SPOT.UPDATED), onSuccess);
     } catch (error) {
       handleMutationError(error, 'updateSpot');
     }
@@ -66,7 +67,7 @@ export function useSpotMutations(lotId: number) {
   ) => {
     try {
       await deleteSpotMutation({ spotId, parkingLotId: lotId }).unwrap();
-      handleDeleteSuccess(SUCCESS_MESSAGES.SPOT.DELETED, onSuccess);
+      handleDeleteSuccess(i18n.t(SUCCESS_MESSAGE_KEYS.SPOT.DELETED), onSuccess);
     } catch (error) {
       handleMutationError(error, 'deleteSpot');
     }

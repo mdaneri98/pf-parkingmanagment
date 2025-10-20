@@ -11,6 +11,7 @@ import { useErrorHandler } from '@shared/utils/errorHandling';
 import { Button, Input } from '@shared/ui/components';
 import { authInitializationService } from '@auth/services/authInitializationService';
 import { useNotification } from '@shared/contexts/NotificationContext';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 type FormValues = { email: string; password: string };
 
@@ -22,6 +23,7 @@ export function LoginPage() {
   const { error: authError } = useAppSelector(selectAuth);
   const { handleError, getUserFriendlyMessage } = useErrorHandler();
   const { showNotification } = useNotification();
+  const { t } = useTypedTranslation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -41,18 +43,18 @@ export function LoginPage() {
           dispatch(setUser(userResponse.data));
         } else {
           authInitializationService.clearStoredCredentials();
-          showNotification('error', 'Login failed: Unable to load user profile.');
+          showNotification('error', t('auth.login.errorLoadProfile'));
           return;
         }
       } catch (userError) {
         console.error(userError);
         authInitializationService.clearStoredCredentials();
-        showNotification('error', 'Login failed: Unable to load user profile. Please try again.');
+        showNotification('error', t('auth.login.errorLoadProfileRetry'));
         return;
       }
 
       dispatch(setInitialized(true));
-      showNotification('success', 'Successfully signed in!');
+      showNotification('success', t('auth.login.successMessage'));
       navigate('/app', { replace: true });
     } catch (loginError) {
       const appError = handleError(loginError, { component: 'LoginPage', action: 'login_attempt' });
@@ -61,23 +63,22 @@ export function LoginPage() {
   };
 
   return (
-      <AuthCard title="Sign in">
+      <AuthCard title={t('auth.login.title')}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Input
               type="email"
-              label="Email address"
-              placeholder="Enter your email"
+              label={t('auth.login.email')}
+              placeholder={t('auth.login.emailPlaceholder')}
               {...register('email', { required: true })}
           />
 
           <div>
             <Input
                 type={showPassword ? 'text' : 'password'}
-                label="Password"
-                placeholder="Enter your password"
+                label={t('auth.login.password')}
+                placeholder={t('auth.login.passwordPlaceholder')}
                 {...register('password', { required: true })}
             />
-            {/* Checkbox para mostrar contraseña */}
             <label className="flex items-center mt-1 text-sm select-none">
               <input
                   type="checkbox"
@@ -85,22 +86,22 @@ export function LoginPage() {
                   checked={showPassword}
                   onChange={() => setShowPassword(!showPassword)}
               />
-              Show password
+              {t('auth.login.showPassword')}
             </label>
           </div>
 
 
           <Button type="submit" className="w-full" size="lg" loading={isSubmitting || isLoading}>
-            Sign in
+            {t('auth.login.submitButton')}
           </Button>
         </form>
 
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-700">
           <Link to="/register" className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200">
-            Create an account
+            {t('auth.login.createAccount')}
           </Link>
           <Link to="/password-recovery" className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200">
-            Forgot password?
+            {t('auth.login.forgotPassword')}
           </Link>
         </div>
       </AuthCard>

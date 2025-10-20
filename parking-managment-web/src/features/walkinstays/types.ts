@@ -64,11 +64,12 @@ export interface RemainingTimeResponse {
 
 // ====== Modal and State Types ======
 
-export type WalkInStayModalType = 'createForm' | 'extendForm';
+export type WalkInStayModalType = 'createForm' | 'extendForm' | 'summary';
 
 export interface WalkInStayModalState {
   createForm: boolean;
   extendForm: boolean;
+  summary: boolean;
 }
 
 // ====== Loading States ======
@@ -92,22 +93,9 @@ export interface TimeThresholdConfig {
   icon: string;
 }
 
-// ====== Error Handling ======
-
-export class WalkInStayError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public details?: Record<string, unknown>
-  ) {
-    super(message);
-    this.name = 'WalkInStayError';
-  }
-}
-
 export type WalkInStayResult<T> = 
   | { success: true; data: T }
-  | { success: false; error: WalkInStayError };
+  | { success: false; error: AppError };
 
 // Re-export ReservationStatus for convenience
 export { ReservationStatus };

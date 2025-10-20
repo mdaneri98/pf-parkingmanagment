@@ -8,6 +8,8 @@ import {
   parseDateTimeFromInput,
   apiResponseToFormData,
 } from '../../utils/priceUtils';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+import { Modal } from '@shared/ui/components';
 
 interface Props {
   isOpen: boolean;
@@ -46,12 +48,13 @@ export function PriceFormModal({
   existingPrices,
   title,
 }: Props) {
+  const { t } = useTypedTranslation();
   const [formData, setFormData] = useState<PriceFormData>(getDefaultFormData());
   const [validationErrors, setValidationErrors] = useState<PriceValidationError[]>([]);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   const vehicleTypeOptions = getVehicleTypeOptions();
-  const modalTitle = title || (mode === 'create' ? 'Create Price Rule' : 'Edit Price Rule');
+  const modalTitle = title || (mode === 'create' ? t('prices.modals.create.title') : t('prices.modals.edit.title'));
 
   // Initialize form data when modal opens or initial data changes
   useEffect(() => {
@@ -102,7 +105,8 @@ export function PriceFormModal({
   };
 
   const getFieldError = (fieldName: keyof PriceFormData): string | undefined => {
-    return validationErrors.find(error => error.field === fieldName)?.message;
+    const error = validationErrors.find(error => error.field === fieldName);
+    return error ? t(error.message) : undefined;
   };
 
   const updateField = <K extends keyof PriceFormData>(
@@ -115,8 +119,8 @@ export function PriceFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <Modal isOpen={isOpen} onClose={handleClose} maxWidth="md">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
           <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
             {modalTitle}
@@ -136,7 +140,7 @@ export function PriceFormModal({
           {/* Vehicle Type */}
           <div>
             <label htmlFor="vehicleType" className="label">
-              Vehicle Type
+              {t('prices.vehicleType')}
             </label>
             <select
               id="vehicleType"
@@ -158,7 +162,7 @@ export function PriceFormModal({
 
           {/* Price */}
           <Input
-            label="Price ($)"
+            label={t('prices.price')}
             type="number"
             step="0.01"
             min="0.01"
@@ -173,29 +177,29 @@ export function PriceFormModal({
 
           {/* Valid From */}
           <Input
-            label="Valid From"
+            label={t('prices.validFrom')}
             type="datetime-local"
             value={formatDateTimeForInput(formData.validFrom)}
             onChange={(e) => updateField('validFrom', parseDateTimeFromInput(e.target.value))}
             error={getFieldError('validFrom')}
             disabled={isLoading}
-            helpText="When this price rule starts being effective"
+            helpText={t('prices.validFromHelp')}
           />
 
           {/* Valid To */}
           <Input
-            label="Valid To"
+            label={t('prices.validTo')}
             type="datetime-local"
             value={formatDateTimeForInput(formData.validTo)}
             onChange={(e) => updateField('validTo', parseDateTimeFromInput(e.target.value))}
             error={getFieldError('validTo')}
             disabled={isLoading}
-            helpText="When this price rule expires"
+            helpText={t('prices.validToHelp')}
           />
 
           <p>
-              <span className="font-medium">Duration:</span>{' '}
-              {Math.ceil((formData.validTo.getTime() - formData.validFrom.getTime()) / (1000 * 60 * 60 * 24))} days
+              <span className="font-medium">{t('prices.duration')}:</span>{' '}
+              {Math.ceil((formData.validTo.getTime() - formData.validFrom.getTime()) / (1000 * 60 * 60 * 24))} {t('prices.days')}
           </p>
 
           {/* Action Buttons */}
@@ -206,7 +210,7 @@ export function PriceFormModal({
               className="btn btn-secondary"
               disabled={isLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -219,15 +223,15 @@ export function PriceFormModal({
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  {mode === 'create' ? 'Creating...' : 'Updating...'}
+                  {mode === 'create' ? t('prices.modals.create.creatingButton') : t('prices.modals.edit.updatingButton')}
                 </div>
               ) : (
-                mode === 'create' ? 'Create Price Rule' : 'Update Price Rule'
+                mode === 'create' ? t('prices.modals.create.submitButton') : t('prices.modals.edit.submitButton')
               )}
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

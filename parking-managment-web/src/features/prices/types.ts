@@ -1,5 +1,6 @@
 import type { BaseEntity } from '../users/types';
 import type { VehicleType } from '@shared/constants';
+import type { AppError } from '@shared/utils/errorHandling';
 
 // ====== Core Price Types ======
 
@@ -83,22 +84,9 @@ export interface PriceConfirmDeleteState {
   };
 }
 
-// ====== Error Handling ======
-
-export class PriceError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public details?: Record<string, unknown>
-  ) {
-    super(message);
-    this.name = 'PriceError';
-  }
-}
-
 export type PriceResult<T> = 
   | { success: true; data: T }
-  | { success: false; error: PriceError };
+  | { success: false; error: AppError };
 
 // ====== Loading States ======
 

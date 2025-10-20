@@ -16,10 +16,12 @@ import {
   findOverlappingPrices,
 } from '@prices/utils/priceUtils';
 import { 
-  PRICE_SUCCESS_MESSAGES, 
-  PRICE_ERROR_MESSAGES,
+  PRICE_SUCCESS_MESSAGE_KEYS, 
+  PRICE_ERROR_MESSAGE_KEYS,
 } from '@prices/constants/prices';
 import { useNotification } from '@shared/contexts';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
+import { AppErrorHandler } from '@shared/utils/errorHandling';
 
 interface UsePriceMutationsOptions {
   parkingLotId: number;
@@ -35,6 +37,7 @@ export const usePriceMutations = ({
   onError,
 }: UsePriceMutationsOptions) => {
   const { showNotification } = useNotification();
+  const { t } = useTypedTranslation();
   
   // RTK Query mutations
   const [createPriceMutation, { isLoading: isCreating }] = useCreatePriceMutation();
@@ -58,7 +61,7 @@ export const usePriceMutations = ({
       // Validate form data
       const validation = validatePriceFormData(formData);
       if (!validation.isValid) {
-        const errorMessage = validation.errors.map(e => e.message).join(', ');
+        const errorMessage = validation.errors.map(e => t(e.message)).join(', ');
         throw new Error(errorMessage);
       }
 
@@ -72,7 +75,7 @@ export const usePriceMutations = ({
         });
 
         if (overlapping.length > 0) {
-          throw new Error(PRICE_ERROR_MESSAGES.VALIDATION.OVERLAPPING_PERIOD);
+          throw new Error(PRICE_ERROR_MESSAGE_KEYS.VALIDATION.OVERLAPPING_PERIOD);
         }
       }
 
@@ -85,14 +88,14 @@ export const usePriceMutations = ({
         body: apiRequest,
       }).unwrap();
 
-      showNotification('success', PRICE_SUCCESS_MESSAGES.PRICE.CREATED);
+      showNotification('success', t(PRICE_SUCCESS_MESSAGE_KEYS.PRICE.CREATED));
 
       // Call success callback
       onSuccess?.('create', response.data);
 
       return { success: true, data: response.data };
     } catch (error: any) {
-      const errorMessage = error?.message || PRICE_ERROR_MESSAGES.PRICE.CREATE_FAILED;
+      const errorMessage = error?.message || t(PRICE_ERROR_MESSAGE_KEYS.PRICE.CREATE_FAILED);
       
       showNotification('error', errorMessage);
 
@@ -101,11 +104,7 @@ export const usePriceMutations = ({
 
       return { 
         success: false, 
-        error: { 
-          name: 'PriceError',
-          message: errorMessage,
-          code: 'CREATE_FAILED',
-        } as any,
+        error: AppErrorHandler.transformApiError(error, 'createPrice'),
       };
     }
   }, [parkingLotId, existingPrices, createPriceMutation, showNotification, onSuccess, onError]);
@@ -120,7 +119,7 @@ export const usePriceMutations = ({
       // Validate form data
       const validation = validatePriceFormData(formData);
       if (!validation.isValid) {
-        const errorMessage = validation.errors.map(e => e.message).join(', ');
+        const errorMessage = validation.errors.map(e => t(e.message)).join(', ');
         throw new Error(errorMessage);
       }
 
@@ -134,7 +133,7 @@ export const usePriceMutations = ({
         }, priceId);
 
         if (overlapping.length > 0) {
-          throw new Error(PRICE_ERROR_MESSAGES.VALIDATION.OVERLAPPING_PERIOD);
+          throw new Error(PRICE_ERROR_MESSAGE_KEYS.VALIDATION.OVERLAPPING_PERIOD);
         }
       }
 
@@ -149,14 +148,14 @@ export const usePriceMutations = ({
       }).unwrap();
 
       // Show success notification
-      showNotification('success', PRICE_SUCCESS_MESSAGES.PRICE.UPDATED);
+      showNotification('success', t(PRICE_SUCCESS_MESSAGE_KEYS.PRICE.UPDATED));
 
       // Call success callback
       onSuccess?.('update', response.data);
 
       return { success: true, data: response.data };
     } catch (error: any) {
-      const errorMessage = error?.message || PRICE_ERROR_MESSAGES.PRICE.UPDATE_FAILED;
+      const errorMessage = error?.message || t(PRICE_ERROR_MESSAGE_KEYS.PRICE.UPDATE_FAILED);
       
       // Show error notification
       showNotification('error', errorMessage);
@@ -166,11 +165,7 @@ export const usePriceMutations = ({
 
       return { 
         success: false, 
-        error: { 
-          name: 'PriceError',
-          message: errorMessage,
-          code: 'UPDATE_FAILED',
-        } as any,
+        error: AppErrorHandler.transformApiError(error, 'updatePrice'),
       };
     }
   }, [parkingLotId, existingPrices, updatePriceMutation, showNotification, onSuccess, onError]);
@@ -185,14 +180,14 @@ export const usePriceMutations = ({
       }).unwrap();
 
       // Show success notification
-      showNotification('info', PRICE_SUCCESS_MESSAGES.PRICE.DELETED);
+      showNotification('info', t(PRICE_SUCCESS_MESSAGE_KEYS.PRICE.DELETED));
 
       // Call success callback
       onSuccess?.('delete');
 
       return { success: true, data: undefined };
     } catch (error: any) {
-      const errorMessage = error?.message || PRICE_ERROR_MESSAGES.PRICE.DELETE_FAILED;
+      const errorMessage = error?.message || t(PRICE_ERROR_MESSAGE_KEYS.PRICE.DELETE_FAILED);
       
       // Show error notification
       showNotification('error', errorMessage);
@@ -202,11 +197,7 @@ export const usePriceMutations = ({
 
       return { 
         success: false, 
-        error: { 
-          name: 'PriceError',
-          message: errorMessage,
-          code: 'DELETE_FAILED',
-        } as any,
+        error: AppErrorHandler.transformApiError(error, 'deletePrice'),
       };
     }
   }, [parkingLotId, deletePriceMutation, showNotification, onSuccess, onError]);

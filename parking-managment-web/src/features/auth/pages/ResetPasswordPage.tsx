@@ -9,6 +9,7 @@ import { setAuthError, setAuthLoading } from '../slice/authSlice';
 import { selectAuthError, selectAuthLoading } from '../selectors';
 import { Button, Input } from '@shared/ui/components';
 import { useNotification } from '@shared/contexts/NotificationContext';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 type FormValues = { token: string; newPassword: string };
 
@@ -18,6 +19,7 @@ export function ResetPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const dispatch = useAppDispatch();
   const { showNotification } = useNotification();
+  const { t } = useTypedTranslation();
 
   const authError = useAppSelector(selectAuthError);
   const authLoading = useAppSelector(selectAuthLoading);
@@ -30,27 +32,27 @@ export function ResetPasswordPage() {
       
       await resetPassword(values).unwrap();
       setIsSuccess(true);
-      showNotification('success', 'Password reset successfully! You can now sign in with your new password.');
+      showNotification('success', t('auth.passwordRecovery.successResetMessage'));
     } catch (error) {
-      showNotification('error', 'Password reset failed. Please check your token and try again.');
+      showNotification('error', t('auth.passwordRecovery.errorResetMessage'));
     } finally {
       dispatch(setAuthLoading(false));
     }
   };
 
   return (
-    <AuthCard title="Reset password">
+    <AuthCard title={t('auth.passwordRecovery.resetTitle')}>
       <div className="space-y-5">
         <div className="text-center">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Enter your reset token and create a new password for your account.
+            {t('auth.passwordRecovery.resetDescription')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Input
-            label="Reset token"
-            placeholder="Enter the token from your email"
+            label={t('auth.passwordRecovery.newPassword')}
+            placeholder={t('auth.passwordRecovery.newPasswordPlaceholder')}
             {...register('token', { required: true })}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,9 +63,9 @@ export function ResetPasswordPage() {
 
           <Input
             type="password"
-            label="New password"
-            placeholder="Create a strong password"
-            helpText="Use at least 8 characters with a mix of letters, numbers and symbols"
+            label={t('auth.passwordRecovery.newPassword')}
+            placeholder={t('auth.passwordRecovery.newPasswordPlaceholder')}
+            helpText={t('auth.register.passwordHelp')}
             {...register('newPassword', { required: true })}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +81,7 @@ export function ResetPasswordPage() {
             size="lg"
             loading={isSubmitting || authLoading || isApiLoading}
           >
-            Reset password
+            {t('auth.passwordRecovery.resetButton')}
           </Button>
         </form>
         
@@ -88,7 +90,7 @@ export function ResetPasswordPage() {
             to="/login" 
             className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
           >
-            Back to sign in
+            {t('auth.passwordRecovery.backToLogin')}
           </Link>
         </div>
       </div>

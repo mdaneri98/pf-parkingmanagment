@@ -2,11 +2,10 @@ import { PaginatedResponse } from '@shared/types';
 
 export enum ReservationStatus {
     PENDING = 'PENDING',
+    ACTIVE = 'ACTIVE',
     CONFIRMED = 'CONFIRMED',
     CANCELLED = 'CANCELLED',
     COMPLETED = 'COMPLETED',
-    IN_USE = 'IN_USE',
-    NO_SHOW = 'NO_SHOW',
 }
 
 export interface ReservationResponse {

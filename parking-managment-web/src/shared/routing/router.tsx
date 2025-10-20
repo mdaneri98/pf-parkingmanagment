@@ -6,7 +6,8 @@ import { RequestRecoveryPage } from '@auth/pages/RequestRecoveryPage';
 import { ResetPasswordPage } from '@auth/pages/ResetPasswordPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AppLayout } from '@shared/layout';
-import { DashboardPage, SettingsPage, WelcomePage, SelectLotPage, LicensePlateSearchPage } from '@parking/pages';
+import { DashboardPage, WelcomePage, SelectLotPage, LicensePlateSearchPage } from '@parking/pages';
+import { SettingsPage } from '@settings/pages';
 import { PricesPage } from '@prices/pages/PricesPage';
 import { ReservationsPage } from '../../features/reservations/pages/ReservationsPage';
 
@@ -59,20 +60,6 @@ export const router = createBrowserRouter([
 
           // Global routes (don't require lot selection)
           { path: 'settings', element: <SettingsPage /> },
-          {
-            path: 'analytics',
-            element: <div className="p-4 text-center text-gray-600">
-              <h2 className="text-lg font-semibold mb-2">Analytics</h2>
-              <p className="text-sm">Analytics feature coming soon...</p>
-            </div>
-          },
-          {
-            path: 'analytics/:lotId',
-            element: <div className="p-4 text-center text-gray-600">
-              <h2 className="text-lg font-semibold mb-2">Analytics</h2>
-              <p className="text-sm">Analytics feature coming soon...</p>
-            </div>
-          },
         ],
       },
     ],

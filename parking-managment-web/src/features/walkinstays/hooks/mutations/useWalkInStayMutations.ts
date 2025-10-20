@@ -10,11 +10,9 @@ import type {
   ReservationStatus,
   WalkInStayResponse,
 } from '@walkinstays/types';
-import {
-  WALK_IN_STAY_SUCCESS_MESSAGES,
-  WALK_IN_STAY_ERROR_MESSAGES,
-} from '@walkinstays/constants/walkInStays';
 import { useNotification } from '@shared/contexts';
+import { AppErrorHandler } from '@shared/utils/errorHandling';
+import i18n from '@shared/i18n/config';
 
 /**
  * Hook for managing walk-in stay mutations with notifications and error handling
@@ -50,18 +48,15 @@ export const useWalkInStayMutations = () => {
           parkingLotId: parkingLotId || 0, // Used for cache invalidation
         }).unwrap();
 
-        showNotification('success', WALK_IN_STAY_SUCCESS_MESSAGES.CREATED);
+        showNotification('success', i18n.t('walkinstays.success.created'));
 
         onSuccess?.(response.data);
       } catch (error: any) {
-        const errorMessage =
-          error?.message ||
-          error?.data?.message ||
-          WALK_IN_STAY_ERROR_MESSAGES.CREATE_FAILED;
-
+        const appError = AppErrorHandler.transformApiError(error, 'createWalkInStay');
+        const errorMessage = AppErrorHandler.getUserFriendlyMessage(appError);
+        
         showNotification('error', errorMessage);
-
-        throw error;
+        throw appError;
       }
     },
     [createWalkInStayMutation, showNotification]
@@ -84,23 +79,18 @@ export const useWalkInStayMutations = () => {
 
         const successMessage =
           status === 'COMPLETED'
-            ? WALK_IN_STAY_SUCCESS_MESSAGES.COMPLETED
-            : WALK_IN_STAY_SUCCESS_MESSAGES.STATUS_UPDATED;
+            ? i18n.t('walkinstays.success.completed')
+            : i18n.t('walkinstays.success.statusUpdated');
 
         showNotification('success', successMessage);
 
         onSuccess?.(response.data);
       } catch (error: any) {
-        const errorMessage =
-          error?.message ||
-          error?.data?.message ||
-          (status === 'COMPLETED'
-            ? WALK_IN_STAY_ERROR_MESSAGES.COMPLETE_FAILED
-            : WALK_IN_STAY_ERROR_MESSAGES.STATUS_UPDATE_FAILED);
-
+        const appError = AppErrorHandler.transformApiError(error, 'updateWalkInStayStatus');
+        const errorMessage = AppErrorHandler.getUserFriendlyMessage(appError);
+        
         showNotification('error', errorMessage);
-
-        throw error;
+        throw appError;
       }
     },
     [updateStatusMutation, showNotification]
@@ -121,18 +111,15 @@ export const useWalkInStayMutations = () => {
           extraHours,
         }).unwrap();
 
-        showNotification('success', WALK_IN_STAY_SUCCESS_MESSAGES.EXTENDED);
+        showNotification('success', i18n.t('walkinstays.success.extended'));
 
         onSuccess?.(response.data);
       } catch (error: any) {
-        const errorMessage =
-          error?.message ||
-          error?.data?.message ||
-          WALK_IN_STAY_ERROR_MESSAGES.EXTEND_FAILED;
-
+        const appError = AppErrorHandler.transformApiError(error, 'extendWalkInStay');
+        const errorMessage = AppErrorHandler.getUserFriendlyMessage(appError);
+        
         showNotification('error', errorMessage);
-
-        throw error;
+        throw appError;
       }
     },
     [extendMutation, showNotification]

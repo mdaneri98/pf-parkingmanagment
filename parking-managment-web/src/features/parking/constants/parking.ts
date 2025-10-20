@@ -62,36 +62,42 @@ export const PARKING_CONSTANTS = {
   },
 } as const;
 
-export const ERROR_MESSAGES = {
+import { ERROR_MESSAGE_KEYS } from '@shared/constants/errorMessages';
+
+// Feature-specific error message keys (shared keys imported from @shared/constants/errorMessages)
+export const PARKING_ERROR_MESSAGE_KEYS = {
   SPOT: {
-    CREATE_FAILED: 'Failed to create spot',
-    UPDATE_FAILED: 'Failed to update spot',
-    DELETE_FAILED: 'Failed to delete spot',
-    NOT_FOUND: 'Spot not found',
+    CREATE_FAILED: 'notifications.error.createFailed',
+    UPDATE_FAILED: 'notifications.error.updateFailed',
+    DELETE_FAILED: 'notifications.error.deleteFailed',
+    NOT_FOUND: 'errors.notFound',
   },
   LOT: {
-    CREATE_FAILED: 'Failed to create parking lot',
-    UPDATE_FAILED: 'Failed to update parking lot',
-    DELETE_FAILED: 'Failed to delete parking lot',
-    NOT_FOUND: 'Parking lot not found',
-    LOAD_FAILED: 'Failed to load parking lot data',
-  },
-  NETWORK: {
-    CONNECTION_ERROR: 'Connection error. Please check your internet connection.',
-    TIMEOUT: 'Request timed out. Please try again.',
-    SERVER_ERROR: 'Server error. Please try again later.',
+    CREATE_FAILED: 'notifications.error.createFailed',
+    UPDATE_FAILED: 'notifications.error.updateFailed',
+    DELETE_FAILED: 'notifications.error.deleteFailed',
+    NOT_FOUND: 'errors.parkingLotNotFound',
+    LOAD_FAILED: 'notifications.error.loadFailed',
   },
 } as const;
 
-export const SUCCESS_MESSAGES = {
+// Re-export shared error message keys for convenience
+export { ERROR_MESSAGE_KEYS };
+
+// Translation keys for success messages
+export const SUCCESS_MESSAGE_KEYS = {
   SPOT: {
-    CREATED: 'Spot created successfully!',
-    UPDATED: 'Spot updated successfully!',
-    DELETED: 'Spot deleted successfully!',
+    CREATED: 'notifications.success.created',
+    UPDATED: 'notifications.success.updated',
+    DELETED: 'notifications.success.deleted',
   },
   LOT: {
-    CREATED: 'Parking lot created successfully!',
-    UPDATED: 'Parking lot updated successfully!',
-    DELETED: 'Parking lot deleted successfully!',
+    CREATED: 'notifications.success.created',
+    UPDATED: 'notifications.success.updated',
+    DELETED: 'notifications.success.deleted',
   },
 } as const;
+
+// Deprecated: Keep for backward compatibility, will be removed
+export const ERROR_MESSAGES = ERROR_MESSAGE_KEYS;
+export const SUCCESS_MESSAGES = SUCCESS_MESSAGE_KEYS;

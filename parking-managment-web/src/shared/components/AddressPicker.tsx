@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface AddressPickerProps {
   address: string;
@@ -21,6 +22,7 @@ export function AddressPicker({
   const mapRef = useRef<HTMLDivElement | null>(null);
   const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
   const autocompleteRef = useRef<HTMLInputElement | null>(null);
+  const { t } = useTypedTranslation();
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -32,17 +34,16 @@ export function AddressPicker({
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places", "marker"], // 👈 important
+      libraries: ["places", "marker"],
     });
 
     loader.load().then(() => {
       if (!mapRef.current || !autocompleteRef.current) return;
 
-      // ✅ Now google.maps.Map is guaranteed to be available
       const map = new google.maps.Map(mapRef.current, {
         center: { lat: 37.4221, lng: -122.0841 },
         zoom: 13,
-        mapId: "DEMO_MAP_ID", // replace with a real Map ID if you have styling
+        mapId: "DEMO_MAP_ID",
       });
 
       // Advanced marker
@@ -51,7 +52,6 @@ export function AddressPicker({
       });
       markerRef.current = marker;
 
-      // Use Autocomplete for stability (instead of PlaceAutocompleteElement for now)
       const autocomplete = new google.maps.places.Autocomplete(autocompleteRef.current!, {
         fields: ["geometry", "formatted_address"],
         types: ["address"],
@@ -75,7 +75,7 @@ export function AddressPicker({
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-        Address
+        {t('shared.addressPicker.label')}
       </label>
       <input
         ref={autocompleteRef}
@@ -83,7 +83,7 @@ export function AddressPicker({
         className="w-full rounded-md border px-3 py-2 text-sm 
                    bg-white text-neutral-900 
                    dark:bg-neutral-800 dark:text-neutral-100"
-        placeholder="Search address..."
+        placeholder={t('shared.addressPicker.placeholder')}
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         disabled={disabled}

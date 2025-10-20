@@ -7,4 +7,8 @@ public class NotFoundException extends BaseException {
         super(HttpStatus.NOT_FOUND, message, ApiErrorCode.NOT_FOUND.getCode());
     }
 
+    public NotFoundException(String messageKey, Object... args) {
+        super(HttpStatus.NOT_FOUND, ApiErrorCode.NOT_FOUND.getCode(), messageKey, args);
+    }
+
 }

@@ -7,5 +7,8 @@ public class AuthenticationFailedException extends BaseException {
         super(HttpStatus.UNAUTHORIZED, message, ApiErrorCode.AUTHENTICATION_FAILED.getCode());
     }
 
+    public AuthenticationFailedException(String messageKey, Object... args) {
+        super(HttpStatus.UNAUTHORIZED, ApiErrorCode.AUTHENTICATION_FAILED.getCode(), messageKey, args);
+    }
 
 }

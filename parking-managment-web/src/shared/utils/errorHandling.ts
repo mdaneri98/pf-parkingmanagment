@@ -1,4 +1,6 @@
 import { logger } from './logger';
+import i18n from '@shared/i18n/config';
+import { ERROR_MESSAGE_KEYS } from '@shared/constants/errorMessages';
 
 export interface ErrorContext {
   component?: string;
@@ -20,12 +22,31 @@ export enum ErrorCodes {
   AUTH_ACCESS_DENIED = 'AUTH_ACCESS_DENIED',
   AUTH_SESSION_EXPIRED = 'AUTH_SESSION_EXPIRED',
   
+  // HTTP Errors
+  HTTP_BAD_REQUEST = 'HTTP_BAD_REQUEST',
+  HTTP_UNAUTHORIZED = 'HTTP_UNAUTHORIZED',
+  HTTP_FORBIDDEN = 'HTTP_FORBIDDEN',
+  HTTP_NOT_FOUND = 'HTTP_NOT_FOUND',
+  HTTP_CONFLICT = 'HTTP_CONFLICT',
+  HTTP_UNPROCESSABLE_ENTITY = 'HTTP_UNPROCESSABLE_ENTITY',
+  HTTP_SERVER_ERROR = 'HTTP_SERVER_ERROR',
+  HTTP_SERVICE_UNAVAILABLE = 'HTTP_SERVICE_UNAVAILABLE',
+  
   // API Errors
   API_NETWORK_ERROR = 'API_NETWORK_ERROR',
   API_TIMEOUT = 'API_TIMEOUT',
   API_SERVER_ERROR = 'API_SERVER_ERROR',
   API_NOT_FOUND = 'API_NOT_FOUND',
   API_VALIDATION_ERROR = 'API_VALIDATION_ERROR',
+  
+  // Network Errors
+  NETWORK_TIMEOUT = 'NETWORK_TIMEOUT',
+  
+  // Operation Errors
+  OPERATION_CREATE_FAILED = 'OPERATION_CREATE_FAILED',
+  OPERATION_UPDATE_FAILED = 'OPERATION_UPDATE_FAILED',
+  OPERATION_DELETE_FAILED = 'OPERATION_DELETE_FAILED',
+  OPERATION_LOAD_FAILED = 'OPERATION_LOAD_FAILED',
   
   // Business Logic Errors
   PARKING_LOT_NOT_FOUND = 'PARKING_LOT_NOT_FOUND',
@@ -61,58 +82,184 @@ export class AppErrorHandler {
     switch (code) {
       case ErrorCodes.AUTH_TOKEN_EXPIRED:
       case ErrorCodes.AUTH_SESSION_EXPIRED:
-        return 'Your session has expired. Please sign in again.';
+        return i18n.t('errors.sessionExpired');
       
       case ErrorCodes.AUTH_INVALID_CREDENTIALS:
-        return 'Invalid email or password. Please check your credentials and try again.';
+        return i18n.t('errors.invalidCredentials');
       
       case ErrorCodes.AUTH_ACCESS_DENIED:
-        return 'Access denied. You do not have permission to perform this action.';
+        return i18n.t('errors.accessDenied');
+      
+      case ErrorCodes.HTTP_BAD_REQUEST:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.BAD_REQUEST);
+      
+      case ErrorCodes.HTTP_UNAUTHORIZED:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.UNAUTHORIZED);
+      
+      case ErrorCodes.HTTP_FORBIDDEN:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.FORBIDDEN);
+      
+      case ErrorCodes.HTTP_NOT_FOUND:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.NOT_FOUND);
+      
+      case ErrorCodes.HTTP_CONFLICT:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.CONFLICT);
+      
+      case ErrorCodes.HTTP_UNPROCESSABLE_ENTITY:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.VALIDATION_ERROR);
+      
+      case ErrorCodes.HTTP_SERVER_ERROR:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.SERVER_ERROR);
+      
+      case ErrorCodes.HTTP_SERVICE_UNAVAILABLE:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.SERVICE_UNAVAILABLE);
       
       case ErrorCodes.API_NETWORK_ERROR:
-        return 'Network error. Please check your internet connection and try again.';
+      case ErrorCodes.NETWORK_TIMEOUT:
+        return i18n.t(ERROR_MESSAGE_KEYS.NETWORK.CONNECTION_ERROR);
       
       case ErrorCodes.API_TIMEOUT:
-        return 'Request timed out. Please try again.';
+        return i18n.t(ERROR_MESSAGE_KEYS.NETWORK.TIMEOUT);
       
       case ErrorCodes.API_SERVER_ERROR:
-        return 'Server error. Please try again later or contact support.';
+        return i18n.t(ERROR_MESSAGE_KEYS.NETWORK.SERVER_ERROR);
       
       case ErrorCodes.API_NOT_FOUND:
-        return 'The requested resource was not found.';
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.NOT_FOUND);
       
       case ErrorCodes.API_VALIDATION_ERROR:
-        return 'Please check your input and try again.';
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.VALIDATION_ERROR);
       
       case ErrorCodes.PARKING_LOT_NOT_FOUND:
-        return 'Parking lot not found. Please select a different parking lot.';
+        return i18n.t('errors.parkingLotNotFound');
       
       case ErrorCodes.PARKING_LOT_ACCESS_DENIED:
-        return 'You do not have access to this parking lot.';
+        return i18n.t('errors.parkingLotAccessDenied');
       
       case ErrorCodes.USER_NOT_FOUND:
-        return 'User not found';
+        return i18n.t('errors.userNotFound');
       
       case 401:
-        return 'Authentication required. Please sign in.';
+        return i18n.t('errors.authenticationRequired');
       
       case 403:
-        return 'Access forbidden. You do not have permission to perform this action.';
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.FORBIDDEN);
       
       case 404:
-        return 'The requested resource was not found.';
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.NOT_FOUND);
+      
+      case 409:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.CONFLICT);
+      
+      case 422:
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.VALIDATION_ERROR);
       
       case 429:
-        return 'Too many requests. Please wait a moment and try again.';
+        return i18n.t('errors.tooManyRequests');
       
       case 500:
       case 502:
       case 503:
       case 504:
-        return 'Server error. Please try again later.';
+        return i18n.t(ERROR_MESSAGE_KEYS.HTTP.SERVER_ERROR);
       
       default:
-        return 'An unexpected error occurred.';
+        return i18n.t(ERROR_MESSAGE_KEYS.GENERAL.UNKNOWN_ERROR);
+    }
+  }
+
+  /**
+   * Transforms API errors into standardized AppError instances
+   */
+  static transformApiError(error: any, context: string): AppError {
+    // Handle different error structures
+    if (error?.data?.message) {
+      return this.createError(
+        error.data.message,
+        error.data.code || ErrorCodes.API_SERVER_ERROR,
+        { context, originalError: error }
+      );
+    }
+
+    if (error?.message) {
+      return this.createError(
+        error.message,
+        ErrorCodes.UNKNOWN_ERROR,
+        { context, originalError: error }
+      );
+    }
+
+    if (error?.status) {
+      return this.createHttpError(error.status, context);
+    }
+
+    // Fallback for unknown errors
+    return this.createError(
+      i18n.t(ERROR_MESSAGE_KEYS.GENERAL.UNEXPECTED_ERROR),
+      ErrorCodes.UNKNOWN_ERROR,
+      { context, originalError: error }
+    );
+  }
+
+  /**
+   * Creates appropriate errors based on HTTP status codes
+   */
+  private static createHttpError(status: number, context: string): AppError {
+    switch (status) {
+      case 400:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.BAD_REQUEST),
+          ErrorCodes.HTTP_BAD_REQUEST,
+          { context, status }
+        );
+      case 401:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.UNAUTHORIZED),
+          ErrorCodes.HTTP_UNAUTHORIZED,
+          { context, status }
+        );
+      case 403:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.FORBIDDEN),
+          ErrorCodes.HTTP_FORBIDDEN,
+          { context, status }
+        );
+      case 404:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.NOT_FOUND),
+          ErrorCodes.HTTP_NOT_FOUND,
+          { context, status }
+        );
+      case 409:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.CONFLICT),
+          ErrorCodes.HTTP_CONFLICT,
+          { context, status }
+        );
+      case 422:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.VALIDATION_ERROR),
+          ErrorCodes.HTTP_UNPROCESSABLE_ENTITY,
+          { context, status }
+        );
+      case 500:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.SERVER_ERROR),
+          ErrorCodes.HTTP_SERVER_ERROR,
+          { context, status }
+        );
+      case 503:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.SERVICE_UNAVAILABLE),
+          ErrorCodes.HTTP_SERVICE_UNAVAILABLE,
+          { context, status }
+        );
+      default:
+        return this.createError(
+          i18n.t(ERROR_MESSAGE_KEYS.HTTP.HTTP_ERROR, { status }),
+          ErrorCodes.UNKNOWN_ERROR,
+          { context, status }
+        );
     }
   }
 
@@ -153,19 +300,23 @@ export class AppErrorHandler {
 
   private static getErrorCodeFromStatus(status: number): ErrorCodes {
     switch (status) {
+      case 400:
+        return ErrorCodes.HTTP_BAD_REQUEST;
       case 401:
         return ErrorCodes.AUTH_TOKEN_EXPIRED;
       case 403:
         return ErrorCodes.AUTH_ACCESS_DENIED;
       case 404:
-        return ErrorCodes.API_NOT_FOUND;
+        return ErrorCodes.HTTP_NOT_FOUND;
+      case 409:
+        return ErrorCodes.HTTP_CONFLICT;
       case 422:
-        return ErrorCodes.API_VALIDATION_ERROR;
+        return ErrorCodes.HTTP_UNPROCESSABLE_ENTITY;
       case 500:
       case 502:
       case 503:
       case 504:
-        return ErrorCodes.API_SERVER_ERROR;
+        return ErrorCodes.HTTP_SERVER_ERROR;
       default:
         return ErrorCodes.UNKNOWN_ERROR;
     }
@@ -179,7 +330,9 @@ export class AppErrorHandler {
     const retryableCodes = [
       ErrorCodes.API_NETWORK_ERROR,
       ErrorCodes.API_TIMEOUT,
-      ErrorCodes.API_SERVER_ERROR,
+      ErrorCodes.NETWORK_TIMEOUT,
+      ErrorCodes.HTTP_SERVER_ERROR,
+      ErrorCodes.HTTP_SERVICE_UNAVAILABLE,
     ];
 
     // Retryable HTTP status codes
@@ -192,6 +345,7 @@ export class AppErrorHandler {
     // Don't show technical errors to users
     const technicalCodes = [
       ErrorCodes.UNKNOWN_ERROR,
+      ErrorCodes.HTTP_SERVER_ERROR,
       ErrorCodes.API_SERVER_ERROR,
     ];
 

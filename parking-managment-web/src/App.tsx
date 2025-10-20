@@ -4,13 +4,20 @@ import { useAppDispatch, useAppSelector } from './hooks';
 import { selectAuth } from '@auth/selectors';
 import { authInitializationService } from '@auth/services/authInitializationService';
 import { router } from '@shared/routing/router';
+import { i18nSyncService } from '@shared/services/i18nSyncService';
+import { store } from '@stores/store';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 function App() {
   const dispatch = useAppDispatch();
   const { isInitialized } = useAppSelector(selectAuth);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTypedTranslation();
 
   useEffect(() => {
+    // Initialize i18n sync service
+    i18nSyncService.initialize(store);
+
     const initAuth = async () => {
       try {
         await authInitializationService.initializeFromStorage(dispatch);
@@ -24,6 +31,10 @@ function App() {
     } else {
       setIsLoading(false);
     }
+
+    return () => {
+      i18nSyncService.cleanup();
+    };
   }, [dispatch, isInitialized]);
 
   if (isLoading) {
@@ -36,10 +47,10 @@ function App() {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              Initializing Parking Management
+              {t('parking.dashboard.initializingTitle')}
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400">
-              Setting up your dashboard...
+              {t('common.settingUpDashboard')}
             </p>
           </div>
         </div>

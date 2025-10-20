@@ -10,10 +10,13 @@ import { clearParkingLotsError } from '@parking/slice/parkingSlice';
 import { parkingApi } from '@parking/api/parkingApi';
 import { ImagePreview } from '@shared/components/ImagePreview';
 import type { ParkingLotResponse } from '@parking/types';
+import { Button } from '@shared/ui/components';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 export function SelectLotPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { t } = useTypedTranslation();
   
   const parkingLots = useAppSelector(selectParkingLots);
   const isLoading = useAppSelector(selectParkingLotsLoading);
@@ -34,7 +37,7 @@ export function SelectLotPage() {
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-600 dark:text-neutral-400">Loading your parking lots...</p>
+          <p className="text-neutral-600 dark:text-neutral-400">{t('parking.lots.loadingLots')}</p>
         </div>
       </div>
     );
@@ -50,16 +53,16 @@ export function SelectLotPage() {
             </svg>
           </div>
           <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-            Failed to Load Parking Lots
+            {t('parking.lots.loadingError')}
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-            We couldn't load your parking lots. Please check your connection and try again.
+            {t('parking.lots.loadingErrorMessage')}
           </p>
           <Button
             onClick={handleRefetch}
             className="bg-primary-600 hover:bg-primary-700 text-white"
           >
-            Try Again
+            {t('parking.lots.tryAgain')}
           </Button>
         </div>
       </div>
@@ -76,10 +79,10 @@ export function SelectLotPage() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
-            No Parking Lots Yet
+            {t('parking.lots.noLotsTitle')}
           </h1>
           <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed">
-            You don't have any parking lots yet. Please contact your administrator to get access to parking lots.
+            {t('parking.lots.noLotsMessage')}
           </p>
         </div>
       </div>
@@ -91,10 +94,10 @@ export function SelectLotPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-          Select a Parking Lot
+          {t('parking.lots.selectLot')}
         </h1>
         <p className="text-lg text-neutral-600 dark:text-neutral-400">
-          Choose a parking lot to manage.
+          {t('parking.lots.selectLotMessage')}
         </p>
       </div>
 
@@ -132,7 +135,7 @@ export function SelectLotPage() {
             {/* Action Indicator */}
             <div className="flex items-center justify-end text-sm">
               <span className="text-primary-600 dark:text-primary-400 font-medium">
-                Click to manage →
+                {t('parking.lots.clickToManage')}
               </span>
             </div>
           </div>

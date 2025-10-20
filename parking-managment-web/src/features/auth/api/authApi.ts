@@ -38,6 +38,17 @@ interface LogoutRequest {
   refreshToken: string;
 }
 
+interface UpdateUserRequest {
+  firstName?: string;
+  lastName?: string;
+  imageUrl?: string;
+  userDetail: {
+    phone?: string;
+    address?: string;
+    lang?: string;
+  };
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: smartBaseQuery,
@@ -107,6 +118,15 @@ export const authApi = createApi({
       }),
       providesTags: ['User'],
     }),
+    
+    updateUser: builder.mutation<ApiResponse<User>, UpdateUserRequest & { userId: number }>({
+      query: ({ userId, ...body }) => ({
+        url: `/users/${userId}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 });
 
@@ -119,6 +139,7 @@ export const {
   useVerifyRecoveryTokenMutation,
   useResetPasswordMutation,
   useGetCurrentUserQuery,
+  useUpdateUserMutation,
 } = authApi;
 
 

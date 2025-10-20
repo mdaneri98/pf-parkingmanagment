@@ -4,6 +4,7 @@ import type {
   CreateSpotRequest,
   UpdateSpotRequest
 } from '../../types';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 
 interface ModalState {
@@ -49,6 +50,8 @@ export function DashboardModals({
   onSpotModalClose,
   onRefetchSpots,
 }: DashboardModalsProps) {
+  const { t } = useTypedTranslation();
+
   return (
     <>
       {/* Spot Detail Modal */}
@@ -132,6 +135,8 @@ function ConfirmDeleteSpotModal({
   onCancel,
   isLoading
 }: ConfirmDeleteSpotModalProps) {
+  const { t } = useTypedTranslation();
+  
   if (!isOpen) return null;
 
   return (
@@ -148,10 +153,10 @@ function ConfirmDeleteSpotModal({
 
           <div className="text-center">
             <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-              Delete Spot
+              {t('parking.spots.modals.deleteSpot.title')}
             </h3>
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-              Are you sure you want to delete this spot? This action cannot be undone.
+              {t('parking.spots.modals.deleteSpot.message')}
             </p>
           </div>
 
@@ -161,14 +166,14 @@ function ConfirmDeleteSpotModal({
               className="flex-1 px-4 py-2 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors"
               disabled={isLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={onConfirm}
               className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
               disabled={isLoading}
             >
-              {isLoading ? 'Deleting...' : 'Delete'}
+              {isLoading ? t('parking.spots.modals.deleteSpot.deleting') : t('common.delete')}
             </button>
           </div>
         </div>

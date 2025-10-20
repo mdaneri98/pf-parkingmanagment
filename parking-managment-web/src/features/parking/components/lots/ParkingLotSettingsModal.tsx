@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import type { UpdateParkingLotRequest, ParkingLotResponse } from '@parking/types';
 import { AddressPicker } from '@shared/components/AddressPicker';
 import { ImagePreview } from '@shared/components/ImagePreview';
-import { Input } from '@shared/ui/components';
+import { Input, Modal } from '@shared/ui/components';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface Props {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export function ParkingLotSettingsModal({ isOpen, onClose, onSubmit, parkingLot,
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const [latitude, setLatitude] = useState<number>(100);
   const [longitude, setLongitude] = useState<number>(100);
+  const { t } = useTypedTranslation();
 
   // Update form data when parkingLot changes
   useEffect(() => {
@@ -47,24 +49,24 @@ export function ParkingLotSettingsModal({ isOpen, onClose, onSubmit, parkingLot,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="card-elevated max-w-md w-full animate-slide-in">
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="md">
+      <div className="card-elevated w-full animate-slide-in">
         <div className="card-body space-y-6">
           <div className="text-center">
             <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-              Parking Lot Settings
+              {t('parking.lots.modals.settings.title')}
             </h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
-              Update parking lot information and settings
+              {t('parking.lots.modals.settings.description')}
             </p>
           </div>
 
           <div className="space-y-4">
             <Input
-              label="Name"
+              label={t('parking.lots.modals.settings.name')}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Parking Lot Name"
+              placeholder={t('parking.lots.modals.settings.namePlaceholder')}
               disabled={isLoading}
             />
 
@@ -78,10 +80,10 @@ export function ParkingLotSettingsModal({ isOpen, onClose, onSubmit, parkingLot,
 
             <div className="space-y-3">
               <Input
-                label="Image URL"
+                label={t('parking.lots.modals.settings.imageUrl')}
                 value={imageUrl || ''}
                 onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="Image URL (optional)"
+                placeholder={t('parking.lots.modals.settings.imageUrlPlaceholder')}
                 disabled={isLoading}
               />
               
@@ -90,7 +92,7 @@ export function ParkingLotSettingsModal({ isOpen, onClose, onSubmit, parkingLot,
                 <div className="flex justify-center">
                   <ImagePreview
                     src={imageUrl}
-                    alt={name || 'Parking lot preview'}
+                    alt={name || t('parking.lots.modals.settings.imagePreviewAlt')}
                     size="sm"
                   />
                 </div>
@@ -104,18 +106,18 @@ export function ParkingLotSettingsModal({ isOpen, onClose, onSubmit, parkingLot,
               className="btn-secondary flex-1"
               disabled={isLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleSubmit}
               className="btn-primary flex-1"
               disabled={isLoading || !name.trim() || !address.trim()}
             >
-              {isLoading ? 'Updating...' : 'Update Settings'}
+              {isLoading ? t('common.updating') : t('parking.lots.modals.settings.saveButton')}
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

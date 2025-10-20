@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         createUserRequestValidator.validate(userRequest);
 
         if (userRepository.existsByEmail(userRequest.getEmail())) {
-            throw new BadRequestException(String.format("The email %s is already in use", userRequest.getEmail()));
+            throw new BadRequestException("user.email.already_exists", userRequest.getEmail());
         }
 
         User user = new User();
@@ -52,6 +52,8 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userRequest.getLastName());
         user.setImageUrl(userRequest.getImageUrl());
         user.setPasswordHash(passwordEncoder.encode(userRequest.getPassword()));
+        user.setUserDetail(new UserDetail());
+
         userRepository.save(user);
 
         return UserResponse.builder()
@@ -71,20 +73,14 @@ public class UserServiceImpl implements UserService {
         updatedUserRequestValidator.validate(user);
         
         User userSaved = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("user.not.found"));
 
         userSaved.setFirstName(user.getFirstName());
         userSaved.setLastName(user.getLastName());
         userSaved.setImageUrl(user.getImageUrl());
-        userSaved.setUserDetail(Optional.ofNullable(user.getUserDetail())
-                .map(userDetailDto -> {
-                    UserDetail userDetail = new UserDetail();
-                    userDetail.setPhone(userDetailDto.getPhone());
-                    userDetail.setAddress(userDetailDto.getAddress());
-                    userDetail.setUser(userSaved);
-                    return userDetail;
-                })
-                .orElse(null));
+        userSaved.getUserDetail().setPhone(user.getUserDetail().getPhone());
+        userSaved.getUserDetail().setAddress(user.getUserDetail().getAddress());
+        userSaved.getUserDetail().setLang(user.getUserDetail().getLang());
         userRepository.save(userSaved);
 
         return UserMapper.toUserResponse(userSaved);
@@ -98,7 +94,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse findById(Long id) {
         return userRepository.findById(id)
                 .map(UserMapper::toUserResponse)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("user.not.found"));
     }
 
     /**

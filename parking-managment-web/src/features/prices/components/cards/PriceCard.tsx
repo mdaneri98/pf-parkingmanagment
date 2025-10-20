@@ -1,5 +1,6 @@
 import type { PriceDisplayData } from '@prices/types';
-import { formatARS } from '@prices/utils/PriceUtils';
+import { formatARS } from '@prices/utils/priceUtils';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface Props {
   price: PriceDisplayData;
@@ -20,6 +21,7 @@ export function PriceCard({
   canDelete = true,
   compact = false,
 }: Props) {
+  const { t } = useTypedTranslation();
   const getStatusColor = () => {
     if (price.isActive) return 'border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800';
     if (price.isExpired) return 'border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800';
@@ -30,7 +32,7 @@ export function PriceCard({
     if (price.isActive) {
       return (
         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-          Active
+          {t('prices.card.status.active')}
         </span>
       );
     }
@@ -38,14 +40,14 @@ export function PriceCard({
     if (price.isExpired) {
       return (
         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-          Expired
+          {t('prices.card.status.expired')}
         </span>
       );
     }
     
     return (
       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-        Upcoming
+        {t('prices.card.status.upcoming')}
       </span>
     );
   };
@@ -92,7 +94,7 @@ export function PriceCard({
                   <button
                     onClick={handleEdit}
                     className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded"
-                    title="Edit price"
+                    title={t('common.edit')}
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -103,7 +105,7 @@ export function PriceCard({
                   <button
                     onClick={handleDelete}
                     className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded text-red-600 dark:text-red-400"
-                    title="Delete price"
+                    title={t('common.delete')}
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -140,11 +142,11 @@ export function PriceCard({
 
       <div className="space-y-2 mb-4">
         <div className="flex justify-between text-sm">
-          <span className="text-neutral-600 dark:text-neutral-400">Valid From:</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{t('prices.card.validFrom')}</span>
           <span className="text-neutral-900 dark:text-neutral-100">{price.formattedValidFrom}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-neutral-600 dark:text-neutral-400">Valid To:</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{t('prices.card.validTo')}</span>
           <span className="text-neutral-900 dark:text-neutral-100">{price.formattedValidTo}</span>
         </div>
       </div>
@@ -153,7 +155,7 @@ export function PriceCard({
       {price.isActive && (
         <div className="mb-4">
           <div className="flex justify-between text-xs text-neutral-600 dark:text-neutral-400 mb-1">
-            <span>Progress</span>
+            <span>{t('prices.card.progress')}</span>
             <span>
               {Math.round(
                 ((new Date().getTime() - new Date(price.validFrom).getTime()) /
@@ -186,7 +188,7 @@ export function PriceCard({
               <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Edit
+              {t('prices.card.edit')}
             </button>
           )}
           {canDelete && (
@@ -197,7 +199,7 @@ export function PriceCard({
               <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              Delete
+              {t('prices.card.delete')}
             </button>
           )}
         </div>

@@ -20,42 +20,45 @@ export const PRICE_CONSTANTS = {
   },
 } as const;
 
-// ====== Error Messages ======
-export const PRICE_ERROR_MESSAGES = {
+import { ERROR_MESSAGE_KEYS } from '@shared/constants/errorMessages';
+
+// Feature-specific error message keys (shared keys imported from @shared/constants/errorMessages)
+export const PRICE_ERROR_MESSAGE_KEYS = {
   PRICE: {
-    CREATE_FAILED: 'Failed to create price rule',
-    UPDATE_FAILED: 'Failed to update price rule', 
-    DELETE_FAILED: 'Failed to delete price rule',
-    NOT_FOUND: 'Price rule not found',
-    LOAD_FAILED: 'Failed to load price data',
+    CREATE_FAILED: 'notifications.error.createFailed',
+    UPDATE_FAILED: 'notifications.error.updateFailed',
+    DELETE_FAILED: 'notifications.error.deleteFailed',
+    NOT_FOUND: 'errors.notFound',
+    LOAD_FAILED: 'notifications.error.loadFailed',
   },
   VALIDATION: {
-    PRICE_REQUIRED: 'Price is required',
-    PRICE_MIN: `Price must be at least $${PRICE_CONSTANTS.VALIDATION.MIN_PRICE}`,
-    PRICE_MAX: `Price cannot exceed $${PRICE_CONSTANTS.VALIDATION.MAX_PRICE}`,
-    VEHICLE_TYPE_REQUIRED: 'Vehicle type is required',
-    VALID_FROM_REQUIRED: 'Start date is required',
-    VALID_TO_REQUIRED: 'End date is required',
-    DATE_RANGE_INVALID: 'End date must be after start date',
-    DATE_PAST: 'Date cannot be in the past',
-    OVERLAPPING_PERIOD: 'This period overlaps with an existing price rule for the same vehicle type',
-  },
-  NETWORK: {
-    CONNECTION_ERROR: 'Connection error. Please check your internet connection.',
-    TIMEOUT: 'Request timed out. Please try again.',
-    SERVER_ERROR: 'Server error. Please try again later.',
-    UNAUTHORIZED: 'You are not authorized to manage prices for this parking lot.',
+    PRICE_REQUIRED: 'validation.price.required',
+    PRICE_MIN: 'validation.price.min',
+    PRICE_MAX: 'validation.price.max',
+    VEHICLE_TYPE_REQUIRED: 'validation.vehicleType.required',
+    VALID_FROM_REQUIRED: 'validation.validFrom.required',
+    VALID_TO_REQUIRED: 'validation.validTo.required',
+    DATE_RANGE_INVALID: 'validation.dateRange.invalid',
+    DATE_PAST: 'validation.date.past',
+    OVERLAPPING_PERIOD: 'validation.price.overlappingPeriod',
   },
 } as const;
 
-// ====== Success Messages ======
-export const PRICE_SUCCESS_MESSAGES = {
+// Re-export shared error message keys for convenience
+export { ERROR_MESSAGE_KEYS };
+
+// Translation keys for success messages
+export const PRICE_SUCCESS_MESSAGE_KEYS = {
   PRICE: {
-    CREATED: 'Price rule created successfully!',
-    UPDATED: 'Price rule updated successfully!',
-    DELETED: 'Price rule deleted successfully!',
+    CREATED: 'notifications.success.created',
+    UPDATED: 'notifications.success.updated',
+    DELETED: 'notifications.success.deleted',
   },
 } as const;
+
+// Deprecated: Keep for backward compatibility, will be removed
+export const PRICE_ERROR_MESSAGES = PRICE_ERROR_MESSAGE_KEYS;
+export const PRICE_SUCCESS_MESSAGES = PRICE_SUCCESS_MESSAGE_KEYS;
 
 // ====== Helper Functions ======
 // Vehicle type conversion functions are now imported from @shared/constants

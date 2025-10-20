@@ -2,6 +2,7 @@ import { fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@re
 import { config } from '@shared/config/env';
 import { logger } from '@shared/utils/logger';
 import { authInitializationService } from '@auth/services/authInitializationService';
+import i18n from '@shared/i18n/config';
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: config.apiBaseUrl,
@@ -13,6 +14,11 @@ export const baseQuery = fetchBaseQuery({
     } else {
       logger.debug('No valid access token available for request');
     }
+    
+    const currentLanguage = i18n.language || 'en';
+    headers.set('Accept-Language', currentLanguage);
+    logger.debug(`Accept-Language header set to: ${currentLanguage}`);
+    
     return headers;
   },
 });

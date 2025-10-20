@@ -1,13 +1,14 @@
 package ar.edu.itba.parkingmanagmentapi.validators.common;
 
 import ar.edu.itba.parkingmanagmentapi.exceptions.BadRequestException;
+import ar.edu.itba.parkingmanagmentapi.util.LocaleContextUtils;
 
 public class LengthRangeFieldValidator extends Validator<String> {
 
     private final int minLength;
     private final int maxLength;
 
-    private static final String ERROR_MESSAGE = "The value for [%s] must be between %d and %d characters. Actual length: %d";
+    private static final String ERROR_MESSAGE_KEY = "validation.field.length_range";
 
     public LengthRangeFieldValidator(int minLength, int maxLength) {
         if (minLength < 0 || maxLength < minLength) {
@@ -22,7 +23,7 @@ public class LengthRangeFieldValidator extends Validator<String> {
         if (value != null) {
             int length = value.length();
             if (length < minLength || length > maxLength) {
-                throw new BadRequestException(String.format(ERROR_MESSAGE, path, minLength, maxLength, length));
+                throw new BadRequestException(LocaleContextUtils.getMessage(ERROR_MESSAGE_KEY, path, minLength, maxLength, length));
             }
         }
     }

@@ -6,8 +6,7 @@ public enum ReservationStatus {
     ACTIVE("ACTIVE"),
     CONFIRMED("CONFIRMED"),
     CANCELLED("CANCELLED"),
-    COMPLETED("COMPLETED"),
-    IN_PROGRESS("IN_PROGRESS");
+    COMPLETED("COMPLETED");
 
 
     private final String name;

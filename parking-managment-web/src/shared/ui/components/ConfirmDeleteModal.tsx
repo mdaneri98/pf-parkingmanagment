@@ -1,3 +1,5 @@
+import { Modal } from '@shared/ui/components';
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -37,8 +39,8 @@ export function ConfirmDeleteModal({
   const styles = variantStyles[confirmVariant];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-md w-full">
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="md">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl w-full">
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-4">
             <div className={`p-2 rounded-lg ${styles.icon}`}>
@@ -69,6 +71,6 @@ export function ConfirmDeleteModal({
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -36,6 +36,7 @@ import { useGetParkingLotByIdQuery } from '@parking/api/parkingApi';
 import type { PriceDisplayData, ParkingPriceResponse } from '@prices/types';
 import { enhancePriceForDisplay } from '@prices/utils/priceUtils';
 import { useMemo } from 'react';
+import { useTypedTranslation } from '@shared/hooks/useTypedTranslation';
 
 interface Props {
   parkingLotId: number;
@@ -54,6 +55,7 @@ export function PricesManagement({
                                    onPriceUpdated,
                                    onPriceDeleted,
                                  }: Props) {
+  const { t } = useTypedTranslation();
   const dispatch = useDispatch();
 
   const {
@@ -227,7 +229,7 @@ export function PricesManagement({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-              Prices Management
+              {t('prices.priceManagement')}
             </h2>
           </div>
           {canEdit && (
@@ -239,7 +241,7 @@ export function PricesManagement({
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                <span>Create Price</span>
+                <span>{t('prices.createPrice')}</span>
               </button>
           )}
         </div>
@@ -274,16 +276,16 @@ export function PricesManagement({
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-                  Failed to Load Price Data
+                  {t('prices.loadingError')}
                 </h3>
                 <p className="text-neutral-600 dark:text-neutral-400 mb-4">
-                  Unable to fetch pricing rules. Please check your connection and try again.
+                  {t('prices.loadingErrorMessage')}
                 </p>
                 <button
                     onClick={() => refetch()}
                     className="px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200"
                 >
-                  Try Again
+                  {t('common.tryAgain')}
                 </button>
               </div>
             </div>
@@ -296,11 +298,11 @@ export function PricesManagement({
                   prices={displayPrices}
                   isLoading={false}
                   isEmpty={true}
-                  emptyMessage="No price rules found"
+                  emptyMessage={t('prices.noPriceRulesFound')}
                   emptyDescription={
                     activeFilterCount > 0
-                        ? "No price rules match your current filters. Try adjusting your search criteria."
-                        : "Create your first price rule to start managing parking costs for different vehicle types."
+                        ? t('prices.noPriceRulesMatchFilters')
+                        : t('prices.createFirstPriceRule')
                   }
               />
             </div>
@@ -314,7 +316,7 @@ export function PricesManagement({
               {activePrices.length > 0 && (
                   <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6 space-y-4">
                     <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-                      Active Price Rules
+                      {t('prices.activePriceRules')}
                     </h3>
                     <PricesGrid
                         prices={activePrices}
@@ -334,7 +336,7 @@ export function PricesManagement({
               {sortedUpcomingPrices.length > 0 && (
                   <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6 space-y-4">
                     <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-                      Upcoming Price Rules
+                      {t('prices.upcomingPriceRules')}
                     </h3>
                     <PricesGrid
                         prices={sortedUpcomingPrices}
@@ -358,7 +360,7 @@ export function PricesManagement({
             onSubmit={handleCreatePrice}
             isLoading={loadingStates.createPrice}
             mode="create"
-            title="Create New Price Rule"
+            title={t('prices.modals.create.title')}
         />
 
         <PriceFormModal
@@ -368,7 +370,7 @@ export function PricesManagement({
             isLoading={loadingStates.updatePrice}
             mode="edit"
             initialData={selectedPrice || undefined}
-            title="Edit Price Rule"
+            title={t('prices.modals.edit.title')}
         />
 
         <PriceDetailModal
@@ -386,13 +388,16 @@ export function PricesManagement({
             onClose={() => dispatch(closeConfirmDelete())}
             onConfirm={handleDeletePrice}
             isLoading={loadingStates.deletePrice}
-            title="Delete Price Rule"
+            title={t('prices.modals.delete.title')}
             message={
               confirmDeleteState
-                  ? `Are you sure you want to delete the price rule for ${confirmDeleteState.priceInfo.vehicleType} at $${confirmDeleteState.priceInfo.price}? This action cannot be undone.`
+                  ? t('prices.modals.delete.message', { 
+                      vehicleType: confirmDeleteState.priceInfo.vehicleType, 
+                      price: confirmDeleteState.priceInfo.price 
+                    })
                   : ''
             }
-            confirmText="Delete Price Rule"
+            confirmText={t('prices.modals.delete.confirmText')}
         />
       </div>
   );

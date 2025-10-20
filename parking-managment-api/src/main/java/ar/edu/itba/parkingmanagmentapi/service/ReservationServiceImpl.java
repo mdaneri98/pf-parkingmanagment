@@ -51,7 +51,7 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
         );
 
         if (prices.isEmpty()) {
-            throw new NotFoundException("There are no rates available for this type of vehicle.");
+            throw new NotFoundException("price.not.found");
         }
 
         ParkingPrice price = prices.get(0);
@@ -65,7 +65,7 @@ public abstract class ReservationServiceImpl<T> implements ReservationService<T>
         Spot spot = spotService.findEntityById(spotId);
 
         if (!makeAvailable && !spot.getIsAvailable()) {
-            throw new NotFoundException("The spot with id " + spot.getId() + " is not available");
+            throw new NotFoundException("spot.not.available", spot.getId());
         }
 
         spot.setIsAvailable(makeAvailable);

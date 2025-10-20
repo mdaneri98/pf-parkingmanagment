@@ -1,5 +1,6 @@
 package ar.edu.itba.parkingmanagmentapi.dto;
 
+import ar.edu.itba.parkingmanagmentapi.util.LocaleContextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,23 +38,23 @@ public class ApiResponse<T> {
 
     // Factory methods
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, data, "Operation completed successfully");
+        return new ApiResponse<>(true, data, LocaleContextUtils.getMessage("api.success.operation"));
     }
 
-    public static <T> ApiResponse<T> success(T data, String message) {
-        return new ApiResponse<>(true, data, message);
+    public static <T> ApiResponse<T> success(T data, String messageKey, Object... args) {
+        return new ApiResponse<>(true, data, LocaleContextUtils.getMessage(messageKey, args));
     }
 
-    public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>(false, null, message, null, null, null, null);
+    public static <T> ApiResponse<T> error(String messageKey, Object... args) {
+        return new ApiResponse<>(false, null, LocaleContextUtils.getMessage(messageKey, args), null, null, null, null);
     }
 
-    public static <T> ApiResponse<T> error(String message, String errorCode) {
-        return new ApiResponse<>(false, null, message, errorCode, null, null, null);
+    public static <T> ApiResponse<T> error(String messageKey, String errorCode, Object... args) {
+        return new ApiResponse<>(false, null, LocaleContextUtils.getMessage(messageKey, args), errorCode, null, null, null);
     }
 
     public static <T> ApiResponse<T> validationError(List<String> errors) {
-        return new ApiResponse<>(false, null, "Validation failed", "VALIDATION_ERROR", errors, null, null);
+        return new ApiResponse<>(false, null, LocaleContextUtils.getMessage("api.error.validation"), "VALIDATION_ERROR", errors, null, null);
     }
 
     public static <T> ResponseEntity<ApiResponse<T>> ok(T data) {

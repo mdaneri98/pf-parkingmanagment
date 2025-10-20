@@ -29,15 +29,25 @@ VALUES ('default', 'default', 'default@default.com', '$2a$10$NrSSkbf/XLqEt0F5Bf3
         'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Detalles de usuarios
-INSERT INTO user_detail (user_id, phone, address, created_at, updated_at)
-VALUES (1, '+5411-2345-6789', 'Av. Corrientes 1234, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (2, '+5411-3456-7890', 'Av. Santa Fe 2345, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (3, '+5411-4567-8901', 'Av. Cabildo 3456, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (4, '+5411-5678-9012', 'Av. Rivadavia 4567, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (5, '+5411-6789-0123', 'Av. Belgrano 5678, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (6, '+5411-7890-1234', 'Av. Libertador 6789, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (7, '+5411-8901-2345', 'Av. Calle Falsa 123, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (8, '+5411-9012-3456', 'Av. San Martín 789, CABA', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO user_detail (phone, address, lang, created_at, updated_at)
+VALUES ('+5411-2345-6789', 'Av. Corrientes 1234, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-3456-7890', 'Av. Santa Fe 2345, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-4567-8901', 'Av. Cabildo 3456, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-5678-9012', 'Av. Rivadavia 4567, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-6789-0123', 'Av. Belgrano 5678, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-7890-1234', 'Av. Libertador 6789, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-8901-2345', 'Av. Calle Falsa 123, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('+5411-9012-3456', 'Av. San Martín 789, CABA', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Link users to their details
+UPDATE common_user SET user_detail_id = 1 WHERE id = 1;
+UPDATE common_user SET user_detail_id = 2 WHERE id = 2;
+UPDATE common_user SET user_detail_id = 3 WHERE id = 3;
+UPDATE common_user SET user_detail_id = 4 WHERE id = 4;
+UPDATE common_user SET user_detail_id = 5 WHERE id = 5;
+UPDATE common_user SET user_detail_id = 6 WHERE id = 6;
+UPDATE common_user SET user_detail_id = 7 WHERE id = 7;
+UPDATE common_user SET user_detail_id = 8 WHERE id = 8;
 
 -- Gerentes (usuarios 5 y 6 serán gerentes)
 INSERT INTO manager (user_id, created_at, updated_at)
@@ -159,7 +169,7 @@ VALUES
 ('2025-12-12 08:00:00', '2025-12-12 17:00:00', 'PENDING', 8000.00, 6, 2, 'DEF456', null, null, CURRENT_TIMESTAMP,
  CURRENT_TIMESTAMP),
 -- En progreso
-('2025-10-24 10:00:00', '2025-10-24 20:00:00', 'IN_PROGRESS', 2100.00, 4, 3, 'JKL012', null, null, CURRENT_TIMESTAMP,
+('2025-10-24 10:00:00', '2025-10-24 20:00:00', 'ACTIVE', 2100.00, 4, 3, 'JKL012', null, null, CURRENT_TIMESTAMP,
  CURRENT_TIMESTAMP),
 -- Cancelada (ayer)
 ('2025-10-11 12:00:00', '2025-10-11 16:00:00', 'CANCELLED', 2800.00, 3, 2, 'GHI789', null, null, CURRENT_TIMESTAMP,

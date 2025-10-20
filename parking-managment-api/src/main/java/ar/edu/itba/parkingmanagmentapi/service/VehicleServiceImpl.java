@@ -47,10 +47,10 @@ public class VehicleServiceImpl implements VehicleService {
 
         Optional<UserVehicleAssignment> uva = userVehicleAssignmentRepository.findByUserIdAndVehicleLicensePlate(request.getUserId(), request.getLicensePlate());
         if (uva.isPresent()) {
-            throw new BadRequestException("There is already an assignment for user " + request.getUserId() + " and vehicle " + request.getLicensePlate());
+            throw new BadRequestException("vehicle.already.exists", request.getLicensePlate());
         }
 
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new NotFoundException("Not found user with id " + request.getUserId()));
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new NotFoundException("user.not.found"));
 
         UserVehicleAssignment assignment = new UserVehicleAssignment(user, vehicle);
         vehicle.getUserAssignments().add(assignment);
@@ -63,7 +63,7 @@ public class VehicleServiceImpl implements VehicleService {
     public VehicleResponse findByLicensePlate(String licensePlate) {
         return vehicleRepository.findById(licensePlate)
                 .map(VehicleMapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("Not found vehicle with license plate " + licensePlate));
+                .orElseThrow(() -> new NotFoundException("vehicle.not.found", licensePlate));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class VehicleServiceImpl implements VehicleService {
     public VehicleResponse update(String licensePlate, VehicleRequest request) {
         updateVehicleValidator.validate(request);
         Vehicle vehicle = vehicleRepository.findById(licensePlate)
-                .orElseThrow(() -> new NotFoundException("Not found vehicle with license plate " + licensePlate));
+                .orElseThrow(() -> new NotFoundException("vehicle.not.found", licensePlate));
 
         vehicle.setBrand(request.getBrand());
         vehicle.setModel(request.getModel());
@@ -91,7 +91,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public void delete(String licensePlate) {
         if (!vehicleRepository.existsById(licensePlate)) {
-            throw new NotFoundException("Not found vehicle with license plate " + licensePlate);
+            throw new NotFoundException("vehicle.not.found", licensePlate);
         }
         vehicleRepository.deleteById(licensePlate);
     }
@@ -106,7 +106,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public Vehicle findEntityByLicensePlate(String licensePlate) {
         return vehicleRepository.findById(licensePlate)
-                .orElseThrow(() -> new NotFoundException("Vehicle not found"));
+                .orElseThrow(() -> new NotFoundException("vehicle.not.found", licensePlate));
     }
 
     @Override
