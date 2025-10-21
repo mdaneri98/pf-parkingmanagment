@@ -185,6 +185,6 @@ class AuthControllerIntegrationTest extends BaseIntegrationTest {
         ApiResponse<Void> apiResponse = parseApiResponse(response, Void.class);
         assertNotNull(apiResponse);
         assertTrue(apiResponse.getMessage().contains(expectedField));
-        assertTrue(apiResponse.getMessage().contains("is mandatory") || apiResponse.getMessage().contains("is not an alphanumeric value"));
+        assertTrue(apiResponse.getMessage().contains("es obligatorio") || apiResponse.getMessage().contains("is not an alphanumeric value"));
     }
 }

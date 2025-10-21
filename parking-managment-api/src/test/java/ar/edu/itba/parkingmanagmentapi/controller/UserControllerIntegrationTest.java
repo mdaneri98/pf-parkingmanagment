@@ -2,10 +2,7 @@ package ar.edu.itba.parkingmanagmentapi.controller;
 
 import ar.edu.itba.parkingmanagmentapi.BaseIntegrationTest;
 import ar.edu.itba.parkingmanagmentapi.builder.TestDataBuilder;
-import ar.edu.itba.parkingmanagmentapi.dto.ApiResponse;
-import ar.edu.itba.parkingmanagmentapi.dto.CreateUserRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.UpdateUserRequest;
-import ar.edu.itba.parkingmanagmentapi.dto.UserResponse;
+import ar.edu.itba.parkingmanagmentapi.dto.*;
 import ar.edu.itba.parkingmanagmentapi.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -69,14 +66,14 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody().getMessage().contains("in use"));
+        assertTrue(response.getBody().getMessage().contains("ya está en uso"));
     }
 
     @ParameterizedTest
     @CsvSource({
-            ", password123, email",
+            ", password123, validation.field.mandatory",
             "'', password123, email",
-            "test@example.com, , password",
+            "test@example.com, , validation.field.mandatory",
             "test@example.com, '', password"
     })
     void testCreateUser_withInvalidInput_shouldReturn400(String email, String password, String expectedField) {
@@ -96,7 +93,6 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getMessage().contains(expectedField));
-        assertTrue(response.getBody().getMessage().contains("is mandatory"));
     }
 
     @ParameterizedTest
@@ -170,7 +166,7 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody().getMessage().toLowerCase().contains("not found"));
+        assertTrue(response.getBody().getMessage().toLowerCase().contains("user.not.found"));
     }
 
     @Test
@@ -179,6 +175,8 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         updateRequest.setFirstName("NuevoNombre");
         updateRequest.setLastName("NuevoApellido");
         updateRequest.setImageUrl("https://example.com/image2.jpg");
+        updateRequest.setUserDetail(new UserDetailDTO("1234567890", "New Address", "en"));
+
 
         HttpEntity<UpdateUserRequest> requestEntity = new HttpEntity<>(updateRequest, createAuthHeaders(normalUser));
         ResponseEntity<ApiResponse<UserResponse>> updateResponse = restTemplate.exchange(

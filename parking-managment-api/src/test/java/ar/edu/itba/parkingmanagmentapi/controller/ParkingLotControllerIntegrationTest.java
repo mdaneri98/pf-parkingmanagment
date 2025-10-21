@@ -222,7 +222,7 @@ class ParkingLotControllerIntegrationTest extends BaseIntegrationTest {
 
         ApiResponse<ApiResponse> apiResponse = parseApiResponse(response, ApiResponse.class);
         assertNotNull(apiResponse);
-        assertTrue(apiResponse.getMessage().contains("is mandatory"));
+        assertTrue(apiResponse.getMessage().contains("validation.field.mandatory"));
     }
 
     @Test

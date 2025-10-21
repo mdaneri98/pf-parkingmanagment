@@ -101,8 +101,10 @@ public abstract class BaseIntegrationTest {
         userRepository.save(userDefaultEntity);
 
         User normalUserEntity = createTestUser("normal@test.com", "password123");
+        normalUserEntity.setUserDetail(new UserDetail());
         String normalUserToken = authenticateUser("normal@test.com", "password123");
         normalUser = new TestUser(normalUserEntity, normalUserToken);
+        userRepository.save(normalUserEntity);
 
         // Create admin user
         User adminUserEntity = createTestUser("admin@admin.com", "password123");
