@@ -1,13 +1,27 @@
 {
-  "name": "ParkingManagementMobile",
-  "version": "0.0.1",
+  "name": "parking-management-mobile",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "type-check": "tsc --noEmit",
+    "clean": "cd android && ./gradlew clean && cd ../ios && xcodebuild clean && cd ..",
+    "clean:cache": "watchman watch-del-all && rm -rf $TMPDIR/react-* && rm -rf node_modules && npm install",
+    "pods": "cd ios && pod install && cd ..",
+    "postinstall": "cd ios && pod install && cd ..",
+    "build:android:debug": "cd android && ./gradlew assembleDebug",
+    "build:android:release": "cd android && ./gradlew assembleRelease",
+    "build:ios:debug": "react-native run-ios --configuration Debug",
+    "build:ios:release": "react-native run-ios --configuration Release",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json}\""
   },
   "dependencies": {
     "react": "19.2.0",
