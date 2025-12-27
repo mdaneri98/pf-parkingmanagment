@@ -84,3 +84,37 @@ backup/
 *.docx
 docs/generated/
 
+# React Native
+parking-management-mobile/node_modules/
+parking-management-mobile/npm-debug.log
+parking-management-mobile/yarn-error.log
+
+# iOS
+parking-management-mobile/ios/Pods/
+parking-management-mobile/ios/build/
+parking-management-mobile/ios/*.xcworkspace
+!parking-management-mobile/ios/*.xcworkspace/contents.xcworkspacedata
+
+# Android
+parking-management-mobile/android/build/
+parking-management-mobile/android/app/build/
+parking-management-mobile/android/.gradle/
+parking-management-mobile/android/local.properties
+
+# Environment
+parking-management-mobile/.env
+parking-management-mobile/.env.local
+parking-management-mobile/.env.*.local
+
+# IDE
+parking-management-mobile/.vscode/
+parking-management-mobile/.idea/
+
+# macOS
+parking-management-mobile/.DS_Store
+
+# Test
+parking-management-mobile/coverage/
+
+# Misc
+parking-management-mobile/.bundle

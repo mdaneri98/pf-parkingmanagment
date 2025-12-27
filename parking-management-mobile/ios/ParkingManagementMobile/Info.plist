@@ -35,7 +35,15 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>We need your location to show nearby parking lots</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide parking services</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access for QR code scanning</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

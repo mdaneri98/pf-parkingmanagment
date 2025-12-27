@@ -23,6 +23,20 @@ target 'ParkingManagementMobile' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # Permissions (Uncomment when configuring permissions)
+  # permissions_path = '../node_modules/react-native-permissions/ios'
+  # pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+  # pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  # pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  # pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
+
+  # Firebase (Uncomment when configuring Firebase)
+  # pod 'Firebase/Core'
+  # pod 'Firebase/Messaging'
+
+  # Maps (Uncomment when configuring Maps)
+  # pod 'react-native-google-maps', path: '../node_modules/react-native-maps'
+
   post_install do |installer|
     react_native_post_install(
       installer,
