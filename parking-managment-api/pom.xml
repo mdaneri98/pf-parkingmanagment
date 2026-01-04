@@ -11,7 +11,7 @@
     <groupId>ar.edu.itba</groupId>
     <artifactId>parking-managment-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>parking-managment-api</name>
     <description>parking-managment-api</description>
     <url/>

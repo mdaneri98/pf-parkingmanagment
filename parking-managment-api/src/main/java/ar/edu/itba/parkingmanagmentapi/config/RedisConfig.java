@@ -17,27 +17,27 @@ public class RedisConfig {
     private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
 
     @Bean
-    @Profile({"dev", "test"})
+    @Profile({"local", "test"})
     public LettuceConnectionFactory redisDevConnectionFactory() {
-        logger.info("Starting Redis TestContainer for dev/test profile");
-        
+        logger.info("Starting Redis TestContainer for local/test profile");
+
         GenericContainer<?> redisContainer = new GenericContainer<>(
                 DockerImageName.parse("redis:7-alpine")
         ).withExposedPorts(6379);
-        
+
         redisContainer.start();
-        
+
         String host = redisContainer.getHost();
         int port = redisContainer.getMappedPort(6379);
-        
+
         logger.info("Redis TestContainer started successfully - Host: {}, Port: {}", host, port);
-        
+
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
         return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
-    @Profile({"local", "prod"})
+    @Profile({"dev", "prod"})
     public LettuceConnectionFactory redisProductionConnectionFactory(
             @Value("${redis.host:localhost}") String host,
             @Value("${redis.port:6379}") int port,
@@ -45,7 +45,7 @@ public class RedisConfig {
             @Value("${redis.database:0}") int database,
             @Value("${redis.timeout:2000}") int timeout) {
         
-        logger.info("Starting Redis connection for local/prod profile");
+        logger.info("Starting Redis connection for dev/prod profile");
 
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(host);
