@@ -31,8 +31,8 @@ RUN chown -R spring:spring /app
 # Switch to non-root user
 USER spring:spring
 
-# Expose the application port (matches application.yml server.port: 8081)
-EXPOSE 8081
+# Expose the application port (matches application.yml server.port: 3000)
+EXPOSE 3000
 
 # Environment variables with sensible defaults
 ENV SPRING_PROFILES_ACTIVE=dev \
@@ -45,11 +45,11 @@ ENV SPRING_PROFILES_ACTIVE=dev \
     REDIS_PASSWORD="" \
     JWT_SECRET="" \
     JWT_EXPIRATION=86400000 \
-    SERVER_PORT=8081
+    SERVER_PORT=3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8081/api/actuator/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/actuator/health || exit 1
 
 # Run the application with environment variable support
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS \
