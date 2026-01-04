@@ -28,18 +28,19 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to show nearby parking lots</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need your location to provide parking services</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need camera access for QR code scanning</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide parking services</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby parking lots</string>
+	<key>RCTNewArchEnabled</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
